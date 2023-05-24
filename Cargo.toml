@@ -1,0 +1,56 @@
+[package]
+name = "mantle-diver"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.71"
+derivative = "2.2.0"
+egui = "0.21.0"
+fnv = "1.0.7"
+hecs = "0.10.3"
+num-traits = "0.2.15"
+rand = "0.8.5"
+rfd = "0.11.3"
+rmp-serde = "1.1.1"
+serde = { version = "1.0.163", features = ["derive"] }
+log = "0.4.17"
+env_logger = "0.10.0"
+zstd = "0.12.3"
+clap = { version = "4.2.7", features = ["derive"] }
+directories = "5.0.1"
+texture_packer = "0.25.0"
+walkdir = "2.3.3"
+image = "0.24.6"
+bitfield-struct = "0.4.2"
+toml = "0.7.4"
+ron = "0.8.0"
+simdnoise = "3.1.6"
+splitty = "1.0.1"
+
+[dependencies.s2dc]
+git = "https://github.com/crumblingstatue/s2dc.git"
+features = ["serde"]
+
+[dependencies.sfml-xt]
+git = "https://github.com/crumblingstatue/sfml-xt.git"
+
+[dependencies.gamedebug_core]
+git = "https://github.com/crumblingstatue/gamedebug_core.git"
+
+[dependencies.egui-inspect]
+git = "https://github.com/crumblingstatue/egui-inspect.git"
+
+[dependencies.sfml]
+git = "https://github.com/jeremyletang/rust-sfml.git"
+
+[dependencies.egui-sfml]
+git = "https://github.com/crumblingstatue/egui-sfml.git"
+
+[profile.dev]
+incremental = false # Buggy on latest rustc nightly, keeps ICEing
+
+[profile.dev.package."*"]
+opt-level = 2
