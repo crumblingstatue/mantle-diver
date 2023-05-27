@@ -291,8 +291,8 @@ impl Index<FgTileId> for TileDb {
 const PATH: &str = "tiles.ron";
 
 impl TileDb {
-    pub fn load_or_default(res_path: &str) -> Self {
-        match std::fs::read_to_string(format!("{res_path}/{PATH}")) {
+    pub fn load_or_default(data_path: &str) -> Self {
+        match std::fs::read_to_string(format!("{data_path}/{PATH}")) {
             Ok(data) => match ron::from_str(&data) {
                 Ok(db) => db,
                 Err(e) => {
@@ -306,9 +306,9 @@ impl TileDb {
             }
         }
     }
-    pub fn try_save(&self, res_path: &str) {
+    pub fn try_save(&self, data_path: &str) {
         match ron::ser::to_string_pretty(self, PrettyConfig::default()) {
-            Ok(str) => match std::fs::write(format!("{res_path}/{PATH}"), str) {
+            Ok(str) => match std::fs::write(format!("{data_path}/{PATH}"), str) {
                 Ok(()) => {}
                 Err(e) => log::warn!("Failed to save tile db: {e}"),
             },

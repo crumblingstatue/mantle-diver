@@ -167,12 +167,12 @@ impl GameState {
         self.world.ticks += 1;
     }
 
-    pub(crate) fn new(world_name: String, path: PathBuf, res: &Res, res_path: &str) -> GameState {
+    pub(crate) fn new(world_name: String, path: PathBuf, res: &Res) -> GameState {
         let mut spawn_point = WorldPos::SURFACE_CENTER;
         spawn_point.y -= 1104;
-        let mut tile_db = TileDb::load_or_default(res_path);
+        let mut tile_db = TileDb::load_or_default("data");
         tile_db.update_rects(&res.atlas.rects);
-        let mut itemdb = ItemDb::load_or_default(res_path);
+        let mut itemdb = ItemDb::load_or_default("data");
         itemdb.update_rects(&res.atlas.rects);
         let mut inventory = Inventory::new_debug();
         let seed;

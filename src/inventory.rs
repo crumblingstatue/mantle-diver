@@ -145,8 +145,8 @@ pub struct ItemDb {
 const PATH: &str = "items.ron";
 
 impl ItemDb {
-    pub fn load_or_default(res_path: &str) -> Self {
-        match std::fs::read_to_string(format!("{res_path}/{PATH}")) {
+    pub fn load_or_default(data_path: &str) -> Self {
+        match std::fs::read_to_string(format!("{data_path}/{PATH}")) {
             Ok(data) => match ron::from_str(&data) {
                 Ok(db) => db,
                 Err(e) => {
@@ -167,9 +167,9 @@ impl ItemDb {
             Some(&self.db[id.0 as usize - 1])
         }
     }
-    pub fn try_save(&self, res_path: &str) {
+    pub fn try_save(&self, data_path: &str) {
         match ron::ser::to_string_pretty(self, PrettyConfig::default()) {
-            Ok(str) => match std::fs::write(format!("{res_path}/{PATH}"), str) {
+            Ok(str) => match std::fs::write(format!("{data_path}/{PATH}"), str) {
                 Ok(()) => {}
                 Err(e) => log::warn!("Failed to save item db: {e}"),
             },

@@ -1,0 +1,167 @@
+(
+    db: [
+        (
+            name: "Dirt Block",
+            graphic_name: "tiles/dirt",
+            tex_rect: (
+                x: 360,
+                y: 26,
+                w: 32,
+                h: 32,
+            ),
+            draw_off: (
+                x: 4,
+                y: 4,
+            ),
+            use_action: PlaceMidTile(
+                id: (1, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Torch",
+            graphic_name: "tiles/torch",
+            tex_rect: (
+                x: 488,
+                y: 0,
+                w: 8,
+                h: 30,
+            ),
+            draw_off: (
+                x: 16,
+                y: 5,
+            ),
+            use_action: PlaceMidTile(
+                id: (3, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Platform",
+            graphic_name: "tiles/platform",
+            tex_rect: (
+                x: 384,
+                y: 154,
+                w: 32,
+                h: 6,
+            ),
+            draw_off: (
+                x: 4,
+                y: 17,
+            ),
+            use_action: PlaceMidTile(
+                id: (4, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Wood Pick",
+            graphic_name: "items/woodpick",
+            tex_rect: (
+                x: 86,
+                y: 256,
+                w: 22,
+                h: 26,
+            ),
+            draw_off: (
+                x: 9,
+                y: 6,
+            ),
+            use_action: MineTile(
+                power: 1.0,
+                delay: 35,
+            ),
+            consumable: false,
+        ),
+        (
+            name: "Panzerium",
+            graphic_name: "tiles/panzerium",
+            tex_rect: (
+                x: 384,
+                y: 186,
+                w: 32,
+                h: 32,
+            ),
+            draw_off: (
+                x: 4,
+                y: 4,
+            ),
+            use_action: PlaceMidTile(
+                id: (5, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Stone wall",
+            graphic_name: "tiles/stoneback",
+            tex_rect: (
+                x: 416,
+                y: 154,
+                w: 32,
+                h: 32,
+            ),
+            draw_off: (
+                x: 4,
+                y: 4,
+            ),
+            use_action: PlaceBgTile(
+                id: (2, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Stone block",
+            graphic_name: "tiles/stone",
+            tex_rect: (
+                x: 256,
+                y: 154,
+                w: 32,
+                h: 32,
+            ),
+            draw_off: (
+                x: 4,
+                y: 4,
+            ),
+            use_action: PlaceMidTile(
+                id: (2, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Coal (place test)",
+            graphic_name: "tiles/coal",
+            tex_rect: (
+                x: 360,
+                y: 0,
+                w: 25,
+                h: 26,
+            ),
+            draw_off: (
+                x: 8,
+                y: 7,
+            ),
+            use_action: PlaceFgTile(
+                id: (1, ()),
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Dev Pick",
+            graphic_name: "items/devpick",
+            tex_rect: (
+                x: 64,
+                y: 256,
+                w: 22,
+                h: 30,
+            ),
+            draw_off: (
+                x: 9,
+                y: 6,
+            ),
+            use_action: RemoveTile(
+                layer: Mid,
+            ),
+            consumable: false,
+        ),
+    ],
+)

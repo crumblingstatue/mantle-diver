@@ -1,0 +1,327 @@
+(
+    unknown_bg: (
+        light: Some((
+            x: 0,
+            y: 0,
+        )),
+        graphic_name: "tiles/unknown_bg",
+        tex_rect: (
+            x: 296,
+            y: 32,
+            w: 32,
+            h: 32,
+        ),
+        layer: (),
+        neigh_aware: false,
+        draw_offs: (
+            x: 0,
+            y: 0,
+        ),
+        health: 0.0,
+        hit_sound: None,
+        item_drop: None,
+    ),
+    unknown_mid: (
+        light: Some((
+            x: 0,
+            y: 0,
+        )),
+        graphic_name: "tiles/unknown_mid",
+        tex_rect: (
+            x: 328,
+            y: 0,
+            w: 32,
+            h: 32,
+        ),
+        layer: (
+            platform: true,
+            bb: Some((
+                x: 0,
+                y: 0,
+                w: 32,
+                h: 32,
+            )),
+        ),
+        neigh_aware: false,
+        draw_offs: (
+            x: 0,
+            y: 0,
+        ),
+        health: 0.0,
+        hit_sound: None,
+        item_drop: None,
+    ),
+    unknown_fg: (
+        light: Some((
+            x: 0,
+            y: 0,
+        )),
+        graphic_name: "tiles/unknown_fg",
+        tex_rect: (
+            x: 296,
+            y: 0,
+            w: 32,
+            h: 32,
+        ),
+        layer: (),
+        neigh_aware: false,
+        draw_offs: (
+            x: 0,
+            y: 0,
+        ),
+        health: 0.0,
+        hit_sound: None,
+        item_drop: None,
+    ),
+    bg: [
+        (
+            light: None,
+            graphic_name: "tiles/dirtback",
+            tex_rect: (
+                x: 32,
+                y: 256,
+                w: 32,
+                h: 32,
+            ),
+            layer: (),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 0.0,
+            hit_sound: None,
+            item_drop: None,
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/stoneback",
+            tex_rect: (
+                x: 416,
+                y: 154,
+                w: 32,
+                h: 32,
+            ),
+            layer: (),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 0.0,
+            hit_sound: None,
+            item_drop: None,
+        ),
+    ],
+    mid: [
+        (
+            light: None,
+            graphic_name: "tiles/dirt",
+            tex_rect: (
+                x: 360,
+                y: 26,
+                w: 128,
+                h: 128,
+            ),
+            layer: (
+                platform: false,
+                bb: Some((
+                    x: 0,
+                    y: 0,
+                    w: 32,
+                    h: 32,
+                )),
+            ),
+            neigh_aware: true,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 3.0,
+            hit_sound: Some("dig/dirt"),
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (1),
+            )),
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/stone",
+            tex_rect: (
+                x: 256,
+                y: 154,
+                w: 128,
+                h: 128,
+            ),
+            layer: (
+                platform: false,
+                bb: Some((
+                    x: 0,
+                    y: 0,
+                    w: 32,
+                    h: 32,
+                )),
+            ),
+            neigh_aware: true,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 6.0,
+            hit_sound: Some("dig/stone"),
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (7),
+            )),
+        ),
+        (
+            light: Some((
+                x: 12,
+                y: -2,
+            )),
+            graphic_name: "tiles/torch",
+            tex_rect: (
+                x: 488,
+                y: 0,
+                w: 8,
+                h: 30,
+            ),
+            layer: (
+                platform: false,
+                bb: None,
+            ),
+            neigh_aware: false,
+            draw_offs: (
+                x: 12,
+                y: 1,
+            ),
+            health: 2.0,
+            hit_sound: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (2),
+            )),
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/platform",
+            tex_rect: (
+                x: 384,
+                y: 154,
+                w: 32,
+                h: 6,
+            ),
+            layer: (
+                platform: true,
+                bb: Some((
+                    x: 0,
+                    y: 0,
+                    w: 32,
+                    h: 1,
+                )),
+            ),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 5.0,
+            hit_sound: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (3),
+            )),
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/panzerium",
+            tex_rect: (
+                x: 384,
+                y: 186,
+                w: 128,
+                h: 128,
+            ),
+            layer: (
+                platform: false,
+                bb: Some((
+                    x: 0,
+                    y: 0,
+                    w: 32,
+                    h: 32,
+                )),
+            ),
+            neigh_aware: true,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 50.0,
+            hit_sound: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (5),
+            )),
+        ),
+    ],
+    fg: [
+        (
+            light: None,
+            graphic_name: "tiles/coal",
+            tex_rect: (
+                x: 360,
+                y: 0,
+                w: 25,
+                h: 26,
+            ),
+            layer: (),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 0.0,
+            hit_sound: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 3,
+                ),
+                id: (8),
+            )),
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/grass",
+            tex_rect: (
+                x: 0,
+                y: 256,
+                w: 32,
+                h: 6,
+            ),
+            layer: (),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 0,
+            ),
+            health: 10.0,
+            hit_sound: None,
+            item_drop: None,
+        ),
+    ],
+)

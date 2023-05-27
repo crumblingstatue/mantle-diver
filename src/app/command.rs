@@ -39,7 +39,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res) {
             Cmd::LoadWorld(name) => {
                 app.game.world.save();
                 let path = app.worlds_dir.join(&name);
-                app.game = GameState::new(name, path, res, &app.cfg.res_folder_path);
+                app.game = GameState::new(name, path, res);
             }
             Cmd::ReloadGraphics => {
                 res.atlas = AtlasBundle::new(&app.cfg.res_folder_path).unwrap();

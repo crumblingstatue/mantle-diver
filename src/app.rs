@@ -106,7 +106,7 @@ impl<'aud> App<'aud> {
         Ok(Self {
             rw,
             should_quit: false,
-            game: GameState::new(wld_name.to_owned(), path, res, &cfg.res_folder_path),
+            game: GameState::new(wld_name.to_owned(), path, res),
             sf_egui,
             input: Input::default(),
             debug: DebugState::default(),
@@ -131,8 +131,8 @@ impl<'aud> App<'aud> {
             self.input.clear_pressed();
             gamedebug_core::inc_frame();
         }
-        self.game.tile_db.try_save(&self.cfg.res_folder_path);
-        self.game.itemdb.try_save(&self.cfg.res_folder_path);
+        self.game.tile_db.try_save("data");
+        self.game.itemdb.try_save("data");
         self.game.world.save();
         std::fs::create_dir_all(self.project_dirs.config_dir()).unwrap();
         self.cfg.last_world = Some(self.game.world.name.clone());
