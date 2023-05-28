@@ -26,10 +26,10 @@ impl Res {
     pub fn load(res_path: &str) -> anyhow::Result<Self> {
         Ok(Self {
             atlas: AtlasBundle::new(res_path)?,
-            surf_music: Music::from_file(&format!("{res_path}/music/music.ogg")).unwrap(),
-            und_music: Music::from_file(&format!("{res_path}/music/cave2.ogg")).unwrap(),
-            sans_font: Font::from_file(&format!("{res_path}/fonts/sans.ttf")).unwrap(),
-            forest_bg: Texture::from_file(&format!("{res_path}/bg/forest.png")).unwrap(),
+            surf_music: Music::from_file(&format!("{res_path}/music/calm.ogg")).unwrap(),
+            und_music: Music::from_file(&format!("{res_path}/music/cave.ogg")).unwrap(),
+            sans_font: Font::from_file(&format!("{res_path}/fonts/ShareTechMono-Regular.ttf")).unwrap(),
+            forest_bg: Texture::from_file(&format!("{res_path}/bg/sky.png")).unwrap(),
         })
     }
 }

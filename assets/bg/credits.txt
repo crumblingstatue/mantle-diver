@@ -1,0 +1,6 @@
+sky.png:
+Author: Bart Kelsey
+URL: https://opengameart.org/content/sky-backdrop
+License: CC-BY 3.0
+
+---
