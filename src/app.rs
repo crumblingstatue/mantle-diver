@@ -3,7 +3,7 @@ use {
         command::CmdVec,
         config::Config,
         debug::{self, DebugState},
-        game::{for_each_tile_on_screen, Biome, GameState},
+        game::{for_each_tile_on_screen, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
         math::{center_offset, TILE_SIZE},
@@ -16,7 +16,6 @@ use {
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
     gamedebug_core::{imm, imm_dbg},
-    log::info,
     rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
     sfml::{
@@ -325,34 +324,7 @@ impl App {
         }
         self.game
             .item_use_system(&self.input, mouse_tpos, aud, &mut self.snd);
-        if self.game.camera_offset.y > 642_000 {
-            self.game.current_biome = Biome::Underground;
-        } else {
-            self.game.current_biome = Biome::Surface;
-        }
-        if self.game.current_biome != self.game.prev_biome {
-            self.game.prev_biome = self.game.current_biome;
-            match self.game.current_biome {
-                Biome::Surface => {
-                    info!("Playing surface music");
-                    if !self.music_sink.empty() {
-                        self.music_sink.clear();
-                    }
-                    self.music_sink
-                        .append(Decoder::new_looped(res.surf_music.clone()).unwrap());
-                    self.music_sink.play();
-                }
-                Biome::Underground => {
-                    info!("Playing underground music");
-                    if !self.music_sink.empty() {
-                        self.music_sink.clear();
-                    }
-                    self.music_sink
-                        .append(Decoder::new_looped(res.und_music.clone()).unwrap());
-                    self.music_sink.play();
-                }
-            }
-        }
+        self.game.biome_watch_system(&mut self.music_sink, res);
         self.game
             .update(&self.input, &mut self.snd, aud, &self.on_screen_tile_ents);
     }

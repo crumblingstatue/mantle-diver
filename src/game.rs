@@ -13,6 +13,7 @@ use {
     },
     fnv::FnvHashMap,
     rand::{seq::SliceRandom, thread_rng, Rng},
+    rodio::Decoder,
     sfml::{
         system::{Vector2f, Vector2u},
         window::Key,
@@ -275,6 +276,33 @@ impl GameState {
         // Make sure that fully consumed stacks are cleared
         if active_slot.qty == 0 {
             active_slot.id = ItemId::EMPTY;
+        }
+    }
+
+    pub(crate) fn biome_watch_system(&mut self, music_sink: &mut rodio::Sink, res: &Res) {
+        if self.camera_offset.y > 642_000 {
+            self.current_biome = Biome::Underground;
+        } else {
+            self.current_biome = Biome::Surface;
+        }
+        if self.current_biome != self.prev_biome {
+            self.prev_biome = self.current_biome;
+            match self.current_biome {
+                Biome::Surface => {
+                    if !music_sink.empty() {
+                        music_sink.clear();
+                    }
+                    music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
+                    music_sink.play();
+                }
+                Biome::Underground => {
+                    if !music_sink.empty() {
+                        music_sink.clear();
+                    }
+                    music_sink.append(Decoder::new_looped(res.und_music.clone()).unwrap());
+                    music_sink.play();
+                }
+            }
         }
     }
 }
