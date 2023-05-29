@@ -118,7 +118,7 @@ impl GameState {
     pub(crate) fn run_systems(
         &mut self,
         debug: &DebugState,
-        input: &Input,
+        input: &mut Input,
         mouse_world_pos: WorldPos,
         mouse_tpos: TilePos,
         rt_size: Vector2u,

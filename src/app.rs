@@ -218,7 +218,7 @@ impl App {
         imm!("@ region {m_chk_x}, {m_chk_y}");
         self.game.run_systems(
             &self.debug,
-            &self.input,
+            &mut self.input,
             mouse_world_pos,
             mouse_tpos,
             rt_size,

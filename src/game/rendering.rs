@@ -195,7 +195,7 @@ impl GameState {
         let mut y_offset = 40.0;
         for (i, item) in list.iter().enumerate() {
             if i == self.menu.cursor {
-                txt.set_fill_color(Color::YELLOW);
+                txt.set_fill_color(self.menu.sel_color);
             } else {
                 txt.set_fill_color(Color::WHITE);
             }

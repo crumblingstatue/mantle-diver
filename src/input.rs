@@ -1,17 +1,43 @@
 use {
     crate::graphics::ScreenVec,
-    fnv::FnvHashSet,
+    fnv::{FnvHashMap, FnvHashSet},
     sfml::window::{mouse, Event, Key},
 };
 
-#[derive(Default, Debug)]
 pub struct Input {
     down: FnvHashSet<Key>,
     pressed: FnvHashSet<Key>,
+    pub key_bindings: FnvHashMap<InputAction, Key>,
     pub lmb_down: bool,
     pub rmb_down: bool,
     pub mouse_down_loc: ScreenVec,
     pub mid_pressed: bool,
+    pub just_pressed_raw: Option<Key>,
+}
+
+impl Default for Input {
+    fn default() -> Self {
+        Self {
+            down: Default::default(),
+            pressed: Default::default(),
+            key_bindings: default_key_bindings(),
+            lmb_down: Default::default(),
+            rmb_down: Default::default(),
+            mouse_down_loc: Default::default(),
+            mid_pressed: Default::default(),
+            just_pressed_raw: None,
+        }
+    }
+}
+
+fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
+    let mut hm = FnvHashMap::default();
+    hm.insert(InputAction::Down, Key::S);
+    hm.insert(InputAction::Left, Key::A);
+    hm.insert(InputAction::Up, Key::W);
+    hm.insert(InputAction::Right, Key::D);
+    hm.insert(InputAction::Jump, Key::Space);
+    hm
 }
 
 impl Input {
@@ -20,6 +46,7 @@ impl Input {
             &Event::KeyPressed { code, .. } => {
                 self.pressed.insert(code);
                 self.down.insert(code);
+                self.just_pressed_raw = Some(code);
             }
             Event::KeyReleased { code, .. } => {
                 self.down.remove(code);
@@ -67,11 +94,46 @@ impl Input {
     pub fn clear_pressed(&mut self) {
         self.mid_pressed = false;
         self.pressed.clear();
+        self.just_pressed_raw = None;
     }
-    pub fn down(&self, key: Key) -> bool {
+    pub fn down_raw(&self, key: Key) -> bool {
         self.down.contains(&key)
     }
-    pub fn pressed(&self, key: Key) -> bool {
+    pub fn pressed_raw(&self, key: Key) -> bool {
         self.pressed.contains(&key)
+    }
+    pub fn down(&self, action: InputAction) -> bool {
+        match self.key_bindings.get(&action) {
+            Some(key) => self.down_raw(*key),
+            None => {
+                log::warn!("Missing key bind for {}", action.name());
+                false
+            }
+        }
+    }
+    #[expect(dead_code, reason = "Will probably use later")]
+    pub fn pressed(&self, action: InputAction) -> bool {
+        self.pressed_raw(self.key_bindings[&action])
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+pub enum InputAction {
+    Left,
+    Right,
+    Jump,
+    Down,
+    Up,
+}
+
+impl InputAction {
+    pub fn name(&self) -> &'static str {
+        match self {
+            InputAction::Left => "Left",
+            InputAction::Right => "Right",
+            InputAction::Jump => "Jump",
+            InputAction::Down => "Down",
+            InputAction::Up => "Up",
+        }
     }
 }

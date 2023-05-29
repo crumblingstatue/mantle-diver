@@ -5,7 +5,7 @@ use {
         command::{Cmd, CmdVec},
         debug::world_dirs,
         game::for_each_tile_on_screen,
-        input::Input,
+        input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
         itemdrop::Itemdrop,
         math::{step_towards, WorldPos, TILE_SIZE},
@@ -16,7 +16,7 @@ use {
     gamedebug_core::imm_dbg,
     rand::{seq::SliceRandom, thread_rng, Rng},
     rodio::Decoder,
-    sfml::{system::Vector2u, window::Key},
+    sfml::{graphics::Color, system::Vector2u, window::Key},
     std::{ops::Index, path::Path},
 };
 
@@ -131,25 +131,25 @@ pub(super) fn player_move_system(
     rt_size: Vector2u,
     on_screen_tile_ents: &mut Vec<TileColEn>,
 ) {
-    let spd = if input.down(Key::LShift) {
+    let spd = if input.down_raw(Key::LShift) {
         8.0
-    } else if input.down(Key::LControl) {
+    } else if input.down_raw(Key::LControl) {
         128.0
     } else {
         3.0
     };
     game.world.player.hspeed = 0.;
-    if input.down(Key::A) {
+    if input.down(InputAction::Left) {
         game.world.player.hspeed = -spd;
     }
-    if input.down(Key::D) {
+    if input.down(InputAction::Right) {
         game.world.player.hspeed = spd;
     }
-    if input.down(Key::W) && game.world.player.can_jump() {
+    if input.down(InputAction::Jump) && game.world.player.can_jump() {
         game.world.player.vspeed = -10.0;
         game.world.player.jumps_left = 0;
     }
-    game.world.player.down_intent = input.down(Key::S);
+    game.world.player.down_intent = input.down(InputAction::Down);
     let terminal_velocity = 60.0;
     game.world.player.vspeed = game
         .world
@@ -229,60 +229,60 @@ pub(super) fn player_move_system(
     game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
 }
 pub(super) fn freecam_move_system(game: &mut GameState, mouse_world_pos: WorldPos, input: &Input) {
-    let spd = if input.down(Key::LShift) {
+    let spd = if input.down_raw(Key::LShift) {
         100
-    } else if input.down(Key::LControl) {
+    } else if input.down_raw(Key::LControl) {
         1000
     } else {
         2
     };
-    if input.down(Key::A) {
+    if input.down(InputAction::Left) {
         game.camera_offset.x = game.camera_offset.x.saturating_sub(spd);
     }
-    if input.down(Key::D) {
+    if input.down(InputAction::Right) {
         game.camera_offset.x = game.camera_offset.x.saturating_add(spd);
     }
-    if input.down(Key::W) {
+    if input.down(InputAction::Up) {
         game.camera_offset.y = game.camera_offset.y.saturating_sub(spd);
     }
-    if input.down(Key::S) {
+    if input.down(InputAction::Down) {
         game.camera_offset.y = game.camera_offset.y.saturating_add(spd);
     }
-    if input.pressed(Key::P) {
+    if input.pressed_raw(Key::P) {
         game.world.player.col_en.en.pos.x = mouse_world_pos.x as i32;
         game.world.player.col_en.en.pos.y = mouse_world_pos.y as i32;
     }
 }
 
 pub(super) fn inventory_input_system(game: &mut GameState, input: &Input) {
-    if input.pressed(Key::Num1) {
+    if input.pressed_raw(Key::Num1) {
         game.selected_inv_slot = 0;
     }
-    if input.pressed(Key::Num2) {
+    if input.pressed_raw(Key::Num2) {
         game.selected_inv_slot = 1;
     }
-    if input.pressed(Key::Num3) {
+    if input.pressed_raw(Key::Num3) {
         game.selected_inv_slot = 2;
     }
-    if input.pressed(Key::Num4) {
+    if input.pressed_raw(Key::Num4) {
         game.selected_inv_slot = 3;
     }
-    if input.pressed(Key::Num5) {
+    if input.pressed_raw(Key::Num5) {
         game.selected_inv_slot = 4;
     }
-    if input.pressed(Key::Num6) {
+    if input.pressed_raw(Key::Num6) {
         game.selected_inv_slot = 5;
     }
-    if input.pressed(Key::Num7) {
+    if input.pressed_raw(Key::Num7) {
         game.selected_inv_slot = 6;
     }
-    if input.pressed(Key::Num8) {
+    if input.pressed_raw(Key::Num8) {
         game.selected_inv_slot = 7;
     }
-    if input.pressed(Key::Num9) {
+    if input.pressed_raw(Key::Num9) {
         game.selected_inv_slot = 8;
     }
-    if input.pressed(Key::Num0) {
+    if input.pressed_raw(Key::Num0) {
         game.selected_inv_slot = 9;
     }
 }
@@ -372,11 +372,24 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
     }
 }
 
-#[derive(Default)]
 pub struct Menu {
     pub stack: MenuStack,
     pub cursor: usize,
     pub open: bool,
+    pub action_to_rebind: Option<InputAction>,
+    pub sel_color: Color,
+}
+
+impl Default for Menu {
+    fn default() -> Self {
+        Self {
+            stack: Default::default(),
+            cursor: Default::default(),
+            open: Default::default(),
+            action_to_rebind: Default::default(),
+            sel_color: Color::YELLOW,
+        }
+    }
 }
 
 pub type MenuStack = Vec<MenuList>;
@@ -394,15 +407,28 @@ enum MenuAction {
     Quit,
     Back,
     Input,
+    Rebind(InputAction),
 }
 
 pub(super) fn pause_menu_system(
     game: &mut GameState,
-    input: &Input,
+    input: &mut Input,
     cmd: &mut CmdVec,
     worlds_dir: &Path,
 ) {
-    if input.pressed(Key::Enter) {
+    if let Some(act) = game.menu.action_to_rebind {
+        game.menu.sel_color = Color::RED;
+        if let Some(key) = input.just_pressed_raw {
+            input.key_bindings.insert(act, key);
+            game.menu.action_to_rebind = None;
+            if let Some(items) = game.menu.stack.last_mut() {
+                *items = build_keyconfig_menu(input);
+            }
+        }
+        return;
+    }
+    game.menu.sel_color = Color::YELLOW;
+    if input.pressed_raw(Key::Enter) {
         if let Some(list) = game.menu.stack.last() {
             match &list[game.menu.cursor].action {
                 MenuAction::NewRandom => {
@@ -427,10 +453,12 @@ pub(super) fn pause_menu_system(
                         action: MenuAction::Back,
                     });
                     game.menu.stack.push(list);
+                    game.menu.cursor = 0;
                 }
                 MenuAction::Quit => cmd.push(Cmd::QuitApp),
                 MenuAction::LoadWorld(name) => cmd.push(Cmd::LoadWorld(name.clone())),
                 MenuAction::Back => {
+                    game.menu.cursor = 0;
                     game.menu.stack.pop();
                     if game.menu.stack.is_empty() {
                         game.menu.open = false;
@@ -448,30 +476,34 @@ pub(super) fn pause_menu_system(
                         },
                     ];
                     game.menu.stack.push(items);
+                    game.menu.cursor = 0;
                 }
                 MenuAction::Input => {
-                    let mut items = Vec::new();
-                    game.menu.stack.push(items);
+                    game.menu.stack.push(build_keyconfig_menu(input));
+                    game.menu.cursor = 0;
+                }
+                MenuAction::Rebind(act) => {
+                    game.menu.action_to_rebind = Some(*act);
                 }
             }
         }
-        game.menu.cursor = 0;
     }
-    if input.pressed(Key::Escape) {
+    if input.pressed_raw(Key::Escape) {
+        game.menu.cursor = 0;
         game.menu.stack.pop();
         if game.menu.stack.is_empty() {
             game.menu.open = false;
         }
     }
     #[expect(clippy::collapsible_if)]
-    if input.pressed(Key::Up) {
+    if input.pressed_raw(Key::Up) {
         if game.menu.cursor > 0 {
             game.menu.cursor -= 1;
         }
     }
     if let Some(list) = game.menu.stack.last() {
         #[expect(clippy::collapsible_if)]
-        if input.pressed(Key::Down) {
+        if input.pressed_raw(Key::Down) {
             if game.menu.cursor + 1 < list.len() {
                 game.menu.cursor += 1;
             }
@@ -479,8 +511,23 @@ pub(super) fn pause_menu_system(
     }
 }
 
+fn build_keyconfig_menu(input: &Input) -> Vec<MenuItem> {
+    let mut items = Vec::new();
+    for (action, key) in &input.key_bindings {
+        items.push(MenuItem {
+            text: format!("{}: {key:?}", action.name()),
+            action: MenuAction::Rebind(*action),
+        })
+    }
+    items.push(MenuItem {
+        text: "Back".into(),
+        action: MenuAction::Back,
+    });
+    items
+}
+
 pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
-    if input.pressed(Key::Escape) {
+    if input.pressed_raw(Key::Escape) {
         let list = vec![
             MenuItem {
                 text: "New world (random)".into(),
