@@ -3,14 +3,12 @@ use {
         command::CmdVec,
         config::Config,
         debug::{self, DebugState},
-        game::{for_each_tile_on_screen, Biome, GameState, TransientBlockState},
+        game::{for_each_tile_on_screen, Biome, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
-        inventory::{ItemId, TileLayer, UseAction},
         math::{center_offset, TILE_SIZE},
         res::{Res, ResAudio},
         save::Save,
-        tiles::TileId,
         world::TilePos,
         CliArgs,
     },
@@ -19,7 +17,7 @@ use {
     egui_sfml::{SfEgui, UserTexSource},
     gamedebug_core::{imm, imm_dbg},
     log::info,
-    rand::{seq::SliceRandom, thread_rng, Rng},
+    rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
     sfml::{
         graphics::{
@@ -319,76 +317,13 @@ impl App {
             self.game.world.player.col_en.en.pos.x = wpos.x as i32;
             self.game.world.player.col_en.en.pos.y = wpos.y as i32;
         }
-        'item_use: {
-            if !self.input.lmb_down {
-                break 'item_use;
-            }
-            let Some(active_slot) = self.game.inventory.slots.get_mut(self.game.selected_inv_slot) else {
-                log::error!("Selected slot {} out of bounds", self.game.selected_inv_slot);
-                break 'item_use;
-            };
-            if active_slot.qty == 0 {
-                break 'item_use;
-            }
-            let Some(itemdef) = &self.game.itemdb.get(active_slot.id) else {
-                break 'item_use;
-            };
-            let ticks = self.game.world.ticks;
-            let t = self.game.world.tile_at_mut(mouse_tpos);
-            match &itemdef.use_action {
-                UseAction::PlaceBgTile { id } => {
-                    if t.bg.empty() {
-                        t.bg = *id;
-                        active_slot.qty -= 1;
-                    }
-                }
-                UseAction::PlaceMidTile { id } => {
-                    if t.mid.empty() {
-                        t.mid = *id;
-                        active_slot.qty -= 1;
-                    }
-                }
-                UseAction::PlaceFgTile { id } => {
-                    if t.fg.empty() {
-                        t.fg = *id;
-                        active_slot.qty -= 1;
-                    }
-                }
-                UseAction::RemoveTile { layer } => match layer {
-                    TileLayer::Bg => t.bg = TileId::EMPTY,
-                    TileLayer::Mid => t.mid = TileId::EMPTY,
-                    TileLayer::Fg => t.fg = TileId::EMPTY,
-                },
-                UseAction::MineTile { power, delay } => 'block: {
-                    if t.mid == TileId::EMPTY || ticks - self.game.last_mine_attempt < *delay {
-                        break 'block;
-                    }
-                    let tdef = &self.game.tile_db[t.mid];
-                    let state = self.game.transient_block_state.entry(mouse_tpos).or_insert(
-                        TransientBlockState {
-                            health: tdef.health,
-                            rot: 0.0,
-                            scale: 1.0,
-                        },
-                    );
-                    let mut rng = thread_rng();
-                    let abs_rot = rng.gen_range(8.0..=16.0);
-                    let max_scale = rng.gen_range(1.1..=1.3);
-                    let min_scale = rng.gen_range(0.8..=0.9);
-                    state.rot = *[-abs_rot, abs_rot].choose(&mut rng).unwrap();
-                    state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
-                    state.health -= power;
-                    if let Some(hit_snd) = &tdef.hit_sound {
-                        self.snd.play(aud, hit_snd, &self.stream_handle);
-                    }
-                    self.game.last_mine_attempt = ticks;
-                }
-            }
-            // Make sure that fully consumed stacks are cleared
-            if active_slot.qty == 0 {
-                active_slot.id = ItemId::EMPTY;
-            }
-        }
+        self.game.item_use_system(
+            &self.input,
+            mouse_tpos,
+            aud,
+            &mut self.snd,
+            &self.stream_handle,
+        );
         if self.game.camera_offset.y > 642_000 {
             self.game.current_biome = Biome::Underground;
         } else {

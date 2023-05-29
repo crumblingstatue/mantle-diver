@@ -3,7 +3,7 @@ use {
         app::{SoundPlayer, TileColEn},
         graphics::{ScreenSc, ScreenVec},
         input::Input,
-        inventory::{Inventory, ItemDb},
+        inventory::{self, Inventory, ItemDb, ItemId, UseAction},
         itemdrop::Itemdrop,
         math::{step_towards, wp_to_tp, WorldPos, TILE_SIZE},
         res::{Res, ResAudio},
@@ -12,7 +12,7 @@ use {
         world::{TilePos, World},
     },
     fnv::FnvHashMap,
-    rand::{thread_rng, Rng},
+    rand::{seq::SliceRandom, thread_rng, Rng},
     sfml::{
         system::{Vector2f, Vector2u},
         window::Key,
@@ -198,6 +198,85 @@ impl GameState {
             transient_block_state: Default::default(),
             last_mine_attempt: 0,
             item_drops: Default::default(),
+        }
+    }
+
+    pub(crate) fn item_use_system(
+        &mut self,
+        input: &Input,
+        mouse_tpos: TilePos,
+        aud: &ResAudio,
+        snd: &mut SoundPlayer,
+        stream_handle: &rodio::OutputStreamHandle,
+    ) {
+        if !input.lmb_down {
+            return;
+        }
+        let Some(active_slot) = self.inventory.slots.get_mut(self.selected_inv_slot) else {
+            log::error!("Selected slot {} out of bounds", self.selected_inv_slot);
+            return;
+        };
+        if active_slot.qty == 0 {
+            return;
+        }
+        let Some(itemdef) = &self.itemdb.get(active_slot.id) else {
+            return;
+        };
+        let ticks = self.world.ticks;
+        let t = self.world.tile_at_mut(mouse_tpos);
+        match &itemdef.use_action {
+            UseAction::PlaceBgTile { id } => {
+                if t.bg.empty() {
+                    t.bg = *id;
+                    active_slot.qty -= 1;
+                }
+            }
+            UseAction::PlaceMidTile { id } => {
+                if t.mid.empty() {
+                    t.mid = *id;
+                    active_slot.qty -= 1;
+                }
+            }
+            UseAction::PlaceFgTile { id } => {
+                if t.fg.empty() {
+                    t.fg = *id;
+                    active_slot.qty -= 1;
+                }
+            }
+            UseAction::RemoveTile { layer } => match layer {
+                inventory::TileLayer::Bg => t.bg = TileId::EMPTY,
+                inventory::TileLayer::Mid => t.mid = TileId::EMPTY,
+                inventory::TileLayer::Fg => t.fg = TileId::EMPTY,
+            },
+            UseAction::MineTile { power, delay } => 'block: {
+                if t.mid == TileId::EMPTY || ticks - self.last_mine_attempt < *delay {
+                    break 'block;
+                }
+                let tdef = &self.tile_db[t.mid];
+                let state =
+                    self.transient_block_state
+                        .entry(mouse_tpos)
+                        .or_insert(TransientBlockState {
+                            health: tdef.health,
+                            rot: 0.0,
+                            scale: 1.0,
+                        });
+                let mut rng = thread_rng();
+                let abs_rot = rng.gen_range(8.0..=16.0);
+                let max_scale = rng.gen_range(1.1..=1.3);
+                let min_scale = rng.gen_range(0.8..=0.9);
+                state.rot = *[-abs_rot, abs_rot].choose(&mut rng).unwrap();
+                state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
+                state.health -= power;
+                if let Some(hit_snd) = &tdef.hit_sound {
+                    snd.play(aud, hit_snd, stream_handle);
+                }
+                self.last_mine_attempt = ticks;
+            }
+        }
+        // Make sure that fully consumed stacks are cleared
+        if active_slot.qty == 0 {
+            active_slot.id = ItemId::EMPTY;
         }
     }
 }
