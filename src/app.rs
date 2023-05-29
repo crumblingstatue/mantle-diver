@@ -228,6 +228,7 @@ impl App {
             &mut self.on_screen_tile_ents,
             aud,
             &mut self.cmdvec,
+            &self.worlds_dir,
         );
     }
 

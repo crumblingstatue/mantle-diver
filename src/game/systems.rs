@@ -3,6 +3,7 @@ use {
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
+        debug::world_dirs,
         game::for_each_tile_on_screen,
         input::Input,
         inventory::{self, ItemId, UseAction},
@@ -16,7 +17,7 @@ use {
     rand::{seq::SliceRandom, thread_rng, Rng},
     rodio::Decoder,
     sfml::{system::Vector2u, window::Key},
-    std::ops::Index,
+    std::{ops::Index, path::Path},
 };
 
 pub(super) fn item_use_system(
@@ -382,13 +383,58 @@ pub type MenuStack = Vec<MenuList>;
 pub type MenuList = Vec<MenuItem>;
 pub struct MenuItem {
     pub text: String,
-    action: fn(&mut GameState, &mut CmdVec),
+    action: MenuAction,
 }
 
-pub(super) fn pause_menu_system(game: &mut GameState, input: &Input, cmd: &mut CmdVec) {
+enum MenuAction {
+    NewRandom,
+    Load,
+    LoadWorld(String),
+    Quit,
+    Back,
+}
+
+pub(super) fn pause_menu_system(
+    game: &mut GameState,
+    input: &Input,
+    cmd: &mut CmdVec,
+    worlds_dir: &Path,
+) {
     if input.pressed(Key::Enter) {
         if let Some(list) = game.menu.stack.last() {
-            (list[game.menu.cursor].action)(game, cmd)
+            match &list[game.menu.cursor].action {
+                MenuAction::NewRandom => {
+                    let n: u32 = thread_rng().gen();
+                    cmd.push(Cmd::LoadWorld(n.to_string()));
+                }
+                MenuAction::Load => {
+                    let mut list = Vec::new();
+                    for dir in world_dirs(worlds_dir) {
+                        let Some(last) = dir.file_name() else {
+                            log::error!("World doesn't have file name component");
+                            continue;
+                        };
+                        let last = last.to_string_lossy().to_string();
+                        list.push(MenuItem {
+                            text: last.clone(),
+                            action: MenuAction::LoadWorld(last),
+                        })
+                    }
+                    list.push(MenuItem {
+                        text: "Back".into(),
+                        action: MenuAction::Back,
+                    });
+                    game.menu.stack.push(list);
+                }
+                MenuAction::Quit => cmd.push(Cmd::QuitApp),
+                MenuAction::LoadWorld(name) => cmd.push(Cmd::LoadWorld(name.clone())),
+                MenuAction::Back => {
+                    game.menu.stack.pop();
+                    if game.menu.stack.is_empty() {
+                        game.menu.open = false;
+                    }
+                }
+            }
         }
         game.menu.cursor = 0;
     }
@@ -419,16 +465,15 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
         let list = vec![
             MenuItem {
                 text: "New world (random)".into(),
-                action: |_game, cmd| {
-                    let n: u32 = thread_rng().gen();
-                    cmd.push(Cmd::LoadWorld(n.to_string()));
-                },
+                action: MenuAction::NewRandom,
+            },
+            MenuItem {
+                text: "Load world".into(),
+                action: MenuAction::Load,
             },
             MenuItem {
                 text: "Quit".into(),
-                action: |_game, cmd| {
-                    cmd.push(Cmd::QuitApp);
-                },
+                action: MenuAction::Quit,
             },
         ];
         game.menu.stack.push(list);

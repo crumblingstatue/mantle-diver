@@ -169,7 +169,7 @@ impl WorldManager {
             .open(&mut open)
             .show(ctx, |ui| {
                 if self.just_opened {
-                    self.refresh_paths(worlds_path);
+                    self.world_dirs = world_dirs(worlds_path);
                     self.just_opened = false;
                 }
                 ui.label(&format!("Current world: {}", game.world.name));
@@ -221,16 +221,18 @@ impl WorldManager {
                 });
 
                 if refresh {
-                    self.refresh_paths(worlds_path);
+                    self.world_dirs = world_dirs(worlds_path);
                 }
             });
         self.open = open;
     }
-    fn refresh_paths(&mut self, worlds_path: &Path) {
-        self.world_dirs.clear();
-        for child in std::fs::read_dir(worlds_path).unwrap() {
-            let child = child.unwrap();
-            self.world_dirs.push(child.path());
-        }
+}
+
+pub fn world_dirs(worlds_path: &Path) -> Vec<PathBuf> {
+    let mut v = Vec::new();
+    for child in std::fs::read_dir(worlds_path).unwrap() {
+        let child = child.unwrap();
+        v.push(child.path());
     }
+    v
 }

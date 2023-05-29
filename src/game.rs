@@ -17,7 +17,7 @@ use {
     fnv::FnvHashMap,
     rand::{thread_rng, Rng},
     sfml::system::{Vector2f, Vector2u},
-    std::path::PathBuf,
+    std::path::{Path, PathBuf},
 };
 
 mod rendering;
@@ -128,9 +128,10 @@ impl GameState {
         on_screen_tile_ents: &mut Vec<TileColEn>,
         aud: &ResAudio,
         cmd: &mut CmdVec,
+        worlds_dir: &Path,
     ) {
         if self.menu.open {
-            systems::pause_menu_system(self, input, cmd);
+            systems::pause_menu_system(self, input, cmd, worlds_dir);
             return;
         }
         systems::general_input_system(self, input);
