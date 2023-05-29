@@ -582,25 +582,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "egui-inspect"
-version = "0.1.0"
-source = "git+https://github.com/crumblingstatue/egui-inspect.git#77b02370966aad6be6eeb94ce88ae9268986fc0d"
-dependencies = [
- "egui",
- "egui-inspect-derive",
-]
-
-[[package]]
-name = "egui-inspect-derive"
-version = "0.1.0"
-source = "git+https://github.com/crumblingstatue/egui-inspect.git#77b02370966aad6be6eeb94ce88ae9268986fc0d"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.18",
-]
-
-[[package]]
 name = "egui-sfml"
 version = "0.4.0"
 source = "git+https://github.com/crumblingstatue/egui-sfml.git#22d57872303899c2b725454826821cd2686ec771"
@@ -1221,7 +1202,6 @@ dependencies = [
  "derivative",
  "directories",
  "egui",
- "egui-inspect",
  "egui-sfml",
  "env_logger",
  "fnv",

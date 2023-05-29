@@ -4,13 +4,12 @@ use {
         math::{IntRect, TILE_SIZE},
         tiles::{BgTileId, FgTileId, MidTileId},
     },
-    egui_inspect::derive::Inspect,
     ron::ser::PrettyConfig,
     serde::{Deserialize, Serialize},
 };
 
 /// We won't have more than 65535 different items
-#[derive(Debug, Inspect, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ItemId(pub u16);
 
 impl ItemId {
@@ -30,13 +29,13 @@ impl ItemId {
 pub type ItemQty = u16;
 
 /// Inventory slot
-#[derive(Debug, Inspect, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Slot {
     pub id: ItemId,
     pub qty: ItemQty,
 }
 
-#[derive(Debug, Inspect, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Inventory {
     pub slots: Vec<Slot>,
 }
@@ -109,18 +108,17 @@ impl Inventory {
     }
 }
 
-#[derive(Debug, Inspect, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ItemDef {
     pub name: String,
     pub graphic_name: String,
     pub tex_rect: IntRect,
     pub draw_off: ScreenVec,
-    #[opaque]
     pub use_action: UseAction,
     pub consumable: bool,
 }
 
-#[derive(Debug, Inspect, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum TileLayer {
     Bg,
     Mid,
@@ -137,7 +135,7 @@ pub enum UseAction {
     MineTile { power: f32, delay: u64 },
 }
 
-#[derive(Debug, Inspect, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct ItemDb {
     db: Vec<ItemDef>,
 }

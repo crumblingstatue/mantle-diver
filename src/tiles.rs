@@ -6,7 +6,6 @@ use {
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },
-    egui_inspect::{derive::Inspect, Inspect},
     ron::ser::PrettyConfig,
     serde::{Deserialize, Serialize},
     std::{
@@ -16,7 +15,7 @@ use {
     },
 };
 
-#[derive(Inspect, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct TileId<Layer>(pub u16, PhantomData<Layer>);
 
 impl<Layer> PartialEq for TileId<Layer> {
@@ -94,9 +93,8 @@ impl Mid {
     }
 }
 
-#[derive(Inspect, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TileItemDrop {
-    #[opaque]
     pub qty_range: RangeInclusive<u8>,
     pub id: ItemId,
 }
@@ -153,11 +151,8 @@ impl FgTileId {
     pub const COAL: Self = Self(1, PhantomData);
 }
 
-#[derive(Serialize, Deserialize, Inspect)]
-pub struct TileDef<Layer: TileLayer>
-where
-    Layer::SpecificDef: Debug + Inspect,
-{
+#[derive(Serialize, Deserialize)]
+pub struct TileDef<Layer: TileLayer> {
     /// Whether the tile emits light, and the light source offset
     pub light: Option<ScreenVec>,
     pub graphic_name: String,
@@ -176,7 +171,7 @@ where
     pub item_drop: Option<TileItemDrop>,
 }
 
-#[derive(Debug, Inspect, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct MidDef {
     /// Platform behavior: Horizontally passable, vertically passable upwards
     pub platform: bool,
@@ -186,7 +181,7 @@ pub struct MidDef {
 
 impl<Layer: TileLayer> Debug for TileDef<Layer>
 where
-    Layer::SpecificDef: Debug + Inspect,
+    Layer::SpecificDef: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("TileDef")
@@ -200,7 +195,7 @@ where
 
 impl<Layer: TileLayer> Default for TileDef<Layer>
 where
-    Layer::SpecificDef: Default + Debug + Inspect,
+    Layer::SpecificDef: Default + Debug,
 {
     fn default() -> Self {
         Self {
@@ -224,7 +219,7 @@ const DEFAULT_TILE_BB: TileBb = TileBb {
     h: TILE_SIZE,
 };
 
-#[derive(Serialize, Deserialize, Debug, Inspect, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub struct TileBb {
     pub x: u8,
     pub y: u8,
@@ -232,7 +227,7 @@ pub struct TileBb {
     pub h: u8,
 }
 
-#[derive(Serialize, Deserialize, Debug, Inspect)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct TileDb {
     unknown_bg: TileDef<Bg>,
     unknown_mid: TileDef<Mid>,
@@ -328,7 +323,7 @@ impl TileDb {
 
 fn update_rect_db<Layer: TileLayer>(db: &mut Vec<TileDef<Layer>>, rects: &RectMap)
 where
-    Layer::SpecificDef: Debug + Inspect,
+    Layer::SpecificDef: Debug,
 {
     for def in db {
         update_rect_def(def, rects);
@@ -339,7 +334,7 @@ fn update_rect_def<Layer: TileLayer>(
     def: &mut TileDef<Layer>,
     rects: &std::collections::HashMap<String, IntRect>,
 ) where
-    Layer::SpecificDef: Debug + Inspect,
+    Layer::SpecificDef: Debug,
 {
     if !def.graphic_name.is_empty() {
         if let Some(rect) = rects.get(def.graphic_name.as_str()) {

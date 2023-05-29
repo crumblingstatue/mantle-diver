@@ -4,29 +4,17 @@ use {
         stringfmt::LengthDisp,
         world::{TPosSc, TilePos},
     },
-    egui_inspect::{derive::Inspect, inspect},
     s2dc::{vec2, MobileEntity},
 };
 
-#[derive(Debug, Inspect)]
+#[derive(Debug)]
 pub struct Player {
-    #[inspect_with(inspect_mobile_entity)]
     pub col_en: MobileEntity,
     pub vspeed: f32,
     pub hspeed: f32,
     pub jumps_left: u8,
     /// true if the player wants to jump down from a platform
     pub down_intent: bool,
-}
-
-fn inspect_mobile_entity(en: &mut MobileEntity, ui: &mut egui::Ui, _id_src: u64) {
-    inspect! {
-        ui,
-        en.en.pos.x,
-        en.en.pos.y,
-        en.en.bb.x,
-        en.en.bb.y
-    }
 }
 
 impl Player {

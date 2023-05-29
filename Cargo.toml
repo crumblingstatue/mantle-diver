@@ -41,9 +41,6 @@ git = "https://github.com/crumblingstatue/sfml-xt.git"
 [dependencies.gamedebug_core]
 git = "https://github.com/crumblingstatue/gamedebug_core.git"
 
-[dependencies.egui-inspect]
-git = "https://github.com/crumblingstatue/egui-inspect.git"
-
 [dependencies.sfml]
 git = "https://github.com/jeremyletang/rust-sfml.git"
 default-features = false
@@ -51,9 +48,6 @@ features = ["graphics"]
 
 [dependencies.egui-sfml]
 git = "https://github.com/crumblingstatue/egui-sfml.git"
-
-[profile.dev]
-incremental = false # Buggy on latest rustc nightly, keeps ICEing
 
 [profile.dev.package."*"]
 opt-level = 2

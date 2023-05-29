@@ -9,7 +9,6 @@ use {
         tiles::{BgTileId, FgTileId, MidTileId, TileId},
         world::reg_chunk_existence::ExistenceBitset,
     },
-    egui_inspect::derive::Inspect,
     fnv::FnvHashMap,
     simdnoise::NoiseBuilder,
     std::{
@@ -22,7 +21,7 @@ use {
 
 pub type ChkPosSc = u16;
 
-#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Inspect)]
+#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy)]
 pub struct ChunkPos {
     pub x: ChkPosSc,
     pub y: ChkPosSc,
@@ -45,7 +44,7 @@ impl ChunkPos {
     }
 }
 
-#[derive(Debug, Inspect)]
+#[derive(Debug)]
 pub struct World {
     /// The currently loaded chunks
     chunks: FnvHashMap<ChunkPos, Chunk>,
@@ -54,7 +53,6 @@ pub struct World {
     pub ticks: u64,
     pub player: Player,
     pub name: String,
-    #[opaque]
     pub path: PathBuf,
     pub seed: i32,
 }
@@ -208,7 +206,7 @@ fn default_chunk_tiles() -> ChunkTiles {
     }; CHUNK_N_TILES]
 }
 
-#[derive(Debug, Inspect)]
+#[derive(Debug)]
 pub struct Chunk {
     tiles: ChunkTiles,
 }
@@ -287,7 +285,7 @@ fn chunk_exists(reg_path: &Path, pos: ChunkPos) -> bool {
     crate::bitmanip::nth_bit_set(bitset.0, idx as usize)
 }
 
-#[derive(Clone, Copy, Debug, Inspect)]
+#[derive(Clone, Copy, Debug)]
 pub struct Tile {
     /// Background wall behind entities
     pub bg: BgTileId,

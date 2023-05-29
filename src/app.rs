@@ -484,7 +484,6 @@ impl App {
                     &mut self.debug,
                     &mut self.game,
                     res,
-                    &mut self.scale,
                     &mut self.cmdvec,
                     &self.worlds_dir,
                 );

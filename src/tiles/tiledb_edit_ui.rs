@@ -5,15 +5,13 @@ use {
         graphics::{ScreenSc, ScreenVec},
         math::TILE_SIZE,
     },
-    egui_inspect::{derive::Inspect, Inspect},
     sfml::system::Vector2u,
     std::fmt::Debug,
 };
 
-#[derive(Debug, Default, Inspect)]
+#[derive(Debug, Default)]
 pub struct TileDbEdit {
     pub open: bool,
-    #[opaque]
     layer: Layer,
     selected: usize,
 }
@@ -140,7 +138,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
     atlas_size: Vector2u,
     cmd: &mut CmdVec,
 ) where
-    <Layer as TileLayer>::SpecificDef: Debug + Default + Inspect,
+    <Layer as TileLayer>::SpecificDef: Debug + Default,
 {
     if ui.button("Add new default").clicked() {
         db.push(Default::default());

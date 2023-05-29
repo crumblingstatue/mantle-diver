@@ -1,14 +1,12 @@
 use {
     crate::{inventory::ItemId, math::WorldPos},
-    egui_inspect::derive::Inspect,
     rand::{seq::SliceRandom, thread_rng, Rng},
     s2dc::Vec2,
 };
 
-#[derive(Inspect, Debug)]
+#[derive(Debug)]
 pub struct Itemdrop {
     pub id: ItemId,
-    #[opaque]
     pub s2dc_en: s2dc::MobileEntity,
     pub vspeed: f32,
     pub hspeed: f32,

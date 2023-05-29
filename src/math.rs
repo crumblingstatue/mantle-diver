@@ -1,6 +1,5 @@
 use {
     crate::world::{TPosSc, TilePos},
-    egui_inspect::derive::Inspect,
     num_traits::{Num, Signed},
     serde::{Deserialize, Serialize},
     sfml::system::Vector2u,
@@ -9,7 +8,7 @@ use {
 
 pub type WPosSc = u32;
 
-#[derive(Clone, Copy, Debug, Inspect)]
+#[derive(Clone, Copy, Debug)]
 pub struct WorldPos {
     pub x: WPosSc,
     pub y: WPosSc,
@@ -92,7 +91,7 @@ pub fn smoothwave<T: Num + From<u8> + PartialOrd + Copy>(input: T, max: T) -> T 
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Inspect, Default, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, Copy)]
 pub struct IntRect {
     pub x: i32,
     pub y: i32,

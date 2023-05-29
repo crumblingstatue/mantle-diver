@@ -12,7 +12,6 @@ use {
         world::{TilePos, World},
     },
     derivative::Derivative,
-    egui_inspect::{derive::Inspect, Inspect},
     fnv::FnvHashMap,
     rand::{thread_rng, Rng},
     sfml::{
@@ -24,7 +23,7 @@ use {
 
 mod rendering;
 
-#[derive(Derivative, Inspect)]
+#[derive(Derivative)]
 #[derivative(Debug)]
 pub struct GameState {
     pub camera_offset: WorldPos,
@@ -45,7 +44,7 @@ pub struct GameState {
     pub item_drops: Vec<Itemdrop>,
 }
 
-#[derive(Debug, Inspect)]
+#[derive(Debug)]
 pub struct TransientBlockState {
     /// If block health reaches 0, it gets destroyed
     pub health: f32,
@@ -53,12 +52,12 @@ pub struct TransientBlockState {
     pub scale: f32,
 }
 
-#[derive(Debug, Inspect)]
+#[derive(Debug)]
 pub struct LightSource {
     pub pos: ScreenVec,
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Debug, Inspect)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Biome {
     Surface,
     Underground,
@@ -214,7 +213,6 @@ fn process_tile_item_drop<L: TileLayer>(
     pos: &TilePos,
 ) where
     TileDb: Index<TileId<L>, Output = TileDef<L>>,
-    L::SpecificDef: Inspect,
 {
     if id.empty() {
         log::warn!("Empty tile id: {id:?}");

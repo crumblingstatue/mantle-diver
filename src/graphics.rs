@@ -1,6 +1,5 @@
 use {
     crate::math::FPS_TARGET,
-    egui_inspect::derive::Inspect,
     serde::{Deserialize, Serialize},
     sfml::{
         graphics::RenderWindow,
@@ -25,7 +24,7 @@ impl ScreenRes {
     }
 }
 
-#[derive(Default, Clone, Copy, Debug, Inspect, Serialize, Deserialize)]
+#[derive(Default, Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct ScreenVec {
     pub x: ScreenSc,
     pub y: ScreenSc,
