@@ -12,6 +12,7 @@ use {
         world::{TilePos, World},
     },
     fnv::FnvHashMap,
+    gamedebug_core::imm_dbg,
     rand::{seq::SliceRandom, thread_rng, Rng},
     rodio::Decoder,
     sfml::{
@@ -304,6 +305,110 @@ impl GameState {
                 }
             }
         }
+    }
+
+    pub(crate) fn player_move_system(
+        &mut self,
+        input: &Input,
+        rt_size: Vector2u,
+        on_screen_tile_ents: &mut Vec<TileColEn>,
+    ) {
+        let spd = if input.down(Key::LShift) {
+            8.0
+        } else if input.down(Key::LControl) {
+            128.0
+        } else {
+            3.0
+        };
+        self.world.player.hspeed = 0.;
+        if input.down(Key::A) {
+            self.world.player.hspeed = -spd;
+        }
+        if input.down(Key::D) {
+            self.world.player.hspeed = spd;
+        }
+        if input.down(Key::W) && self.world.player.can_jump() {
+            self.world.player.vspeed = -10.0;
+            self.world.player.jumps_left = 0;
+        }
+        self.world.player.down_intent = input.down(Key::S);
+        let terminal_velocity = 60.0;
+        self.world.player.vspeed = self
+            .world
+            .player
+            .vspeed
+            .clamp(-terminal_velocity, terminal_velocity);
+        on_screen_tile_ents.clear();
+        for_each_tile_on_screen(self.camera_offset, rt_size, |tp, _sp| {
+            let tile = self.world.tile_at_mut(tp).mid;
+            if tile.empty() {
+                return;
+            }
+            let tdef = &self.tile_db[tile];
+            let Some(bb) = tdef.layer.bb else {
+                return;
+            };
+            let x = tp.x as i32 * TILE_SIZE as i32;
+            let y = tp.y as i32 * TILE_SIZE as i32;
+            let en = s2dc::Entity::from_rect_corners(
+                x + bb.x as i32,
+                y + bb.y as i32,
+                x + bb.w as i32,
+                y + bb.h as i32,
+            );
+            on_screen_tile_ents.push(TileColEn {
+                col: en,
+                platform: tdef.layer.platform,
+            });
+        });
+        imm_dbg!(on_screen_tile_ents.len());
+        self.world
+            .player
+            .col_en
+            .move_y(self.world.player.vspeed, |player_en, off| {
+                let mut col = false;
+                for en in on_screen_tile_ents.iter() {
+                    if player_en.would_collide(&en.col, off) {
+                        if en.platform {
+                            if self.world.player.vspeed < 0. {
+                                continue;
+                            }
+                            // If the player's feet are below the top of the platform,
+                            // collision shouldn't happen
+                            let player_feet = player_en.pos.y + player_en.bb.y;
+                            if player_feet > en.col.pos.y || self.world.player.down_intent {
+                                continue;
+                            }
+                        }
+                        col = true;
+                        if self.world.player.vspeed > 0. {
+                            self.world.player.jumps_left = 1;
+                        }
+                        self.world.player.vspeed = 0.;
+                    }
+                }
+                col
+            });
+        self.world
+            .player
+            .col_en
+            .move_x(self.world.player.hspeed, |player_en, off| {
+                let mut col = false;
+                for en in on_screen_tile_ents.iter() {
+                    if en.platform {
+                        continue;
+                    }
+                    if player_en.would_collide(&en.col, off) {
+                        col = true;
+                        self.world.player.hspeed = 0.;
+                    }
+                }
+                col
+            });
+        self.world.player.vspeed += self.gravity;
+        let (x, y, _w, _h) = self.world.player.col_en.en.xywh();
+        self.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
+        self.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
     }
 }
 

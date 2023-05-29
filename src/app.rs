@@ -3,10 +3,10 @@ use {
         command::CmdVec,
         config::Config,
         debug::{self, DebugState},
-        game::{for_each_tile_on_screen, GameState},
+        game::GameState,
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
-        math::{center_offset, TILE_SIZE},
+        math::center_offset,
         res::{Res, ResAudio},
         save::Save,
         world::TilePos,
@@ -15,7 +15,7 @@ use {
     anyhow::Context,
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
-    gamedebug_core::{imm, imm_dbg},
+    gamedebug_core::imm,
     rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
     sfml::{
@@ -198,104 +198,8 @@ impl App {
         if self.debug.freecam {
             self.do_freecam();
         } else {
-            let spd = if self.input.down(Key::LShift) {
-                8.0
-            } else if self.input.down(Key::LControl) {
-                128.0
-            } else {
-                3.0
-            };
-            self.game.world.player.hspeed = 0.;
-            if self.input.down(Key::A) {
-                self.game.world.player.hspeed = -spd;
-            }
-            if self.input.down(Key::D) {
-                self.game.world.player.hspeed = spd;
-            }
-            if self.input.down(Key::W) && self.game.world.player.can_jump() {
-                self.game.world.player.vspeed = -10.0;
-                self.game.world.player.jumps_left = 0;
-            }
-            self.game.world.player.down_intent = self.input.down(Key::S);
-            let terminal_velocity = 60.0;
-            self.game.world.player.vspeed = self
-                .game
-                .world
-                .player
-                .vspeed
-                .clamp(-terminal_velocity, terminal_velocity);
-            self.on_screen_tile_ents.clear();
-            for_each_tile_on_screen(self.game.camera_offset, self.rt.size(), |tp, _sp| {
-                let tile = self.game.world.tile_at_mut(tp).mid;
-                if tile.empty() {
-                    return;
-                }
-                let tdef = &self.game.tile_db[tile];
-                let Some(bb) = tdef.layer.bb else {
-                    return;
-                };
-                let x = tp.x as i32 * TILE_SIZE as i32;
-                let y = tp.y as i32 * TILE_SIZE as i32;
-                let en = s2dc::Entity::from_rect_corners(
-                    x + bb.x as i32,
-                    y + bb.y as i32,
-                    x + bb.w as i32,
-                    y + bb.h as i32,
-                );
-                self.on_screen_tile_ents.push(TileColEn {
-                    col: en,
-                    platform: tdef.layer.platform,
-                });
-            });
-            imm_dbg!(self.on_screen_tile_ents.len());
-            self.game.world.player.col_en.move_y(
-                self.game.world.player.vspeed,
-                |player_en, off| {
-                    let mut col = false;
-                    for en in &self.on_screen_tile_ents {
-                        if player_en.would_collide(&en.col, off) {
-                            if en.platform {
-                                if self.game.world.player.vspeed < 0. {
-                                    continue;
-                                }
-                                // If the player's feet are below the top of the platform,
-                                // collision shouldn't happen
-                                let player_feet = player_en.pos.y + player_en.bb.y;
-                                if player_feet > en.col.pos.y || self.game.world.player.down_intent
-                                {
-                                    continue;
-                                }
-                            }
-                            col = true;
-                            if self.game.world.player.vspeed > 0. {
-                                self.game.world.player.jumps_left = 1;
-                            }
-                            self.game.world.player.vspeed = 0.;
-                        }
-                    }
-                    col
-                },
-            );
-            self.game.world.player.col_en.move_x(
-                self.game.world.player.hspeed,
-                |player_en, off| {
-                    let mut col = false;
-                    for en in &self.on_screen_tile_ents {
-                        if en.platform {
-                            continue;
-                        }
-                        if player_en.would_collide(&en.col, off) {
-                            col = true;
-                            self.game.world.player.hspeed = 0.;
-                        }
-                    }
-                    col
-                },
-            );
-            self.game.world.player.vspeed += self.game.gravity;
-            let (x, y, _w, _h) = self.game.world.player.col_en.en.xywh();
-            self.game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
-            self.game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
+            self.game
+                .player_move_system(&self.input, rt_size, &mut self.on_screen_tile_ents);
         }
         let mut loc = self.input.mouse_down_loc;
         let vco = viewport_center_offset(self.rw.size(), rt_size, self.scale);
