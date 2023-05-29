@@ -12,7 +12,7 @@ pub struct Config {
 }
 
 pub fn default_res_folder_path() -> String {
-    "res".to_string()
+    "assets".to_string()
 }
 
 impl Default for Config {
