@@ -112,6 +112,7 @@ impl Inventory {
 pub struct ItemDef {
     pub name: String,
     pub graphic_name: String,
+    #[serde(skip)]
     pub tex_rect: IntRect,
     pub draw_off: ScreenVec,
     pub use_action: UseAction,

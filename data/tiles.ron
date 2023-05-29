@@ -5,12 +5,6 @@
             y: 0,
         )),
         graphic_name: "tiles/unknown_bg",
-        tex_rect: (
-            x: 413,
-            y: 32,
-            w: 32,
-            h: 32,
-        ),
         layer: (),
         neigh_aware: false,
         draw_offs: (
@@ -27,12 +21,6 @@
             y: 0,
         )),
         graphic_name: "tiles/unknown_mid",
-        tex_rect: (
-            x: 462,
-            y: 0,
-            w: 32,
-            h: 32,
-        ),
         layer: (
             platform: true,
             bb: Some((
@@ -57,12 +45,6 @@
             y: 0,
         )),
         graphic_name: "tiles/unknown_fg",
-        tex_rect: (
-            x: 430,
-            y: 0,
-            w: 32,
-            h: 32,
-        ),
         layer: (),
         neigh_aware: false,
         draw_offs: (
@@ -77,12 +59,6 @@
         (
             light: None,
             graphic_name: "tiles/dirtback",
-            tex_rect: (
-                x: 256,
-                y: 180,
-                w: 32,
-                h: 32,
-            ),
             layer: (),
             neigh_aware: false,
             draw_offs: (
@@ -96,12 +72,6 @@
         (
             light: None,
             graphic_name: "tiles/stoneback",
-            tex_rect: (
-                x: 288,
-                y: 168,
-                w: 32,
-                h: 32,
-            ),
             layer: (),
             neigh_aware: false,
             draw_offs: (
@@ -117,12 +87,6 @@
         (
             light: None,
             graphic_name: "tiles/dirt",
-            tex_rect: (
-                x: 256,
-                y: 40,
-                w: 128,
-                h: 128,
-            ),
             layer: (
                 platform: false,
                 bb: Some((
@@ -150,12 +114,6 @@
         (
             light: None,
             graphic_name: "tiles/stone",
-            tex_rect: (
-                x: 384,
-                y: 64,
-                w: 128,
-                h: 128,
-            ),
             layer: (
                 platform: false,
                 bb: Some((
@@ -186,12 +144,6 @@
                 y: -2,
             )),
             graphic_name: "tiles/torch",
-            tex_rect: (
-                x: 320,
-                y: 168,
-                w: 8,
-                h: 30,
-            ),
             layer: (
                 platform: false,
                 bb: None,
@@ -214,12 +166,6 @@
         (
             light: None,
             graphic_name: "tiles/platform",
-            tex_rect: (
-                x: 256,
-                y: 168,
-                w: 32,
-                h: 6,
-            ),
             layer: (
                 platform: true,
                 bb: Some((
@@ -247,12 +193,6 @@
         (
             light: None,
             graphic_name: "tiles/panzerium",
-            tex_rect: (
-                x: 328,
-                y: 192,
-                w: 128,
-                h: 128,
-            ),
             layer: (
                 platform: false,
                 bb: Some((
@@ -282,12 +222,6 @@
         (
             light: None,
             graphic_name: "tiles/coal",
-            tex_rect: (
-                x: 388,
-                y: 26,
-                w: 25,
-                h: 26,
-            ),
             layer: (),
             neigh_aware: false,
             draw_offs: (
@@ -307,12 +241,6 @@
         (
             light: None,
             graphic_name: "tiles/grass",
-            tex_rect: (
-                x: 256,
-                y: 174,
-                w: 32,
-                h: 6,
-            ),
             layer: (),
             neigh_aware: false,
             draw_offs: (

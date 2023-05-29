@@ -156,6 +156,7 @@ pub struct TileDef<Layer: TileLayer> {
     /// Whether the tile emits light, and the light source offset
     pub light: Option<ScreenVec>,
     pub graphic_name: String,
+    #[serde(skip)]
     pub tex_rect: IntRect,
     pub layer: Layer::SpecificDef,
     /// Neighbour aware tile, 4x4 tileset, select based on
