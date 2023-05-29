@@ -68,7 +68,7 @@ pub fn path_key(path: &Path) -> String {
         .join(fname.file_stem().unwrap())
         .display()
         .to_string();
-    key_string.replace("\\", "/")
+    key_string.replace('\\', "/")
 }
 
 #[test]
