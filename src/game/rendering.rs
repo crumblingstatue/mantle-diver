@@ -101,6 +101,10 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
         s.set_texture_rect(item_def.tex_rect.to_sf());
         rt.draw(&s);
     }
+    draw_player(game, rt);
+}
+
+fn draw_player(game: &mut GameState, rt: &mut RenderTexture) {
     let (x, y, w, h) = game.world.player.col_en.en.xywh();
     let mut rect_sh = RectangleShape::new();
     rect_sh.set_position((
