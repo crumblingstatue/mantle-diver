@@ -37,6 +37,7 @@ pub struct GameState {
     pub transient_block_state: FnvHashMap<TilePos, TransientBlockState>,
     pub last_mine_attempt: u64,
     pub item_drops: Vec<Itemdrop>,
+    pub menu_open: bool,
 }
 
 #[derive(Debug)]
@@ -107,6 +108,7 @@ impl GameState {
             transient_block_state: Default::default(),
             last_mine_attempt: 0,
             item_drops: Default::default(),
+            menu_open: false,
         }
     }
 
@@ -124,6 +126,11 @@ impl GameState {
         on_screen_tile_ents: &mut Vec<TileColEn>,
         aud: &ResAudio,
     ) {
+        if self.menu_open {
+            systems::pause_menu_system(self, input);
+            return;
+        }
+        systems::general_input_system(self, input);
         if debug.freecam {
             systems::freecam_move_system(self, mouse_world_pos, input);
         } else {

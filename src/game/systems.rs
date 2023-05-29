@@ -369,3 +369,15 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
         ));
     }
 }
+
+pub(super) fn pause_menu_system(game: &mut GameState, input: &Input) {
+    if input.pressed(Key::Escape) {
+        game.menu_open = false;
+    }
+}
+
+pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
+    if input.pressed(Key::Escape) {
+        game.menu_open = true;
+    }
+}
