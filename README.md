@@ -3,6 +3,6 @@
 
 # Cloning
 
-You need [Git LFS](https://git-lfs.com/) to properly clone the access.
+You need [Git LFS](https://git-lfs.com/) to properly clone the assets.
 See the setup instructions on the linked website.
 Once you have Git LFS, you should be able to just clone the repository and get the correct assets.
