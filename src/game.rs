@@ -1,6 +1,7 @@
 use {
     crate::{
         app::{SoundPlayer, TileColEn},
+        debug::DebugState,
         graphics::{ScreenSc, ScreenVec},
         input::Input,
         inventory::{self, Inventory, ItemDb, ItemId, UseAction},
@@ -434,6 +435,30 @@ impl GameState {
             self.world.player.col_en.en.pos.x = mouse_world_pos.x as i32;
             self.world.player.col_en.en.pos.y = mouse_world_pos.y as i32;
         }
+    }
+
+    #[expect(clippy::too_many_arguments)]
+    pub(crate) fn run_systems(
+        &mut self,
+        debug: &DebugState,
+        input: &Input,
+        mouse_world_pos: WorldPos,
+        mouse_tpos: TilePos,
+        rt_size: Vector2u,
+        music_sink: &mut rodio::Sink,
+        res: &Res,
+        snd: &mut SoundPlayer,
+        on_screen_tile_ents: &mut Vec<TileColEn>,
+        aud: &ResAudio,
+    ) {
+        if debug.freecam {
+            self.freecam_move_system(mouse_world_pos, input);
+        } else {
+            self.player_move_system(input, rt_size, on_screen_tile_ents);
+        }
+        self.item_use_system(input, mouse_tpos, aud, snd);
+        self.biome_watch_system(music_sink, res);
+        self.update(input, snd, aud, on_screen_tile_ents);
     }
 }
 

@@ -199,12 +199,6 @@ impl App {
         let mut loc = self.input.mouse_down_loc;
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
         mouse_world_pos.y = mouse_world_pos.y.saturating_add_signed(loc.y.into());
-        if self.debug.freecam {
-            self.game.freecam_move_system(mouse_world_pos, &self.input);
-        } else {
-            self.game
-                .player_move_system(&self.input, rt_size, &mut self.on_screen_tile_ents);
-        }
         let vco = viewport_center_offset(self.rw.size(), rt_size, self.scale);
         loc.x -= vco.x;
         loc.y -= vco.y;
@@ -222,11 +216,18 @@ impl App {
         imm!("@ chunk {}, {}", m_chk.x, m_chk.y);
         let (m_chk_x, m_chk_y) = m_chk.region();
         imm!("@ region {m_chk_x}, {m_chk_y}");
-        self.game
-            .item_use_system(&self.input, mouse_tpos, aud, &mut self.snd);
-        self.game.biome_watch_system(&mut self.music_sink, res);
-        self.game
-            .update(&self.input, &mut self.snd, aud, &self.on_screen_tile_ents);
+        self.game.run_systems(
+            &self.debug,
+            &self.input,
+            mouse_world_pos,
+            mouse_tpos,
+            rt_size,
+            &mut self.music_sink,
+            res,
+            &mut self.snd,
+            &mut self.on_screen_tile_ents,
+            aud,
+        );
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
