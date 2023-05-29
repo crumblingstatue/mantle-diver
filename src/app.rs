@@ -152,6 +152,7 @@ impl App {
         let result = Save {
             inventory: self.game.inventory,
             world_seed: self.game.world.seed,
+            player: self.game.world.player.sav(),
         }
         .save(&self.game.world.path);
         log::info!("Save result: {result:?}");

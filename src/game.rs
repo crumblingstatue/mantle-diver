@@ -83,20 +83,21 @@ impl GameState {
         let mut itemdb = ItemDb::load_or_default("data");
         itemdb.update_rects(&res.atlas.rects);
         let mut inventory = Inventory::new_debug();
-        let seed;
+        let mut world;
         match Save::load(&path) {
             Ok(save) => {
                 inventory = save.inventory;
-                seed = save.world_seed;
+                world = World::new(spawn_point, &world_name, path, save.world_seed);
+                world.player.update_from_save(&save.player);
             }
             Err(e) => {
                 log::error!("Failed to load save: {e}");
-                seed = thread_rng().gen();
+                world = World::new(spawn_point, &world_name, path, thread_rng().gen());
             }
         }
         Self {
             camera_offset: spawn_point,
-            world: World::new(spawn_point, &world_name, path, seed),
+            world,
             gravity: 0.55,
             current_biome: Biome::Surface,
             prev_biome: Biome::Surface,

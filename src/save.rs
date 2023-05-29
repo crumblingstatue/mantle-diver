@@ -9,6 +9,40 @@ use {
 pub struct Save {
     pub inventory: Inventory,
     pub world_seed: i32,
+    pub player: PlayerSav,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct PlayerSav {
+    pub skin_color: Rgb,
+    pub eye_color: Rgb,
+    pub hair_color: Rgb,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Rgb {
+    r: u8,
+    g: u8,
+    b: u8,
+}
+
+impl Rgb {
+    pub fn to_sf(&self) -> sfml::graphics::Color {
+        sfml::graphics::Color {
+            r: self.r,
+            g: self.g,
+            b: self.b,
+            a: 255,
+        }
+    }
+
+    pub(crate) fn from_sf(sf: sfml::graphics::Color) -> Rgb {
+        Self {
+            r: sf.r,
+            g: sf.g,
+            b: sf.b,
+        }
+    }
 }
 
 impl Save {

@@ -1,6 +1,7 @@
 use {
     crate::{
         math::{WorldPos, TILE_SIZE},
+        save::Rgb,
         stringfmt::LengthDisp,
         world::{TPosSc, TilePos},
     },
@@ -57,5 +58,19 @@ impl Player {
     }
     pub fn depth_disp(&self) -> LengthDisp {
         LengthDisp(self.feet_y() as f32 - WorldPos::SURFACE as f32)
+    }
+
+    pub(crate) fn update_from_save(&mut self, sav: &crate::save::PlayerSav) {
+        self.hair_color = sav.hair_color.to_sf();
+        self.eye_color = sav.eye_color.to_sf();
+        self.skin_color = sav.skin_color.to_sf();
+    }
+
+    pub(crate) fn sav(&self) -> crate::save::PlayerSav {
+        crate::save::PlayerSav {
+            skin_color: Rgb::from_sf(self.skin_color),
+            eye_color: Rgb::from_sf(self.eye_color),
+            hair_color: Rgb::from_sf(self.hair_color),
+        }
     }
 }
