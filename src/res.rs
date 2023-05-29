@@ -1,34 +1,47 @@
 use {
     crate::texture_atlas::AtlasBundle,
+    derivative::Derivative,
     egui::epaint::ahash::HashMap,
+    rodio::Decoder,
     sfml::{
-        audio::{Music, SoundBuffer},
         graphics::{Font, Texture},
         SfBox,
     },
-    std::path::Path,
+    std::{io::Cursor, path::Path},
 };
 
-#[derive(Debug)]
+pub type AuBuf = Cursor<Vec<u8>>;
+pub type AuDecBuf = Decoder<AuBuf>;
+
+#[derive(Derivative)]
+#[derivative(Debug)]
 pub struct Res {
     pub atlas: AtlasBundle,
-    pub surf_music: Music<'static>,
-    pub und_music: Music<'static>,
+    #[derivative(Debug = "ignore")]
+    pub surf_music: AuBuf,
+    #[derivative(Debug = "ignore")]
+    pub und_music: AuBuf,
     pub sans_font: SfBox<Font>,
     pub forest_bg: SfBox<Texture>,
 }
 
 pub struct ResAudio {
-    pub sounds: HashMap<String, SfBox<SoundBuffer>>,
+    pub sounds: HashMap<String, Cursor<Vec<u8>>>,
+}
+
+pub fn load_sound<P: AsRef<Path>>(path: P) -> anyhow::Result<AuBuf> {
+    let data = std::fs::read(path)?;
+    Ok(std::io::Cursor::new(data))
 }
 
 impl Res {
     pub fn load(res_path: &str) -> anyhow::Result<Self> {
         Ok(Self {
             atlas: AtlasBundle::new(res_path)?,
-            surf_music: Music::from_file(&format!("{res_path}/music/calm.ogg")).unwrap(),
-            und_music: Music::from_file(&format!("{res_path}/music/cave.ogg")).unwrap(),
-            sans_font: Font::from_file(&format!("{res_path}/fonts/ShareTechMono-Regular.ttf")).unwrap(),
+            surf_music: load_sound(format!("{res_path}/music/calm.ogg"))?,
+            und_music: load_sound(format!("{res_path}/music/cave.ogg"))?,
+            sans_font: Font::from_file(&format!("{res_path}/fonts/ShareTechMono-Regular.ttf"))
+                .unwrap(),
             forest_bg: Texture::from_file(&format!("{res_path}/bg/sky.png")).unwrap(),
         })
     }
@@ -38,7 +51,7 @@ impl ResAudio {
     pub fn load(res_path: &str) -> anyhow::Result<Self> {
         let mut map = HashMap::default();
         walk_res_dir(&format!("{res_path}/sfx"), |path| {
-            let snd = SoundBuffer::from_file(path.to_str().unwrap()).unwrap();
+            let snd = load_sound(path.to_str().unwrap()).unwrap();
             map.insert(path_key(path), snd);
         });
         Ok(Self { sounds: map })

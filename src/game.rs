@@ -78,12 +78,13 @@ impl SfVec2fExt for Vector2f {
 }
 
 impl GameState {
-    pub fn update<'a>(
+    pub fn update(
         &mut self,
         input: &Input,
-        snd: &mut SoundPlayer<'a>,
-        aud: &'a ResAudio,
+        snd: &mut SoundPlayer,
+        aud: &ResAudio,
         on_screen_tile_ents: &[TileColEn],
+        stream_handle: &rodio::OutputStreamHandle,
     ) {
         if input.pressed(Key::Num1) {
             self.selected_inv_slot = 0;
@@ -141,7 +142,7 @@ impl GameState {
             #[expect(clippy::collapsible_if)]
             if self.world.player.col_en.en.collides(&itemdrop.s2dc_en.en) {
                 if self.inventory.add(itemdrop.id, 1) {
-                    snd.play(aud, "etc/pickup");
+                    snd.play(aud, "etc/pickup", stream_handle);
                     retain = false;
                 }
             }

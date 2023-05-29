@@ -29,6 +29,7 @@ toml = "0.7.4"
 ron = "0.8.0"
 simdnoise = "3.1.6"
 splitty = "1.0.1"
+rodio = "0.17.1"
 
 [dependencies.s2dc]
 git = "https://github.com/crumblingstatue/s2dc.git"
@@ -45,6 +46,8 @@ git = "https://github.com/crumblingstatue/egui-inspect.git"
 
 [dependencies.sfml]
 git = "https://github.com/jeremyletang/rust-sfml.git"
+default-features = false
+features = ["graphics"]
 
 [dependencies.egui-sfml]
 git = "https://github.com/crumblingstatue/egui-sfml.git"

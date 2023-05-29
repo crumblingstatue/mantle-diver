@@ -12,7 +12,6 @@ use {
     egui_inspect::{derive::Inspect, inspect},
     gamedebug_core::IMMEDIATE,
     rand::{thread_rng, Rng},
-    sfml::audio::SoundSource,
     std::{
         fmt::Write,
         path::{Path, PathBuf},
@@ -42,7 +41,6 @@ fn debug_panel_ui(
     mut debug: &mut DebugState,
     mut game: &mut GameState,
     ctx: &egui::Context,
-    res: &mut Res,
     mut scale: &mut u8,
 ) {
     let mut open = debug.panel;
@@ -80,10 +78,6 @@ fn debug_panel_ui(
                     px_per_frame_to_km_h(game.world.player.vspeed)
                 ));
             }
-            ui.label("Music volume");
-            let mut vol = res.surf_music.volume();
-            ui.add(egui::DragValue::new(&mut vol));
-            res.surf_music.set_volume(vol);
             ui.separator();
             egui::ScrollArea::both()
                 .id_source("insp_scroll")
@@ -117,7 +111,7 @@ pub(crate) fn do_debug_ui(
     cmd: &mut CmdVec,
     worlds_path: &Path,
 ) {
-    debug_panel_ui(debug, game, ctx, res, scale);
+    debug_panel_ui(debug, game, ctx, scale);
     debug.tiledb_edit.ui(
         ctx,
         &mut game.tile_db,

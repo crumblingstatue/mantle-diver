@@ -8,7 +8,7 @@ use {
         input::Input,
         inventory::{ItemId, TileLayer, UseAction},
         math::{center_offset, TILE_SIZE},
-        res::{Res, ResAudio},
+        res::{AuDecBuf, Res, ResAudio},
         save::Save,
         tiles::TileId,
         world::TilePos,
@@ -18,9 +18,10 @@ use {
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
     gamedebug_core::{imm, imm_dbg},
+    log::info,
     rand::{seq::SliceRandom, thread_rng, Rng},
+    rodio::OutputStreamHandle,
     sfml::{
-        audio::{Sound, SoundSource},
         graphics::{
             BlendMode, Color, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
             RenderWindow, Shape, Sprite, Texture, Transformable, View,
@@ -34,7 +35,7 @@ use {
 mod command;
 
 /// Application level state (includes game and ui state, etc.)
-pub struct App<'aud> {
+pub struct App {
     pub rw: RenderWindow,
     pub should_quit: bool,
     pub game: GameState,
@@ -50,23 +51,26 @@ pub struct App<'aud> {
     pub project_dirs: ProjectDirs,
     pub cmdvec: CmdVec,
     worlds_dir: std::path::PathBuf,
-    pub snd: SoundPlayer<'aud>,
+    pub snd: SoundPlayer,
     pub cfg: Config,
     pub on_screen_tile_ents: Vec<TileColEn>,
     /// Last computed mouse tile position
     pub last_mouse_tpos: TilePos,
+    pub music_sink: rodio::Sink,
+    pub stream: rodio::OutputStream,
+    pub stream_handle: rodio::OutputStreamHandle,
 }
 
 #[derive(Default)]
-pub struct SoundPlayer<'aud> {
-    sounds: VecDeque<Sound<'aud>>,
+pub struct SoundPlayer {
+    sounds: VecDeque<rodio::Sink>,
 }
 
-impl<'aud> SoundPlayer<'aud> {
-    pub fn play(&mut self, aud: &'aud ResAudio, name: &str) {
-        let mut snd = Sound::with_buffer(&aud.sounds[name]);
-        snd.play();
-        self.sounds.push_back(snd);
+impl SoundPlayer {
+    pub fn play(&mut self, aud: &ResAudio, name: &str, stream: &OutputStreamHandle) {
+        let sink = rodio::Sink::try_new(stream).unwrap();
+        sink.append(AuDecBuf::new(aud.sounds[name].clone()).unwrap());
+        self.sounds.push_back(sink);
         // Limit max number of sounds
         if self.sounds.len() > 16 {
             self.sounds.pop_front();
@@ -74,7 +78,7 @@ impl<'aud> SoundPlayer<'aud> {
     }
 }
 
-impl<'aud> App<'aud> {
+impl App {
     pub fn new(
         args: CliArgs,
         res: &mut Res,
@@ -83,9 +87,6 @@ impl<'aud> App<'aud> {
     ) -> anyhow::Result<Self> {
         let rw = graphics::make_window();
         let sf_egui = SfEgui::new(&rw);
-        res.surf_music.set_looping(true);
-        res.surf_music.set_volume(10.0);
-        res.surf_music.play();
         let rw_size = rw.size();
         let rt =
             RenderTexture::new(rw_size.x, rw_size.y).context("Failed to create render texture")?;
@@ -103,6 +104,7 @@ impl<'aud> App<'aud> {
                 .unwrap_or(cfg.last_world.as_deref().unwrap_or("TestWorld"))
         };
         let path = worlds_dir.join(wld_name);
+        let (stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
         Ok(Self {
             rw,
             should_quit: false,
@@ -120,10 +122,13 @@ impl<'aud> App<'aud> {
             cfg,
             on_screen_tile_ents: Default::default(),
             last_mouse_tpos: TilePos { x: 0, y: 0 },
+            music_sink: rodio::Sink::try_new(&stream_handle).unwrap(),
+            stream,
+            stream_handle,
         })
     }
 
-    pub fn do_game_loop(mut self, res: &mut Res, aud: &'aud ResAudio) {
+    pub fn do_game_loop(mut self, res: &mut Res, aud: &ResAudio) {
         while !self.should_quit {
             self.do_event_handling();
             self.do_update(res, aud);
@@ -182,7 +187,7 @@ impl<'aud> App<'aud> {
         }
     }
 
-    fn do_update(&mut self, res: &mut Res, aud: &'aud ResAudio) {
+    fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
         let rt_size = self.rt.size();
         if self.debug.freecam {
             self.do_freecam();
@@ -371,7 +376,7 @@ impl<'aud> App<'aud> {
                     state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
                     state.health -= power;
                     if let Some(hit_snd) = &tdef.hit_sound {
-                        self.snd.play(aud, hit_snd);
+                        self.snd.play(aud, hit_snd, &self.stream_handle);
                     }
                     self.game.last_mine_attempt = ticks;
                 }
@@ -390,19 +395,31 @@ impl<'aud> App<'aud> {
             self.game.prev_biome = self.game.current_biome;
             match self.game.current_biome {
                 Biome::Surface => {
-                    res.und_music.stop();
-                    res.surf_music.play();
+                    info!("Playing surface music");
+                    self.music_sink.clear();
+                    self.music_sink
+                        .append(AuDecBuf::new(res.surf_music.clone()).unwrap());
+                    self.music_sink.play();
                 }
                 Biome::Underground => {
-                    res.surf_music.stop();
-                    res.und_music.set_volume(res.surf_music.volume());
-                    res.und_music.set_looping(true);
-                    res.und_music.play();
+                    info!("Playing underground music");
+                    if !self.music_sink.empty() {
+                        self.music_sink.clear();
+                    }
+                    self.music_sink
+                        .append(AuDecBuf::new(res.und_music.clone()).unwrap());
+                    self.music_sink.play();
+                    self.music_sink.set_volume(1.0);
                 }
             }
         }
-        self.game
-            .update(&self.input, &mut self.snd, aud, &self.on_screen_tile_ents);
+        self.game.update(
+            &self.input,
+            &mut self.snd,
+            aud,
+            &self.on_screen_tile_ents,
+            &self.stream_handle,
+        );
     }
 
     fn do_freecam(&mut self) {
