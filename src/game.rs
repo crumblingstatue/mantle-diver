@@ -410,6 +410,31 @@ impl GameState {
         self.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
         self.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
     }
+    pub(crate) fn freecam_move_system(&mut self, mouse_world_pos: WorldPos, input: &Input) {
+        let spd = if input.down(Key::LShift) {
+            100
+        } else if input.down(Key::LControl) {
+            1000
+        } else {
+            2
+        };
+        if input.down(Key::A) {
+            self.camera_offset.x = self.camera_offset.x.saturating_sub(spd);
+        }
+        if input.down(Key::D) {
+            self.camera_offset.x = self.camera_offset.x.saturating_add(spd);
+        }
+        if input.down(Key::W) {
+            self.camera_offset.y = self.camera_offset.y.saturating_sub(spd);
+        }
+        if input.down(Key::S) {
+            self.camera_offset.y = self.camera_offset.y.saturating_add(spd);
+        }
+        if input.pressed(Key::P) {
+            self.world.player.col_en.en.pos.x = mouse_world_pos.x as i32;
+            self.world.player.col_en.en.pos.y = mouse_world_pos.y as i32;
+        }
+    }
 }
 
 fn process_tile_item_drop<L: TileLayer>(
