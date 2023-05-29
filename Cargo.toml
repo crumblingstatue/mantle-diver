@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.71"
-derivative = "2.2.0"
 egui = "0.21.0"
 fnv = "1.0.7"
 hecs = "0.10.3"

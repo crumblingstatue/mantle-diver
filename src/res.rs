@@ -1,6 +1,5 @@
 use {
     crate::texture_atlas::AtlasBundle,
-    derivative::Derivative,
     egui::epaint::ahash::HashMap,
     rodio::Decoder,
     sfml::{
@@ -13,13 +12,9 @@ use {
 pub type AuBuf = Cursor<Vec<u8>>;
 pub type AuDecBuf = Decoder<AuBuf>;
 
-#[derive(Derivative)]
-#[derivative(Debug)]
 pub struct Res {
     pub atlas: AtlasBundle,
-    #[derivative(Debug = "ignore")]
     pub surf_music: AuBuf,
-    #[derivative(Debug = "ignore")]
     pub und_music: AuBuf,
     pub sans_font: SfBox<Font>,
     pub forest_bg: SfBox<Texture>,
