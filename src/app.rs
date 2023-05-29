@@ -8,7 +8,7 @@ use {
         input::Input,
         inventory::{ItemId, TileLayer, UseAction},
         math::{center_offset, TILE_SIZE},
-        res::{AuDecBuf, Res, ResAudio},
+        res::{Res, ResAudio},
         save::Save,
         tiles::TileId,
         world::TilePos,
@@ -20,7 +20,7 @@ use {
     gamedebug_core::{imm, imm_dbg},
     log::info,
     rand::{seq::SliceRandom, thread_rng, Rng},
-    rodio::OutputStreamHandle,
+    rodio::{Decoder, OutputStreamHandle},
     sfml::{
         graphics::{
             BlendMode, Color, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
@@ -69,7 +69,7 @@ pub struct SoundPlayer {
 impl SoundPlayer {
     pub fn play(&mut self, aud: &ResAudio, name: &str, stream: &OutputStreamHandle) {
         let sink = rodio::Sink::try_new(stream).unwrap();
-        sink.append(AuDecBuf::new(aud.sounds[name].clone()).unwrap());
+        sink.append(Decoder::new(aud.sounds[name].clone()).unwrap());
         self.sounds.push_back(sink);
         // Limit max number of sounds
         if self.sounds.len() > 16 {
@@ -106,7 +106,7 @@ impl App {
         let path = worlds_dir.join(wld_name);
         let (stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
         let music_sink = rodio::Sink::try_new(&stream_handle).unwrap();
-        music_sink.append(AuDecBuf::new(res.surf_music.clone()).unwrap());
+        music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
         music_sink.play();
         Ok(Self {
             rw,
@@ -399,9 +399,11 @@ impl App {
             match self.game.current_biome {
                 Biome::Surface => {
                     info!("Playing surface music");
-                    self.music_sink.clear();
+                    if !self.music_sink.empty() {
+                        self.music_sink.clear();
+                    }
                     self.music_sink
-                        .append(AuDecBuf::new(res.surf_music.clone()).unwrap());
+                        .append(Decoder::new_looped(res.surf_music.clone()).unwrap());
                     self.music_sink.play();
                 }
                 Biome::Underground => {
@@ -410,9 +412,8 @@ impl App {
                         self.music_sink.clear();
                     }
                     self.music_sink
-                        .append(AuDecBuf::new(res.und_music.clone()).unwrap());
+                        .append(Decoder::new_looped(res.und_music.clone()).unwrap());
                     self.music_sink.play();
-                    self.music_sink.set_volume(1.0);
                 }
             }
         }

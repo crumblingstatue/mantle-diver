@@ -1,7 +1,6 @@
 use {
     crate::texture_atlas::AtlasBundle,
     egui::epaint::ahash::HashMap,
-    rodio::Decoder,
     sfml::{
         graphics::{Font, Texture},
         SfBox,
@@ -10,12 +9,12 @@ use {
 };
 
 pub type AuBuf = Cursor<Vec<u8>>;
-pub type AuDecBuf = Decoder<AuBuf>;
 
 pub struct Res {
     pub atlas: AtlasBundle,
     pub surf_music: AuBuf,
     pub und_music: AuBuf,
+    pub test_music: AuBuf,
     pub sans_font: SfBox<Font>,
     pub forest_bg: SfBox<Texture>,
 }
@@ -38,6 +37,7 @@ impl Res {
             sans_font: Font::from_file(&format!("{res_path}/fonts/ShareTechMono-Regular.ttf"))
                 .unwrap(),
             forest_bg: Texture::from_file(&format!("{res_path}/bg/sky.png")).unwrap(),
+            test_music: load_sound(format!("{res_path}/music/testsong.ogg")).unwrap(),
         })
     }
 }
