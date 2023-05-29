@@ -236,7 +236,7 @@ impl App {
         rendering::light_pass(&mut self.game, &mut self.light_map, res);
         self.rt.clear(Color::rgb(55, 221, 231));
         rendering::draw_world(&mut self.game, &mut self.rt, res);
-        rendering::draw_entities(&mut self.game, &mut self.rt, res);
+        rendering::draw_entities(&mut self.game, &mut self.rt, res, &self.debug);
         self.rt.display();
         let mut spr = Sprite::with_texture(self.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));

@@ -1,8 +1,10 @@
 use {
     super::{for_each_tile_on_screen, GameState, LightSource, SfVec2fExt},
     crate::{
+        debug::DebugState,
         graphics::ScreenVec,
         math::{smoothwave, WorldPos, TILE_SIZE},
+        player::FacingDir,
         res::Res,
     },
     gamedebug_core::imm_dbg,
@@ -85,7 +87,7 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
         }
     });
 }
-pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
+pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);
     s.set_origin((16., 16.));
     for drop in &game.item_drops {
@@ -101,10 +103,60 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
         s.set_texture_rect(item_def.tex_rect.to_sf());
         rt.draw(&s);
     }
-    draw_player(game, rt);
+    draw_player(game, rt, debug, res);
 }
 
-fn draw_player(game: &mut GameState, rt: &mut RenderTexture) {
+fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState, res: &Res) {
+    if debug.player_bb {
+        draw_player_bb(game, rt);
+    } else {
+        draw_player_sprites(game, rt, res);
+    }
+}
+
+fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
+    let mut s = Sprite::with_texture(&res.atlas.tex);
+    let (x, y, _w, _h) = game.world.player.col_en.en.xywh();
+    let (base_x, base_y) = (
+        (x - game.camera_offset.x as i32) as f32,
+        (y - game.camera_offset.y as i32) as f32,
+    );
+    let (mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x) = (0.0, 4.0, -4.0, 0.0, 0.0);
+    if game.world.player.facing_dir == FacingDir::Right {
+        s.set_scale((-1.0, 1.0));
+        head_x = 34.0;
+        eye_x = 30.0;
+        hair_x = 38.0;
+        torso_x = 34.0;
+        legs_x = 34.0;
+    }
+    s.set_color(game.world.player.skin_color);
+    // Head
+    s.set_texture_rect(res.atlas.rects["char/head1"].to_sf());
+    s.set_position((base_x + head_x, base_y));
+    rt.draw(&s);
+    // Eye
+    s.set_color(game.world.player.eye_color);
+    s.set_texture_rect(res.atlas.rects["char/eye1"].to_sf());
+    s.set_position((base_x + eye_x, base_y + 8.));
+    rt.draw(&s);
+    // Hair
+    s.set_color(game.world.player.hair_color);
+    s.set_texture_rect(res.atlas.rects["char/hair1"].to_sf());
+    s.set_position((base_x + hair_x, base_y - 4.));
+    rt.draw(&s);
+    s.set_color(game.world.player.skin_color);
+    // Torso
+    s.set_texture_rect(res.atlas.rects["char/torso1"].to_sf());
+    s.set_position((base_x + torso_x, base_y + 32.0));
+    rt.draw(&s);
+    // Legs
+    s.set_texture_rect(res.atlas.rects["char/legs1"].to_sf());
+    s.set_position((base_x + legs_x, base_y + 64.0));
+    rt.draw(&s);
+}
+
+fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
     let (x, y, w, h) = game.world.player.col_en.en.xywh();
     let mut rect_sh = RectangleShape::new();
     rect_sh.set_position((

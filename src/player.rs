@@ -5,6 +5,7 @@ use {
         world::{TPosSc, TilePos},
     },
     s2dc::{vec2, MobileEntity},
+    sfml::graphics::Color,
 };
 
 #[derive(Debug)]
@@ -15,6 +16,16 @@ pub struct Player {
     pub jumps_left: u8,
     /// true if the player wants to jump down from a platform
     pub down_intent: bool,
+    pub skin_color: Color,
+    pub eye_color: Color,
+    pub hair_color: Color,
+    pub facing_dir: FacingDir,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum FacingDir {
+    Left,
+    Right,
 }
 
 impl Player {
@@ -25,6 +36,10 @@ impl Player {
             hspeed: 0.0,
             jumps_left: 0,
             down_intent: false,
+            skin_color: Color::WHITE,
+            eye_color: Color::WHITE,
+            hair_color: Color::BLACK,
+            facing_dir: FacingDir::Right,
         }
     }
     #[expect(dead_code)]

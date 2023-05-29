@@ -11,6 +11,7 @@ use {
     egui::TextBuffer,
     gamedebug_core::IMMEDIATE,
     rand::{thread_rng, Rng},
+    sfml::graphics::Color,
     std::{
         fmt::Write,
         path::{Path, PathBuf},
@@ -24,6 +25,7 @@ pub struct DebugState {
     pub tiledb_edit: TileDbEdit,
     pub show_atlas: bool,
     pub console: Console,
+    pub player_bb: bool,
     world_mgr: WorldManager,
 }
 
@@ -72,6 +74,15 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     px_per_frame_to_km_h(game.world.player.vspeed)
                 ));
             }
+            ui.collapsing("Player", |ui| {
+                ui.label("Skin color");
+                color_edit_button(ui, &mut game.world.player.skin_color);
+                ui.label("Eye color");
+                color_edit_button(ui, &mut game.world.player.eye_color);
+                ui.label("Hair color");
+                color_edit_button(ui, &mut game.world.player.hair_color);
+                ui.checkbox(&mut debug.player_bb, "Draw bb instead");
+            });
             ui.separator();
             egui::ScrollArea::vertical().show(ui, |ui| {
                 IMMEDIATE.for_each(|msg| {
@@ -81,6 +92,14 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
             IMMEDIATE.clear();
         });
     debug.panel = open;
+}
+
+fn color_edit_button(ui: &mut egui::Ui, c: &mut Color) {
+    let mut rgb = [c.r, c.g, c.b];
+    ui.color_edit_button_srgb(&mut rgb);
+    c.r = rgb[0];
+    c.g = rgb[1];
+    c.b = rgb[2];
 }
 
 pub(crate) fn do_debug_ui(

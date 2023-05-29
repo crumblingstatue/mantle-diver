@@ -9,6 +9,7 @@ use {
         inventory::{self, ItemId, UseAction},
         itemdrop::Itemdrop,
         math::{step_towards, WorldPos, TILE_SIZE},
+        player::FacingDir,
         res::{Res, ResAudio},
         tiles::{self, TileDb, TileDef, TileId},
         world::TilePos,
@@ -141,9 +142,11 @@ pub(super) fn player_move_system(
     game.world.player.hspeed = 0.;
     if input.down(InputAction::Left) {
         game.world.player.hspeed = -spd;
+        game.world.player.facing_dir = FacingDir::Left;
     }
     if input.down(InputAction::Right) {
         game.world.player.hspeed = spd;
+        game.world.player.facing_dir = FacingDir::Right;
     }
     if input.down(InputAction::Jump) && game.world.player.can_jump() {
         game.world.player.vspeed = -10.0;
