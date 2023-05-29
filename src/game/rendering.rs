@@ -120,7 +120,8 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         (x - game.camera_offset.x as i32) as f32,
         (y - game.camera_offset.y as i32) as f32,
     );
-    let (mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x) = (0.0, 4.0, -4.0, 0.0, 0.0);
+    let (mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x, mut tool_x) =
+        (0.0, 4.0, -4.0, 0.0, 0.0, 0.0);
     match game.world.player.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
@@ -137,6 +138,9 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
+                tool_x = offs.left.x as f32;
             }
         }
         FacingDir::Right => {
@@ -155,6 +159,9 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
+                tool_x = offs.right.x as f32;
             }
         }
     }
@@ -181,6 +188,10 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     // Legs
     s.set_texture_rect(res.atlas.rects["char/legs1"].to_sf());
     s.set_position((base_x + legs_x, base_y + 64.0));
+    rt.draw(&s);
+    // Tool
+    s.set_texture_rect(res.atlas.rects["items/woodpick"].to_sf());
+    s.set_position((base_x + tool_x, base_y + 30.0));
     rt.draw(&s);
 }
 
