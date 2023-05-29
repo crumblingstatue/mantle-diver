@@ -20,7 +20,7 @@ use {
     std::path::{Path, PathBuf},
 };
 
-mod rendering;
+pub mod rendering;
 mod systems;
 
 pub struct GameState {

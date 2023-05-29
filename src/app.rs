@@ -3,7 +3,7 @@ use {
         command::CmdVec,
         config::Config,
         debug::{self, DebugState},
-        game::GameState,
+        game::{rendering, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
         math::center_offset,
@@ -233,10 +233,10 @@ impl App {
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
-        self.game.light_pass(&mut self.light_map, res);
+        rendering::light_pass(&mut self.game, &mut self.light_map, res);
         self.rt.clear(Color::rgb(55, 221, 231));
-        self.game.draw_world(&mut self.rt, res);
-        self.game.draw_entities(&mut self.rt, res);
+        rendering::draw_world(&mut self.game, &mut self.rt, res);
+        rendering::draw_entities(&mut self.game, &mut self.rt, res);
         self.rt.display();
         let mut spr = Sprite::with_texture(self.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));
@@ -257,7 +257,7 @@ impl App {
             x: (self.rw.size().x / self.scale as u32) as f32,
             y: (self.rw.size().y / self.scale as u32) as f32,
         };
-        self.game.draw_ui(&mut self.rt, res, ui_dims);
+        rendering::draw_ui(&mut self.game, &mut self.rt, res, ui_dims);
         self.rt.display();
         let mut spr = Sprite::with_texture(self.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));
