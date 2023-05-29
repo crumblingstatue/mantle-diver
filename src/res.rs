@@ -64,10 +64,11 @@ pub fn path_key(path: &Path) -> String {
     let folder = rev_iter.next().unwrap();
     let fname: &Path = fname.as_ref();
     let folder: &Path = folder.as_ref();
-    folder
+    let key_string = folder
         .join(fname.file_stem().unwrap())
         .display()
-        .to_string()
+        .to_string();
+    key_string.replace("\\", "/")
 }
 
 #[test]
