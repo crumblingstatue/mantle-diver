@@ -11,7 +11,6 @@ use {
         tiles::{TileDb, TileDef, TileId, TileLayer},
         world::{TilePos, World},
     },
-    derivative::Derivative,
     fnv::FnvHashMap,
     rand::{thread_rng, Rng},
     sfml::{
@@ -23,15 +22,12 @@ use {
 
 mod rendering;
 
-#[derive(Derivative)]
-#[derivative(Debug)]
 pub struct GameState {
     pub camera_offset: WorldPos,
     pub world: World,
     pub gravity: f32,
     pub current_biome: Biome,
     pub prev_biome: Biome,
-    #[derivative(Debug = "ignore")]
     pub ambient_light: u8,
     pub light_sources: Vec<LightSource>,
     pub tile_db: TileDb,
