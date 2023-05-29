@@ -1210,7 +1210,6 @@ dependencies = [
  "simdnoise",
  "splitty",
  "texture_packer",
- "toml",
  "walkdir",
  "zstd",
 ]

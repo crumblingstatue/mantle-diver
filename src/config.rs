@@ -27,16 +27,16 @@ impl Default for Config {
 
 impl Config {
     pub fn load(base_dir: &Path) -> anyhow::Result<Self> {
-        let path = base_dir.join("config.toml");
+        let path = base_dir.join("config.ron");
         if !path.exists() {
             return Ok(Self::default());
         }
         let data = std::fs::read_to_string(path)?;
-        Ok(toml::from_str(&data)?)
+        Ok(ron::from_str(&data)?)
     }
     pub fn save(&self, base_dir: &Path) -> anyhow::Result<()> {
-        let path = base_dir.join("config.toml");
-        let data = toml::to_string_pretty(self)?;
+        let path = base_dir.join("config.ron");
+        let data = ron::ser::to_string_pretty(self, ron::ser::PrettyConfig::default())?;
         Ok(std::fs::write(path, data)?)
     }
 }
