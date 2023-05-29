@@ -105,6 +105,9 @@ impl App {
         };
         let path = worlds_dir.join(wld_name);
         let (stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
+        let music_sink = rodio::Sink::try_new(&stream_handle).unwrap();
+        music_sink.append(AuDecBuf::new(res.surf_music.clone()).unwrap());
+        music_sink.play();
         Ok(Self {
             rw,
             should_quit: false,
@@ -122,7 +125,7 @@ impl App {
             cfg,
             on_screen_tile_ents: Default::default(),
             last_mouse_tpos: TilePos { x: 0, y: 0 },
-            music_sink: rodio::Sink::try_new(&stream_handle).unwrap(),
+            music_sink,
             stream,
             stream_handle,
         })
