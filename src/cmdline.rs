@@ -1,5 +1,5 @@
 use {
-    crate::{command::Cmd, math::WorldPos},
+    crate::{command::Cmd, debug::DebugState, math::WorldPos},
     clap::Parser,
     splitty::SplitUnquotedChar,
 };
@@ -12,6 +12,8 @@ pub enum CmdLine {
     Tp(Tp),
     Spawn,
     Give(Give),
+    /// Char db editor
+    Chardb,
     /// Tile db editor
     Tiledb,
     /// Set scale
@@ -61,6 +63,7 @@ pub enum Dispatch {
     ClearConsole,
     ToggleAtlas,
     ToggleWorldMgr,
+    Noop,
 }
 
 impl CmdLine {
@@ -70,7 +73,7 @@ impl CmdLine {
         Ok(Self::try_parse_from(words)?)
     }
 
-    pub(crate) fn dispatch(self) -> Dispatch {
+    pub(crate) fn dispatch(self, debug: &mut DebugState) -> Dispatch {
         match self {
             CmdLine::Quit => Dispatch::Cmd(Cmd::QuitApp),
             CmdLine::Freecam => Dispatch::Cmd(Cmd::ToggleFreecam),
@@ -85,6 +88,10 @@ impl CmdLine {
                 amount: give.amount,
             }),
             CmdLine::Tiledb => Dispatch::Cmd(Cmd::ToggleTileDbEdit),
+            CmdLine::Chardb => {
+                debug.chardb_edit.open ^= true;
+                Dispatch::Noop
+            }
             CmdLine::Scale(scale) => Dispatch::Cmd(Cmd::SetScale(scale.scale)),
             CmdLine::World(world) => {
                 if world.name.is_empty() {

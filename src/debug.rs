@@ -1,8 +1,10 @@
 use {
     crate::{
+        char::Offset,
         cmdline::CmdLine,
         command::{Cmd, CmdVec},
         game::GameState,
+        graphics::ScreenVec,
         math::{px_per_frame_to_km_h, WorldPos},
         res::Res,
         stringfmt::LengthDisp,
@@ -18,7 +20,7 @@ use {
     },
 };
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub struct DebugState {
     pub panel: bool,
     pub freecam: bool,
@@ -26,7 +28,47 @@ pub struct DebugState {
     pub show_atlas: bool,
     pub console: Console,
     pub player_bb: bool,
+    pub chardb_edit: CharDbEdit,
     world_mgr: WorldManager,
+}
+
+#[derive(Default)]
+pub struct CharDbEdit {
+    pub open: bool,
+    pub name_buf: String,
+}
+impl CharDbEdit {
+    fn ui(&mut self, ctx: &egui::Context, char_db: &mut crate::char::CharDb) {
+        egui::Window::new("Chardb")
+            .open(&mut self.open)
+            .show(ctx, |ui| {
+                ui.text_edit_singleline(&mut self.name_buf);
+                if ui.button("Add").clicked() {
+                    char_db.graphic_offsets.insert(
+                        self.name_buf.clone(),
+                        Offset {
+                            left: ScreenVec::default(),
+                            right: ScreenVec::default(),
+                        },
+                    );
+                }
+                ui.separator();
+                char_db.graphic_offsets.retain(|k, v| {
+                    let mut retain = true;
+                    ui.horizontal(|ui| {
+                        ui.label(k);
+                        ui.label("l");
+                        ui.add(egui::DragValue::new(&mut v.left.x));
+                        ui.label("r");
+                        ui.add(egui::DragValue::new(&mut v.right.x));
+                        if ui.button("x").clicked() {
+                            retain = false;
+                        }
+                    });
+                    retain
+                })
+            });
+    }
 }
 
 #[derive(Default, Debug)]
@@ -81,7 +123,7 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                 color_edit_button(ui, &mut game.world.player.eye_color);
                 ui.label("Hair color");
                 color_edit_button(ui, &mut game.world.player.hair_color);
-                ui.checkbox(&mut debug.player_bb, "Draw bb instead");
+                ui.checkbox(&mut debug.player_bb, "Draw bb");
             });
             ui.separator();
             egui::ScrollArea::vertical().show(ui, |ui| {
@@ -118,13 +160,15 @@ pub(crate) fn do_debug_ui(
         res.atlas.tex.size(),
         cmd,
     );
+    debug.chardb_edit.ui(ctx, &mut game.char_db);
     console_ui(ctx, debug, cmd);
     debug.world_mgr.ui(ctx, game, worlds_path, cmd);
 }
 
 fn console_ui(ctx: &egui::Context, debug: &mut DebugState, cmd: &mut CmdVec) {
+    let mut open = debug.console.show;
     egui::Window::new("Console (F11)")
-        .open(&mut debug.console.show)
+        .open(&mut open)
         .show(ctx, |ui| {
             let up_arrow =
                 ui.input_mut(|inp| inp.consume_key(egui::Modifiers::default(), egui::Key::ArrowUp));
@@ -144,7 +188,7 @@ fn console_ui(ctx: &egui::Context, debug: &mut DebugState, cmd: &mut CmdVec) {
                     }
                 };
                 debug.console.history.push(debug.console.cmdline.take());
-                match cmdline.dispatch() {
+                match cmdline.dispatch(debug) {
                     crate::cmdline::Dispatch::Cmd(command) => cmd.push(command),
                     crate::cmdline::Dispatch::ClearConsole => debug.console.log.clear(),
                     crate::cmdline::Dispatch::ToggleAtlas => debug.show_atlas ^= true,
@@ -152,6 +196,7 @@ fn console_ui(ctx: &egui::Context, debug: &mut DebugState, cmd: &mut CmdVec) {
                         debug.world_mgr.open ^= true;
                         debug.world_mgr.just_opened = true;
                     }
+                    crate::cmdline::Dispatch::Noop => {}
                 }
             }
             if up_arrow {
@@ -166,6 +211,7 @@ fn console_ui(ctx: &egui::Context, debug: &mut DebugState, cmd: &mut CmdVec) {
                 });
         });
     debug.console.just_opened = false;
+    debug.console.show = open;
 }
 
 #[derive(Default, Debug)]

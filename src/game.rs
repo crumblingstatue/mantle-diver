@@ -2,6 +2,7 @@ use {
     self::systems::Menu,
     crate::{
         app::{SoundPlayer, TileColEn},
+        char::CharDb,
         command::CmdVec,
         debug::DebugState,
         graphics::{ScreenSc, ScreenVec},
@@ -32,6 +33,7 @@ pub struct GameState {
     pub ambient_light: u8,
     pub light_sources: Vec<LightSource>,
     pub tile_db: TileDb,
+    pub char_db: CharDb,
     pub inventory: Inventory,
     pub itemdb: ItemDb,
     pub selected_inv_slot: usize,
@@ -112,6 +114,7 @@ impl GameState {
             last_mine_attempt: 0,
             item_drops: Default::default(),
             menu: Menu::default(),
+            char_db: CharDb::load().unwrap(),
         }
     }
 

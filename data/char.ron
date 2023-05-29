@@ -1,0 +1,54 @@
+(
+    graphic_offsets: {
+        "char/torso1": (
+            left: (
+                x: 5,
+                y: 0,
+            ),
+            right: (
+                x: 36,
+                y: 0,
+            ),
+        ),
+        "char/hair1": (
+            left: (
+                x: 1,
+                y: 0,
+            ),
+            right: (
+                x: 38,
+                y: 0,
+            ),
+        ),
+        "char/head1": (
+            left: (
+                x: 5,
+                y: 10,
+            ),
+            right: (
+                x: 35,
+                y: 13,
+            ),
+        ),
+        "char/legs1": (
+            left: (
+                x: 4,
+                y: 0,
+            ),
+            right: (
+                x: 37,
+                y: 0,
+            ),
+        ),
+        "char/eye1": (
+            left: (
+                x: 9,
+                y: 0,
+            ),
+            right: (
+                x: 32,
+                y: 0,
+            ),
+        ),
+    },
+)

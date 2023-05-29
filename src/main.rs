@@ -11,6 +11,7 @@ use {
 
 mod app;
 mod bitmanip;
+mod char;
 mod cmdline;
 mod command;
 mod config;

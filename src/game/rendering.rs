@@ -107,10 +107,9 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, de
 }
 
 fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState, res: &Res) {
+    draw_player_sprites(game, rt, res);
     if debug.player_bb {
         draw_player_bb(game, rt);
-    } else {
-        draw_player_sprites(game, rt, res);
     }
 }
 
@@ -122,13 +121,42 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         (y - game.camera_offset.y as i32) as f32,
     );
     let (mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x) = (0.0, 4.0, -4.0, 0.0, 0.0);
-    if game.world.player.facing_dir == FacingDir::Right {
-        s.set_scale((-1.0, 1.0));
-        head_x = 34.0;
-        eye_x = 30.0;
-        hair_x = 38.0;
-        torso_x = 34.0;
-        legs_x = 34.0;
+    match game.world.player.facing_dir {
+        FacingDir::Left => {
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
+                head_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/eye1") {
+                eye_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/hair1") {
+                hair_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/torso1") {
+                torso_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
+                legs_x = offs.left.x as f32;
+            }
+        }
+        FacingDir::Right => {
+            s.set_scale((-1.0, 1.0));
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
+                head_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/eye1") {
+                eye_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/hair1") {
+                hair_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/torso1") {
+                torso_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
+                legs_x = offs.right.x as f32;
+            }
+        }
     }
     s.set_color(game.world.player.skin_color);
     // Head
@@ -159,6 +187,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
 fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
     let (x, y, w, h) = game.world.player.col_en.en.xywh();
     let mut rect_sh = RectangleShape::new();
+    rect_sh.set_fill_color(Color::rgba(255, 255, 255, 96));
     rect_sh.set_position((
         (x - game.camera_offset.x as i32) as f32,
         (y - game.camera_offset.y as i32) as f32,
