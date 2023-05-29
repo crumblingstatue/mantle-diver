@@ -174,6 +174,36 @@ impl GameState {
         text.set_string(&format!("Depth: {}", self.world.player.depth_disp()));
         text.set_character_size(18);
         rt.draw(&text);
+        if self.menu.open {
+            self.draw_menu(rt, res);
+        }
+    }
+
+    fn draw_menu(&mut self, rt: &mut RenderTexture, res: &Res) {
+        let Some(list) = self.menu.stack.last() else {
+            log::warn!("Trying to draw empty menu");
+            return;
+        };
+        let (x, y, w, h) = (100., 100., 250., 300.);
+        let mut rs = RectangleShape::from_rect(Rect::new(x, y, w, h));
+        rs.set_fill_color(Color::rgba(20, 20, 40, 120));
+        rt.draw(&rs);
+        let mut txt = Text::new("Mantle Diver", &res.sans_font, 20);
+        txt.set_fill_color(Color::rgb(120, 140, 130));
+        txt.set_position((x, y));
+        rt.draw(&txt);
+        let mut y_offset = 40.0;
+        for (i, item) in list.iter().enumerate() {
+            if i == self.menu.cursor {
+                txt.set_fill_color(Color::YELLOW);
+            } else {
+                txt.set_fill_color(Color::WHITE);
+            }
+            txt.set_position((x, y + y_offset));
+            txt.set_string(&item.text);
+            rt.draw(&txt);
+            y_offset += 22.0;
+        }
     }
 
     pub(crate) fn light_pass(&mut self, lightmap: &mut RenderTexture, res: &Res) {

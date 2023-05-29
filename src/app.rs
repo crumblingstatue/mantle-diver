@@ -227,6 +227,7 @@ impl App {
             &mut self.snd,
             &mut self.on_screen_tile_ents,
             aud,
+            &mut self.cmdvec,
         );
     }
 

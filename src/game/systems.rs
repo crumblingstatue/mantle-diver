@@ -2,6 +2,7 @@ use {
     super::{Biome, GameState, TransientBlockState},
     crate::{
         app::{SoundPlayer, TileColEn},
+        command::{Cmd, CmdVec},
         game::for_each_tile_on_screen,
         input::Input,
         inventory::{self, ItemId, UseAction},
@@ -370,14 +371,67 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
     }
 }
 
-pub(super) fn pause_menu_system(game: &mut GameState, input: &Input) {
+#[derive(Default)]
+pub struct Menu {
+    pub stack: MenuStack,
+    pub cursor: usize,
+    pub open: bool,
+}
+
+pub type MenuStack = Vec<MenuList>;
+pub type MenuList = Vec<MenuItem>;
+pub struct MenuItem {
+    pub text: String,
+    action: fn(&mut GameState, &mut CmdVec),
+}
+
+pub(super) fn pause_menu_system(game: &mut GameState, input: &Input, cmd: &mut CmdVec) {
+    if input.pressed(Key::Enter) {
+        if let Some(list) = game.menu.stack.last() {
+            (list[game.menu.cursor].action)(game, cmd)
+        }
+        game.menu.cursor = 0;
+    }
     if input.pressed(Key::Escape) {
-        game.menu_open = false;
+        game.menu.stack.pop();
+        if game.menu.stack.is_empty() {
+            game.menu.open = false;
+        }
+    }
+    #[expect(clippy::collapsible_if)]
+    if input.pressed(Key::Up) {
+        if game.menu.cursor > 0 {
+            game.menu.cursor -= 1;
+        }
+    }
+    if let Some(list) = game.menu.stack.last() {
+        #[expect(clippy::collapsible_if)]
+        if input.pressed(Key::Down) {
+            if game.menu.cursor + 1 < list.len() {
+                game.menu.cursor += 1;
+            }
+        }
     }
 }
 
 pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
     if input.pressed(Key::Escape) {
-        game.menu_open = true;
+        let list = vec![
+            MenuItem {
+                text: "New world (random)".into(),
+                action: |_game, cmd| {
+                    let n: u32 = thread_rng().gen();
+                    cmd.push(Cmd::LoadWorld(n.to_string()));
+                },
+            },
+            MenuItem {
+                text: "Quit".into(),
+                action: |_game, cmd| {
+                    cmd.push(Cmd::QuitApp);
+                },
+            },
+        ];
+        game.menu.stack.push(list);
+        game.menu.open = true;
     }
 }

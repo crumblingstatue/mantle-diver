@@ -1,6 +1,8 @@
 use {
+    self::systems::Menu,
     crate::{
         app::{SoundPlayer, TileColEn},
+        command::CmdVec,
         debug::DebugState,
         graphics::{ScreenSc, ScreenVec},
         input::Input,
@@ -37,7 +39,7 @@ pub struct GameState {
     pub transient_block_state: FnvHashMap<TilePos, TransientBlockState>,
     pub last_mine_attempt: u64,
     pub item_drops: Vec<Itemdrop>,
-    pub menu_open: bool,
+    pub menu: Menu,
 }
 
 #[derive(Debug)]
@@ -108,7 +110,7 @@ impl GameState {
             transient_block_state: Default::default(),
             last_mine_attempt: 0,
             item_drops: Default::default(),
-            menu_open: false,
+            menu: Menu::default(),
         }
     }
 
@@ -125,9 +127,10 @@ impl GameState {
         snd: &mut SoundPlayer,
         on_screen_tile_ents: &mut Vec<TileColEn>,
         aud: &ResAudio,
+        cmd: &mut CmdVec,
     ) {
-        if self.menu_open {
-            systems::pause_menu_system(self, input);
+        if self.menu.open {
+            systems::pause_menu_system(self, input, cmd);
             return;
         }
         systems::general_input_system(self, input);
