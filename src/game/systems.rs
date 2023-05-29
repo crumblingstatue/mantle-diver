@@ -390,8 +390,10 @@ enum MenuAction {
     NewRandom,
     Load,
     LoadWorld(String),
+    Settings,
     Quit,
     Back,
+    Input,
 }
 
 pub(super) fn pause_menu_system(
@@ -434,6 +436,23 @@ pub(super) fn pause_menu_system(
                         game.menu.open = false;
                     }
                 }
+                MenuAction::Settings => {
+                    let items = vec![
+                        MenuItem {
+                            text: "Input".into(),
+                            action: MenuAction::Input,
+                        },
+                        MenuItem {
+                            text: "Back".into(),
+                            action: MenuAction::Back,
+                        },
+                    ];
+                    game.menu.stack.push(items);
+                }
+                MenuAction::Input => {
+                    let mut items = Vec::new();
+                    game.menu.stack.push(items);
+                }
             }
         }
         game.menu.cursor = 0;
@@ -470,6 +489,10 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
             MenuItem {
                 text: "Load world".into(),
                 action: MenuAction::Load,
+            },
+            MenuItem {
+                text: "Settings".into(),
+                action: MenuAction::Settings,
             },
             MenuItem {
                 text: "Quit".into(),
