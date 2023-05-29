@@ -59,14 +59,20 @@ pub struct App {
     pub stream_handle: rodio::OutputStreamHandle,
 }
 
-#[derive(Default)]
 pub struct SoundPlayer {
     sounds: VecDeque<rodio::Sink>,
+    stream_handle: OutputStreamHandle,
 }
 
 impl SoundPlayer {
-    pub fn play(&mut self, aud: &ResAudio, name: &str, stream: &OutputStreamHandle) {
-        let sink = rodio::Sink::try_new(stream).unwrap();
+    pub fn new(stream: OutputStreamHandle) -> Self {
+        Self {
+            sounds: Default::default(),
+            stream_handle: stream,
+        }
+    }
+    pub fn play(&mut self, aud: &ResAudio, name: &str) {
+        let sink = rodio::Sink::try_new(&self.stream_handle).unwrap();
         sink.append(Decoder::new(aud.sounds[name].clone()).unwrap());
         self.sounds.push_back(sink);
         // Limit max number of sounds
@@ -119,7 +125,7 @@ impl App {
             project_dirs,
             cmdvec: CmdVec::default(),
             worlds_dir,
-            snd: SoundPlayer::default(),
+            snd: SoundPlayer::new(stream_handle.clone()),
             cfg,
             on_screen_tile_ents: Default::default(),
             last_mouse_tpos: TilePos { x: 0, y: 0 },
@@ -317,13 +323,8 @@ impl App {
             self.game.world.player.col_en.en.pos.x = wpos.x as i32;
             self.game.world.player.col_en.en.pos.y = wpos.y as i32;
         }
-        self.game.item_use_system(
-            &self.input,
-            mouse_tpos,
-            aud,
-            &mut self.snd,
-            &self.stream_handle,
-        );
+        self.game
+            .item_use_system(&self.input, mouse_tpos, aud, &mut self.snd);
         if self.game.camera_offset.y > 642_000 {
             self.game.current_biome = Biome::Underground;
         } else {
@@ -352,13 +353,8 @@ impl App {
                 }
             }
         }
-        self.game.update(
-            &self.input,
-            &mut self.snd,
-            aud,
-            &self.on_screen_tile_ents,
-            &self.stream_handle,
-        );
+        self.game
+            .update(&self.input, &mut self.snd, aud, &self.on_screen_tile_ents);
     }
 
     fn do_freecam(&mut self) {

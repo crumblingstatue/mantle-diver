@@ -79,7 +79,6 @@ impl GameState {
         snd: &mut SoundPlayer,
         aud: &ResAudio,
         on_screen_tile_ents: &[TileColEn],
-        stream_handle: &rodio::OutputStreamHandle,
     ) {
         if input.pressed(Key::Num1) {
             self.selected_inv_slot = 0;
@@ -137,7 +136,7 @@ impl GameState {
             #[expect(clippy::collapsible_if)]
             if self.world.player.col_en.en.collides(&itemdrop.s2dc_en.en) {
                 if self.inventory.add(itemdrop.id, 1) {
-                    snd.play(aud, "etc/pickup", stream_handle);
+                    snd.play(aud, "etc/pickup");
                     retain = false;
                 }
             }
@@ -207,7 +206,6 @@ impl GameState {
         mouse_tpos: TilePos,
         aud: &ResAudio,
         snd: &mut SoundPlayer,
-        stream_handle: &rodio::OutputStreamHandle,
     ) {
         if !input.lmb_down {
             return;
@@ -269,7 +267,7 @@ impl GameState {
                 state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
                 state.health -= power;
                 if let Some(hit_snd) = &tdef.hit_sound {
-                    snd.play(aud, hit_snd, stream_handle);
+                    snd.play(aud, hit_snd);
                 }
                 self.last_mine_attempt = ticks;
             }
