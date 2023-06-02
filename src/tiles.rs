@@ -144,7 +144,8 @@ impl BgTileId {
 impl MidTileId {
     pub const DIRT: Self = Self(1, PhantomData);
     pub const STONE: Self = Self(2, PhantomData);
-    pub const UNBREAKANIUM: Self = Self(6, PhantomData);
+    pub const TREE: Self = Self(6, PhantomData);
+    pub const UNBREAKANIUM: Self = Self(7, PhantomData);
 }
 
 impl FgTileId {

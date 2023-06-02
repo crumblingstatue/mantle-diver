@@ -217,6 +217,22 @@
                 id: (5),
             )),
         ),
+        (
+            light: None,
+            graphic_name: "tiles/tree",
+            layer: (
+                platform: false,
+                bb: None,
+            ),
+            neigh_aware: false,
+            draw_offs: (
+                x: -16,
+                y: -174,
+            ),
+            health: 10.0,
+            hit_sound: None,
+            item_drop: None,
+        ),
     ],
     fg: [
         (
