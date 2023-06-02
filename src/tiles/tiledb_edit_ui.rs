@@ -224,6 +224,16 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
                 }
             }
         });
+        match &mut def.hit_sound {
+            Some(snd) => {
+                ui.text_edit_singleline(snd);
+            }
+            None => {
+                if ui.button("Add hit sound").clicked() {
+                    def.hit_sound = Some(String::default());
+                }
+            }
+        }
         Layer::special_ui(&mut def.layer, ui);
         ui.label("P to paint tile at cursor");
         if ui.input(|inp| inp.key_down(egui::Key::P)) {
