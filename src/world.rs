@@ -233,8 +233,14 @@ impl Chunk {
             let y = y + i as u32 / CHUNK_EXTENT as u32;
             let local_x = i as u32 % CHUNK_EXTENT as u32;
             let ceil = 19_968u32.saturating_add_signed(hnoise[local_x as usize] as i32 / 4);
-            if y == ceil - 1 && noise as u32 % 6 == 0 {
-                t.mid = MidTileId::TREE;
+            if y == ceil - 1 {
+                if noise as u32 % 19 == 0 {
+                    t.mid = MidTileId::TREE;
+                } else if noise as u32 % 17 == 0 {
+                    t.mid = MidTileId::SMALL_ROCK;
+                } else if noise as u32 % 15 == 0 {
+                    t.mid = MidTileId::STICK;
+                }
             }
             if y < ceil {
                 continue;

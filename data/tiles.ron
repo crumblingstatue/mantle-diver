@@ -233,6 +233,38 @@
             hit_sound: Some("dig/tree"),
             item_drop: None,
         ),
+        (
+            light: None,
+            graphic_name: "tiles/smallrock",
+            layer: (
+                platform: false,
+                bb: None,
+            ),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 22,
+            ),
+            health: 10.0,
+            hit_sound: Some("dig/stone"),
+            item_drop: None,
+        ),
+        (
+            light: None,
+            graphic_name: "tiles/stick",
+            layer: (
+                platform: false,
+                bb: None,
+            ),
+            neigh_aware: false,
+            draw_offs: (
+                x: 0,
+                y: 24,
+            ),
+            health: 10.0,
+            hit_sound: Some("dig/tree"),
+            item_drop: None,
+        ),
     ],
     fg: [
         (
