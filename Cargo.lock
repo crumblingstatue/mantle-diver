@@ -213,17 +213,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc827186963e592360843fb5ba4b973e145841266c1357f7180c43526f2e5b61"
 
 [[package]]
-name = "bitfield-struct"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d45dab14a087f71b848e87af72d3155d9f13dae31b9a56b380864580fe00a81c"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.18",
-]
-
-[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1186,7 +1175,6 @@ name = "mantle-diver"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "bitfield-struct",
  "clap",
  "directories",
  "egui",
