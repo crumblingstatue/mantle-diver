@@ -121,7 +121,7 @@ pub fn step_towards(current: &mut f32, desired: f32, step: f32) {
     let diff = desired - *current; // Calculate the difference between current and desired values
     let direction = diff.signum(); // Get the sign of the difference to know which way to move
 
-    if diff.abs() < 0.02 {
+    if diff.abs() < step {
         // Check if the difference is less than the closeness threshold
         *current = desired; // If it is, set current to desired and return
         return;
