@@ -72,11 +72,18 @@ impl SoundPlayer {
     }
     pub fn play(&mut self, aud: &ResAudio, name: &str) {
         let sink = rodio::Sink::try_new(&self.stream_handle).unwrap();
-        sink.append(Decoder::new(aud.sounds[name].clone()).unwrap());
-        self.sounds.push_back(sink);
-        // Limit max number of sounds
-        if self.sounds.len() > 16 {
-            self.sounds.pop_front();
+        match aud.sounds.get(name) {
+            Some(name) => {
+                sink.append(Decoder::new(name.clone()).unwrap());
+                self.sounds.push_back(sink);
+                // Limit max number of sounds
+                if self.sounds.len() > 16 {
+                    self.sounds.pop_front();
+                }
+            }
+            None => {
+                log::error!("No such sound: {name}");
+            }
         }
     }
 }
