@@ -148,7 +148,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
         .show(ui, |ui| {
             for (i, def) in db.iter().enumerate() {
                 if ui
-                    .selectable_label(*sel_idx == i, format!("{i} {}", def.graphic_name))
+                    .selectable_label(*sel_idx == i, format!("{} {}", i + 1, def.graphic_name))
                     .clicked()
                 {
                     *sel_idx = i;
