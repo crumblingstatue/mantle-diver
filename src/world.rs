@@ -224,17 +224,22 @@ impl Chunk {
         )
         .with_seed(seed)
         .generate_scaled(0.0, 1000.0);
+        let hnoise = NoiseBuilder::gradient_1d_offset(x as f32, CHUNK_EXTENT as usize)
+            .with_seed(seed)
+            .generate_scaled(-10., 10.);
         // TODO: TAke care to generate all chunks with same seed on same world
         assert!(noise.len() == CHUNK_N_TILES);
         for (i, (t, noise)) in tiles.iter_mut().zip(noise.into_iter()).enumerate() {
             let y = y + i as u32 / CHUNK_EXTENT as u32;
-            if y < 19_968 {
+            let local_x = i as u32 % CHUNK_EXTENT as u32;
+            let ceil = 19_968u32.saturating_add_signed(hnoise[local_x as usize] as i32);
+            if y < ceil {
                 continue;
             }
-            if y < 19980 {
+            if y < 19980u32.saturating_add_signed(hnoise[local_x as usize] as i32) {
                 t.mid = MidTileId::DIRT;
                 t.bg = BgTileId::DIRT;
-                if y == 19968 {
+                if y == ceil {
                     t.fg = FgTileId::GRASS;
                 }
                 continue;
