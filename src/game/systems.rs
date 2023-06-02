@@ -3,7 +3,6 @@ use {
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
-        debug::world_dirs,
         game::for_each_tile_on_screen,
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
@@ -11,6 +10,7 @@ use {
         math::{step_towards, WorldPos, TILE_SIZE},
         player::FacingDir,
         res::{Res, ResAudio},
+        save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
         world::TilePos,
     },

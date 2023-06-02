@@ -1,7 +1,7 @@
 use {
     crate::inventory::Inventory,
     serde::{Deserialize, Serialize},
-    std::path::Path,
+    std::path::{Path, PathBuf},
 };
 
 /// Holds the chunk-independent save data like inventory, etc.
@@ -60,4 +60,13 @@ impl Save {
             world_dir.join("save.dat"),
         )?)?)
     }
+}
+
+pub fn world_dirs(worlds_path: &Path) -> Vec<PathBuf> {
+    let mut v = Vec::new();
+    for child in std::fs::read_dir(worlds_path).unwrap() {
+        let child = child.unwrap();
+        v.push(child.path());
+    }
+    v
 }
