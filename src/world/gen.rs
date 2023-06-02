@@ -41,7 +41,7 @@ impl Chunk {
             if y < ceil {
                 continue;
             }
-            if y < 19980u32.saturating_add_signed(hnoise[local_x as usize] as i32) {
+            if y < 20_060u32.saturating_add_signed(hnoise[local_x as usize] as i32) {
                 t.mid = MidTileId::DIRT;
                 t.bg = BgTileId::DIRT;
                 if y == ceil {
