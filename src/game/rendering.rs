@@ -200,7 +200,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     // Eye
     s.set_color(game.world.player.eye_color);
     s.set_texture_rect(res.atlas.rects["char/eye1"].to_sf());
-    s.set_position((base_x + eye_x, base_y + 8.));
+    s.set_position((base_x + eye_x, base_y + 9.));
     rt.draw(&s);
     // Hair
     s.set_color(game.world.player.hair_color);

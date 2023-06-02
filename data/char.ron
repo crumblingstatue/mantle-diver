@@ -10,6 +10,26 @@
                 y: 0,
             ),
         ),
+        "char/torso1": (
+            left: (
+                x: 5,
+                y: 0,
+            ),
+            right: (
+                x: 36,
+                y: 0,
+            ),
+        ),
+        "char/legs1": (
+            left: (
+                x: 4,
+                y: 0,
+            ),
+            right: (
+                x: 37,
+                y: 0,
+            ),
+        ),
         "char/shirt1": (
             left: (
                 x: 7,
@@ -30,13 +50,23 @@
                 y: 0,
             ),
         ),
-        "char/legs1": (
+        "char/hair1": (
             left: (
-                x: 4,
+                x: 1,
                 y: 0,
             ),
             right: (
-                x: 37,
+                x: 38,
+                y: 0,
+            ),
+        ),
+        "char/pants1": (
+            left: (
+                x: 7,
+                y: 0,
+            ),
+            right: (
+                x: 34,
                 y: 0,
             ),
         ),
@@ -50,16 +80,6 @@
                 y: 13,
             ),
         ),
-        "char/hair1": (
-            left: (
-                x: 1,
-                y: 0,
-            ),
-            right: (
-                x: 38,
-                y: 0,
-            ),
-        ),
         "char/shoes1": (
             left: (
                 x: 4,
@@ -67,26 +87,6 @@
             ),
             right: (
                 x: 37,
-                y: 0,
-            ),
-        ),
-        "char/torso1": (
-            left: (
-                x: 5,
-                y: 0,
-            ),
-            right: (
-                x: 36,
-                y: 0,
-            ),
-        ),
-        "char/pants1": (
-            left: (
-                x: 7,
-                y: 0,
-            ),
-            right: (
-                x: 34,
                 y: 0,
             ),
         ),

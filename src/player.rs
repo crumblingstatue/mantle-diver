@@ -40,12 +40,12 @@ impl Player {
             hspeed: 0.0,
             jumps_left: 0,
             down_intent: false,
-            skin_color: Color::WHITE,
+            skin_color: Color::rgb(249, 209, 151),
             eye_color: Color::WHITE,
-            hair_color: Color::BLACK,
-            pants_color: Color::WHITE,
-            shirt_color: Color::WHITE,
-            shoes_color: Color::WHITE,
+            hair_color: Color::rgb(105, 203, 255),
+            pants_color: Color::rgb(43, 85, 142),
+            shirt_color: Color::rgb(170, 37, 7),
+            shoes_color: Color::rgb(74, 44, 0),
             facing_dir: FacingDir::Right,
         }
     }
