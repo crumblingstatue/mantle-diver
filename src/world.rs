@@ -226,8 +226,17 @@ impl Chunk {
         .generate_scaled(0.0, 1000.0);
         // TODO: TAke care to generate all chunks with same seed on same world
         assert!(noise.len() == CHUNK_N_TILES);
-        for (t, noise) in tiles.iter_mut().zip(noise.into_iter()) {
-            if y < 19_900 {
+        for (i, (t, noise)) in tiles.iter_mut().zip(noise.into_iter()).enumerate() {
+            let y = y + i as u32 / CHUNK_EXTENT as u32;
+            if y < 19_968 {
+                continue;
+            }
+            if y < 19980 {
+                t.mid = MidTileId::DIRT;
+                t.bg = BgTileId::DIRT;
+                if y == 19968 {
+                    t.fg = FgTileId::GRASS;
+                }
                 continue;
             }
             t.bg = BgTileId::STONE;
