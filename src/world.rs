@@ -232,7 +232,7 @@ impl Chunk {
         for (i, (t, noise)) in tiles.iter_mut().zip(noise.into_iter()).enumerate() {
             let y = y + i as u32 / CHUNK_EXTENT as u32;
             let local_x = i as u32 % CHUNK_EXTENT as u32;
-            let ceil = 19_968u32.saturating_add_signed(hnoise[local_x as usize] as i32);
+            let ceil = 19_968u32.saturating_add_signed(hnoise[local_x as usize] as i32 / 4);
             if y < ceil {
                 continue;
             }
