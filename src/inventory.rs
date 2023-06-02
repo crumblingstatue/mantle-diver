@@ -138,7 +138,7 @@ pub enum UseAction {
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct ItemDb {
-    db: Vec<ItemDef>,
+    pub db: Vec<ItemDef>,
 }
 
 const PATH: &str = "items.ron";

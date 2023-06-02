@@ -109,5 +109,31 @@
             ),
             consumable: false,
         ),
+        (
+            name: "Small rock",
+            graphic_name: "tiles/smallrock",
+            draw_off: (
+                x: 5,
+                y: 12,
+            ),
+            use_action: MineTile(
+                power: 0.0,
+                delay: 0,
+            ),
+            consumable: true,
+        ),
+        (
+            name: "Stick",
+            graphic_name: "tiles/stick",
+            draw_off: (
+                x: 4,
+                y: 12,
+            ),
+            use_action: MineTile(
+                power: 0.0,
+                delay: 0,
+            ),
+            consumable: true,
+        ),
     ],
 )

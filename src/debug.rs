@@ -1,5 +1,8 @@
+use self::item_db_edit::ItemDbEdit;
+
 mod char_db_edit;
 mod console;
+mod item_db_edit;
 mod world_manager;
 
 use {
@@ -30,6 +33,7 @@ pub struct DebugState {
     pub console: Console,
     pub player_bb: bool,
     pub chardb_edit: CharDbEdit,
+    pub itemdb_edit: ItemDbEdit,
     world_mgr: WorldManager,
 }
 
@@ -120,6 +124,7 @@ pub(crate) fn do_debug_ui(
         cmd,
     );
     debug.chardb_edit.ui(ctx, &mut game.char_db);
+    debug.itemdb_edit.ui(ctx, &mut game.itemdb);
     console_ui(ctx, debug, cmd);
     debug.world_mgr.ui(ctx, game, worlds_path, cmd);
 }

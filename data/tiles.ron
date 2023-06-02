@@ -247,7 +247,13 @@
             ),
             health: 10.0,
             hit_sound: Some("dig/stone"),
-            item_drop: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (10),
+            )),
         ),
         (
             light: None,
@@ -263,7 +269,13 @@
             ),
             health: 10.0,
             hit_sound: Some("dig/tree"),
-            item_drop: None,
+            item_drop: Some((
+                qty_range: (
+                    start: 1,
+                    end: 1,
+                ),
+                id: (11),
+            )),
         ),
     ],
     fg: [

@@ -16,6 +16,8 @@ pub enum CmdLine {
     Chardb,
     /// Tile db editor
     Tiledb,
+    /// Item db editor
+    Itemdb,
     /// Set scale
     Scale(Scale),
     World(World),
@@ -102,6 +104,10 @@ impl CmdLine {
             }
             CmdLine::Atlas => Dispatch::ToggleAtlas,
             CmdLine::Greload => Dispatch::Cmd(Cmd::ReloadGraphics),
+            CmdLine::Itemdb => {
+                debug.itemdb_edit.open ^= true;
+                Dispatch::Noop
+            }
         }
     }
 }
