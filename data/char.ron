@@ -1,5 +1,25 @@
 (
     graphic_offsets: {
+        "items/woodpick": (
+            left: (
+                x: -14,
+                y: 0,
+            ),
+            right: (
+                x: 56,
+                y: 0,
+            ),
+        ),
+        "char/shirt1": (
+            left: (
+                x: 7,
+                y: 0,
+            ),
+            right: (
+                x: 34,
+                y: 0,
+            ),
+        ),
         "char/eye1": (
             left: (
                 x: 9,
@@ -7,26 +27,6 @@
             ),
             right: (
                 x: 32,
-                y: 0,
-            ),
-        ),
-        "char/torso1": (
-            left: (
-                x: 5,
-                y: 0,
-            ),
-            right: (
-                x: 36,
-                y: 0,
-            ),
-        ),
-        "char/hair1": (
-            left: (
-                x: 1,
-                y: 0,
-            ),
-            right: (
-                x: 38,
                 y: 0,
             ),
         ),
@@ -50,13 +50,43 @@
                 y: 13,
             ),
         ),
-        "items/woodpick": (
+        "char/hair1": (
             left: (
-                x: -14,
+                x: 1,
                 y: 0,
             ),
             right: (
-                x: 56,
+                x: 38,
+                y: 0,
+            ),
+        ),
+        "char/shoes1": (
+            left: (
+                x: 4,
+                y: 0,
+            ),
+            right: (
+                x: 37,
+                y: 0,
+            ),
+        ),
+        "char/torso1": (
+            left: (
+                x: 5,
+                y: 0,
+            ),
+            right: (
+                x: 36,
+                y: 0,
+            ),
+        ),
+        "char/pants1": (
+            left: (
+                x: 7,
+                y: 0,
+            ),
+            right: (
+                x: 34,
                 y: 0,
             ),
         ),

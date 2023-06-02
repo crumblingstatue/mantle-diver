@@ -120,8 +120,17 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         (x - game.camera_offset.x as i32) as f32,
         (y - game.camera_offset.y as i32) as f32,
     );
-    let (mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x, mut tool_x) =
-        (0.0, 4.0, -4.0, 0.0, 0.0, 0.0);
+    let (
+        mut head_x,
+        mut eye_x,
+        mut hair_x,
+        mut torso_x,
+        mut legs_x,
+        mut tool_x,
+        mut pants_x,
+        mut shirt_x,
+        mut shoes_x,
+    ) = (0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     match game.world.player.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
@@ -138,6 +147,15 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
+                pants_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
+                shirt_x = offs.left.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
+                shoes_x = offs.left.x as f32;
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
                 tool_x = offs.left.x as f32;
@@ -159,6 +177,15 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
+                pants_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
+                shirt_x = offs.right.x as f32;
+            }
+            if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
+                shoes_x = offs.right.x as f32;
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
                 tool_x = offs.right.x as f32;
@@ -189,7 +216,23 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     s.set_texture_rect(res.atlas.rects["char/legs1"].to_sf());
     s.set_position((base_x + legs_x, base_y + 64.0));
     rt.draw(&s);
+    // Shirt
+    s.set_texture_rect(res.atlas.rects["char/shirt1"].to_sf());
+    s.set_position((base_x + shirt_x, base_y + 32.0));
+    s.set_color(game.world.player.shirt_color);
+    rt.draw(&s);
+    // Pants
+    s.set_texture_rect(res.atlas.rects["char/pants1"].to_sf());
+    s.set_position((base_x + pants_x, base_y + 64.0));
+    s.set_color(game.world.player.pants_color);
+    rt.draw(&s);
+    // Shoes
+    s.set_texture_rect(res.atlas.rects["char/shoes1"].to_sf());
+    s.set_position((base_x + shoes_x, base_y + 87.0));
+    s.set_color(game.world.player.shoes_color);
+    rt.draw(&s);
     // Tool
+    s.set_color(Color::WHITE);
     s.set_texture_rect(res.atlas.rects["items/woodpick"].to_sf());
     s.set_position((base_x + tool_x, base_y + 30.0));
     rt.draw(&s);

@@ -20,6 +20,9 @@ pub struct Player {
     pub skin_color: Color,
     pub eye_color: Color,
     pub hair_color: Color,
+    pub pants_color: Color,
+    pub shirt_color: Color,
+    pub shoes_color: Color,
     pub facing_dir: FacingDir,
 }
 
@@ -40,6 +43,9 @@ impl Player {
             skin_color: Color::WHITE,
             eye_color: Color::WHITE,
             hair_color: Color::BLACK,
+            pants_color: Color::WHITE,
+            shirt_color: Color::WHITE,
+            shoes_color: Color::WHITE,
             facing_dir: FacingDir::Right,
         }
     }
@@ -64,6 +70,9 @@ impl Player {
         self.hair_color = sav.hair_color.to_sf();
         self.eye_color = sav.eye_color.to_sf();
         self.skin_color = sav.skin_color.to_sf();
+        self.shirt_color = sav.shirt_color.to_sf();
+        self.pants_color = sav.pants_color.to_sf();
+        self.shoes_color = sav.shoes_color.to_sf();
     }
 
     pub(crate) fn sav(&self) -> crate::save::PlayerSav {
@@ -71,6 +80,9 @@ impl Player {
             skin_color: Rgb::from_sf(self.skin_color),
             eye_color: Rgb::from_sf(self.eye_color),
             hair_color: Rgb::from_sf(self.hair_color),
+            shirt_color: Rgb::from_sf(self.shirt_color),
+            pants_color: Rgb::from_sf(self.pants_color),
+            shoes_color: Rgb::from_sf(self.shoes_color),
         }
     }
 }

@@ -123,6 +123,12 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                 color_edit_button(ui, &mut game.world.player.eye_color);
                 ui.label("Hair color");
                 color_edit_button(ui, &mut game.world.player.hair_color);
+                ui.label("Shirt color");
+                color_edit_button(ui, &mut game.world.player.shirt_color);
+                ui.label("Pants color");
+                color_edit_button(ui, &mut game.world.player.pants_color);
+                ui.label("Shoes color");
+                color_edit_button(ui, &mut game.world.player.shoes_color);
                 ui.checkbox(&mut debug.player_bb, "Draw bb");
             });
             ui.separator();

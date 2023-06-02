@@ -17,6 +17,9 @@ pub struct PlayerSav {
     pub skin_color: Rgb,
     pub eye_color: Rgb,
     pub hair_color: Rgb,
+    pub shirt_color: Rgb,
+    pub pants_color: Rgb,
+    pub shoes_color: Rgb,
 }
 
 #[derive(Serialize, Deserialize)]
