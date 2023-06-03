@@ -549,4 +549,12 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
         game.menu.stack.push(list);
         game.menu.open = true;
     }
+    if input.pressed_raw(Key::P) {
+        game.paused ^= true;
+        game.pause_next_frame = false;
+    }
+    if input.pressed_raw(Key::Period) {
+        game.paused = false;
+        game.pause_next_frame = true;
+    }
 }

@@ -44,6 +44,8 @@ pub struct GameState {
     pub ecw: hecs::World,
     pub ecb: hecs::CommandBuffer,
     pub player_en: hecs::Entity,
+    pub paused: bool,
+    pub pause_next_frame: bool,
 }
 
 #[derive(Debug)]
@@ -123,6 +125,8 @@ impl GameState {
             ecw,
             ecb: hecs::CommandBuffer::default(),
             player_en,
+            paused: false,
+            pause_next_frame: false,
         }
     }
 
@@ -142,11 +146,14 @@ impl GameState {
         cmd: &mut CmdVec,
         worlds_dir: &Path,
     ) {
-        if self.menu.open {
+        systems::general_input_system(self, input);
+        if self.menu.open || self.paused {
             systems::pause_menu_system(self, input, cmd, worlds_dir);
             return;
         }
-        systems::general_input_system(self, input);
+        if self.pause_next_frame {
+            self.paused = true;
+        }
         update_on_screen_tile_ents(self, on_screen_tile_ents, rt_size);
         if debug.freecam {
             systems::freecam_move_system(self, mouse_world_pos, input);
