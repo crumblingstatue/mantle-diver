@@ -92,7 +92,12 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     ui.label("Shoes color");
                     color_edit_button(ui, &mut plr.dat.shoes_color);
                 });
-                ui.checkbox(&mut debug.dbg_overlay, "Draw debug overlay");
+                if ui
+                    .checkbox(&mut debug.dbg_overlay, "Draw debug overlay")
+                    .clicked()
+                {
+                    DBG_OVR.toggle();
+                }
                 ui.separator();
             }
             egui::ScrollArea::vertical().show(ui, |ui| {
@@ -139,4 +144,4 @@ pub enum DbgOvr {
     WldRect { r: WorldRect, c: Color },
 }
 
-pub static DBG_OVR: MsgBuf<DbgOvr> = MsgBuf::new(true);
+pub static DBG_OVR: MsgBuf<DbgOvr> = MsgBuf::new(false);
