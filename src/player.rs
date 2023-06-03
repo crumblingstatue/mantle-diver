@@ -1,19 +1,10 @@
 use {
-    crate::{
-        math::{WorldPos, TILE_SIZE},
-        save::Rgb,
-        stringfmt::LengthDisp,
-        world::{TPosSc, TilePos},
-    },
+    crate::{math::WorldPos, save::Rgb, stringfmt::LengthDisp},
     s2dc::{vec2, MobileEntity},
     sfml::graphics::Color,
 };
 
-#[derive(Debug)]
-pub struct Player {
-    pub col_en: MobileEntity,
-    pub vspeed: f32,
-    pub hspeed: f32,
+pub struct PlayerData {
     pub jumps_left: u8,
     /// true if the player wants to jump down from a platform
     pub down_intent: bool,
@@ -26,18 +17,62 @@ pub struct Player {
     pub facing_dir: FacingDir,
 }
 
+pub struct MovingEnt {
+    pub hspeed: f32,
+    pub vspeed: f32,
+    pub mob: MobileEntity,
+}
+impl MovingEnt {
+    fn new(pos: WorldPos, size: s2dc::Vec2) -> Self {
+        Self {
+            hspeed: 0.0,
+            vspeed: 0.0,
+            mob: MobileEntity::from_pos_and_bb(vec2(pos.x as i32, pos.y as i32), size),
+        }
+    }
+    pub fn feet_y(&self) -> i32 {
+        self.mob.en.pos.y + self.mob.en.bb.y
+    }
+    pub fn depth_disp(&self) -> LengthDisp {
+        LengthDisp(self.feet_y() as f32 - WorldPos::SURFACE as f32)
+    }
+}
+
+pub struct IsPlayer;
+
+#[derive(hecs::Bundle)]
+pub struct PlayerBundle {
+    pub mov: MovingEnt,
+    pub dat: PlayerData,
+    pub _is: IsPlayer,
+}
+
+#[derive(hecs::Query)]
+pub struct PlayerQuery<'a> {
+    pub mov: &'a mut MovingEnt,
+    pub dat: &'a mut PlayerData,
+    _is: &'a IsPlayer,
+}
+
+impl PlayerBundle {
+    pub fn new_at(pos: WorldPos) -> Self {
+        Self {
+            mov: MovingEnt::new(pos, vec2(20, 46)),
+            dat: PlayerData::default(),
+            _is: IsPlayer,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum FacingDir {
     Left,
     Right,
 }
 
-impl Player {
-    pub fn new_at(pos: WorldPos) -> Self {
+impl Default for PlayerData {
+    fn default() -> Self {
         Self {
-            col_en: MobileEntity::from_pos_and_bb(vec2(pos.x as i32, pos.y as i32), vec2(20, 46)),
-            vspeed: 0.0,
-            hspeed: 0.0,
             jumps_left: 0,
             down_intent: false,
             skin_color: Color::rgb(249, 209, 151),
@@ -49,23 +84,9 @@ impl Player {
             facing_dir: FacingDir::Right,
         }
     }
-    #[expect(dead_code)]
-    pub fn center_tp(&self) -> TilePos {
-        TilePos {
-            x: (self.col_en.en.pos.x / TILE_SIZE as i32) as TPosSc,
-            y: (self.col_en.en.pos.y / TILE_SIZE as i32) as TPosSc,
-        }
-    }
-    pub fn can_jump(&self) -> bool {
-        self.jumps_left > 0
-    }
-    pub fn feet_y(&self) -> i32 {
-        self.col_en.en.pos.y + self.col_en.en.bb.y
-    }
-    pub fn depth_disp(&self) -> LengthDisp {
-        LengthDisp(self.feet_y() as f32 - WorldPos::SURFACE as f32)
-    }
+}
 
+impl PlayerData {
     pub(crate) fn update_from_save(&mut self, sav: &crate::save::PlayerSav) {
         self.hair_color = sav.hair_color.to_sf();
         self.eye_color = sav.eye_color.to_sf();
@@ -84,5 +105,9 @@ impl Player {
             pants_color: Rgb::from_sf(self.pants_color),
             shoes_color: Rgb::from_sf(self.shoes_color),
         }
+    }
+
+    pub fn can_jump(&self) -> bool {
+        self.jumps_left > 0
     }
 }

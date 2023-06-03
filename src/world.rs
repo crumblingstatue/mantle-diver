@@ -5,8 +5,6 @@ mod serialization;
 use {
     self::serialization::save_chunk,
     crate::{
-        math::WorldPos,
-        player::Player,
         tiles::{BgTileId, FgTileId, MidTileId, TileId},
         world::reg_chunk_existence::ExistenceBitset,
     },
@@ -51,18 +49,16 @@ pub struct World {
     /// This is the number of ticks since the world has started.
     /// In other words, the age of the world.
     pub ticks: u64,
-    pub player: Player,
     pub name: String,
     pub path: PathBuf,
     pub seed: i32,
 }
 
 impl World {
-    pub fn new(spawn_point: WorldPos, name: &str, path: PathBuf, seed: i32) -> Self {
+    pub fn new(name: &str, path: PathBuf, seed: i32) -> Self {
         Self {
             chunks: Default::default(),
             ticks: Default::default(),
-            player: Player::new_at(spawn_point),
             name: name.to_string(),
             path,
             seed,

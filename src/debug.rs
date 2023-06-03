@@ -1,4 +1,4 @@
-use self::item_db_edit::ItemDbEdit;
+use {self::item_db_edit::ItemDbEdit, crate::player::PlayerQuery};
 
 mod char_db_edit;
 mod console;
@@ -56,39 +56,41 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     "Cam offset from center: {}",
                     LengthDisp(co.x as f32 - WorldPos::CENTER as f32)
                 ));
-            } else {
-                ui.label(format!("Player Depth: {}", game.world.player.depth_disp()));
-                ui.label(format!(
-                    "Player offset from center: {}",
-                    LengthDisp(game.world.player.col_en.en.pos.x as f32 - WorldPos::CENTER as f32)
-                ));
-                ui.label(format!(
-                    "Hspeed: {} ({} km/h)",
-                    game.world.player.hspeed,
-                    px_per_frame_to_km_h(game.world.player.hspeed)
-                ));
-                ui.label(format!(
-                    "Vspeed: {} ({} km/h)",
-                    game.world.player.vspeed,
-                    px_per_frame_to_km_h(game.world.player.vspeed)
-                ));
             }
-            ui.collapsing("Player", |ui| {
-                ui.label("Skin color");
-                color_edit_button(ui, &mut game.world.player.skin_color);
-                ui.label("Eye color");
-                color_edit_button(ui, &mut game.world.player.eye_color);
-                ui.label("Hair color");
-                color_edit_button(ui, &mut game.world.player.hair_color);
-                ui.label("Shirt color");
-                color_edit_button(ui, &mut game.world.player.shirt_color);
-                ui.label("Pants color");
-                color_edit_button(ui, &mut game.world.player.pants_color);
-                ui.label("Shoes color");
-                color_edit_button(ui, &mut game.world.player.shoes_color);
-                ui.checkbox(&mut debug.player_bb, "Draw bb");
-            });
-            ui.separator();
+
+            for (_en, plr) in game.ecw.query_mut::<PlayerQuery>() {
+                ui.collapsing("Player", |ui| {
+                    ui.label(format!("Player Depth: {}", plr.mov.depth_disp()));
+                    ui.label(format!(
+                        "Player offset from center: {}",
+                        LengthDisp(plr.mov.mob.en.pos.x as f32 - WorldPos::CENTER as f32)
+                    ));
+                    ui.label(format!(
+                        "Hspeed: {} ({} km/h)",
+                        plr.mov.hspeed,
+                        px_per_frame_to_km_h(plr.mov.hspeed)
+                    ));
+                    ui.label(format!(
+                        "Vspeed: {} ({} km/h)",
+                        plr.mov.vspeed,
+                        px_per_frame_to_km_h(plr.mov.vspeed)
+                    ));
+                    ui.label("Skin color");
+                    color_edit_button(ui, &mut plr.dat.skin_color);
+                    ui.label("Eye color");
+                    color_edit_button(ui, &mut plr.dat.eye_color);
+                    ui.label("Hair color");
+                    color_edit_button(ui, &mut plr.dat.hair_color);
+                    ui.label("Shirt color");
+                    color_edit_button(ui, &mut plr.dat.shirt_color);
+                    ui.label("Pants color");
+                    color_edit_button(ui, &mut plr.dat.pants_color);
+                    ui.label("Shoes color");
+                    color_edit_button(ui, &mut plr.dat.shoes_color);
+                    ui.checkbox(&mut debug.player_bb, "Draw bb");
+                });
+                ui.separator();
+            }
             egui::ScrollArea::vertical().show(ui, |ui| {
                 IMMEDIATE.for_each(|msg| {
                     ui.label(msg);

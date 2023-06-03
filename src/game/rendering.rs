@@ -4,7 +4,7 @@ use {
         debug::DebugState,
         graphics::ScreenVec,
         math::{smoothwave, WorldPos, TILE_SIZE},
-        player::FacingDir,
+        player::{FacingDir, PlayerQuery},
         res::Res,
     },
     gamedebug_core::imm_dbg,
@@ -114,8 +114,12 @@ fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState,
 }
 
 fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
+    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+        log::error!("Player query failed");
+        return;
+    };
     let mut s = Sprite::with_texture(&res.atlas.tex);
-    let (x, y, _w, _h) = game.world.player.col_en.en.xywh();
+    let (x, y, _w, _h) = plr.mov.mob.en.xywh();
     let (base_x, base_y) = (
         (x - game.camera_offset.x as i32) as f32,
         (y - game.camera_offset.y as i32) as f32,
@@ -131,7 +135,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         mut shirt_x,
         mut shoes_x,
     ) = (0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    match game.world.player.facing_dir {
+    match plr.dat.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
                 head_x = offs.left.x as f32;
@@ -192,22 +196,22 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
         }
     }
-    s.set_color(game.world.player.skin_color);
+    s.set_color(plr.dat.skin_color);
     // Head
     s.set_texture_rect(res.atlas.rects["char/head1"].to_sf());
     s.set_position((base_x + head_x, base_y));
     rt.draw(&s);
     // Eye
-    s.set_color(game.world.player.eye_color);
+    s.set_color(plr.dat.eye_color);
     s.set_texture_rect(res.atlas.rects["char/eye1"].to_sf());
     s.set_position((base_x + eye_x, base_y + 9.));
     rt.draw(&s);
     // Hair
-    s.set_color(game.world.player.hair_color);
+    s.set_color(plr.dat.hair_color);
     s.set_texture_rect(res.atlas.rects["char/hair1"].to_sf());
     s.set_position((base_x + hair_x, base_y - 4.));
     rt.draw(&s);
-    s.set_color(game.world.player.skin_color);
+    s.set_color(plr.dat.skin_color);
     // Torso
     s.set_texture_rect(res.atlas.rects["char/torso1"].to_sf());
     s.set_position((base_x + torso_x, base_y + 32.0));
@@ -219,17 +223,17 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     // Shirt
     s.set_texture_rect(res.atlas.rects["char/shirt1"].to_sf());
     s.set_position((base_x + shirt_x, base_y + 32.0));
-    s.set_color(game.world.player.shirt_color);
+    s.set_color(plr.dat.shirt_color);
     rt.draw(&s);
     // Pants
     s.set_texture_rect(res.atlas.rects["char/pants1"].to_sf());
     s.set_position((base_x + pants_x, base_y + 64.0));
-    s.set_color(game.world.player.pants_color);
+    s.set_color(plr.dat.pants_color);
     rt.draw(&s);
     // Shoes
     s.set_texture_rect(res.atlas.rects["char/shoes1"].to_sf());
     s.set_position((base_x + shoes_x, base_y + 87.0));
-    s.set_color(game.world.player.shoes_color);
+    s.set_color(plr.dat.shoes_color);
     rt.draw(&s);
     // Tool
     s.set_color(Color::WHITE);
@@ -239,7 +243,10 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
 }
 
 fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
-    let (x, y, w, h) = game.world.player.col_en.en.xywh();
+    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+        return;
+    };
+    let (x, y, w, h) = plr.mov.mob.en.xywh();
     let mut rect_sh = RectangleShape::new();
     rect_sh.set_fill_color(Color::rgba(255, 255, 255, 96));
     rect_sh.set_position((
@@ -251,8 +258,8 @@ fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
     rect_sh.set_size((2., 2.));
     rect_sh.set_fill_color(Color::RED);
     rect_sh.set_position((
-        (game.world.player.col_en.en.pos.x - game.camera_offset.x as i32) as f32,
-        (game.world.player.col_en.en.pos.y - game.camera_offset.y as i32) as f32,
+        (plr.mov.mob.en.pos.x - game.camera_offset.x as i32) as f32,
+        (plr.mov.mob.en.pos.y - game.camera_offset.y as i32) as f32,
     ));
     rt.draw(&rect_sh);
 }
@@ -309,7 +316,9 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
     rs.set_outline_thickness(0.);
     rt.draw(&rs);
     text.set_position((0., 0.));
-    text.set_string(&format!("Depth: {}", game.world.player.depth_disp()));
+    if let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() {
+        text.set_string(&format!("Depth: {}", plr.mov.depth_disp()));
+    };
     text.set_character_size(18);
     rt.draw(&text);
     if game.menu.open {

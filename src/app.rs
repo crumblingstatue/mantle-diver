@@ -7,6 +7,7 @@ use {
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
         math::center_offset,
+        player::PlayerQuery,
         res::{Res, ResAudio},
         save::Save,
         world::TilePos,
@@ -157,10 +158,17 @@ impl App {
         self.cfg.last_world = Some(self.game.world.name.clone());
         self.cfg.scale = self.scale;
         self.cfg.save(self.project_dirs.config_dir()).unwrap();
+        let (_en, plr) = self
+            .game
+            .ecw
+            .query_mut::<PlayerQuery>()
+            .into_iter()
+            .next()
+            .unwrap();
         let result = Save {
             inventory: self.game.inventory,
             world_seed: self.game.world.seed,
-            player: self.game.world.player.sav(),
+            player: plr.dat.sav(),
         }
         .save(&self.game.world.path);
         log::info!("Save result: {result:?}");

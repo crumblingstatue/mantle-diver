@@ -8,7 +8,7 @@ use {
         inventory::{self, ItemId, UseAction},
         itemdrop::Itemdrop,
         math::{step_towards, WorldPos, TILE_SIZE},
-        player::FacingDir,
+        player::{FacingDir, MovingEnt, PlayerQuery},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
@@ -99,6 +99,13 @@ pub(super) fn item_use_system(
     }
 }
 
+pub(super) fn move_system(game: &mut GameState) {
+    for (_en, mov) in game.ecw.query_mut::<&mut MovingEnt>() {
+        let terminal_velocity = 60.0;
+        mov.vspeed = mov.vspeed.clamp(-terminal_velocity, terminal_velocity);
+    }
+}
+
 pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::Sink, res: &Res) {
     if game.camera_offset.y > 642_000 {
         game.current_biome = Biome::Underground;
@@ -132,6 +139,9 @@ pub(super) fn player_move_system(
     rt_size: Vector2u,
     on_screen_tile_ents: &mut Vec<TileColEn>,
 ) {
+    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+        return;
+    };
     let spd = if input.down_raw(Key::LShift) {
         8.0
     } else if input.down_raw(Key::LControl) {
@@ -139,26 +149,21 @@ pub(super) fn player_move_system(
     } else {
         3.0
     };
-    game.world.player.hspeed = 0.;
+    plr.mov.hspeed = 0.;
     if input.down(InputAction::Left) {
-        game.world.player.hspeed = -spd;
-        game.world.player.facing_dir = FacingDir::Left;
+        plr.mov.hspeed = -spd;
+        plr.dat.facing_dir = FacingDir::Left;
     }
     if input.down(InputAction::Right) {
-        game.world.player.hspeed = spd;
-        game.world.player.facing_dir = FacingDir::Right;
+        plr.mov.hspeed = spd;
+        plr.dat.facing_dir = FacingDir::Right;
     }
-    if input.down(InputAction::Jump) && game.world.player.can_jump() {
-        game.world.player.vspeed = -10.0;
-        game.world.player.jumps_left = 0;
+    if input.down(InputAction::Jump) && plr.dat.can_jump() {
+        plr.mov.vspeed = -10.0;
+        plr.dat.jumps_left = 0;
     }
-    game.world.player.down_intent = input.down(InputAction::Down);
-    let terminal_velocity = 60.0;
-    game.world.player.vspeed = game
-        .world
-        .player
-        .vspeed
-        .clamp(-terminal_velocity, terminal_velocity);
+    plr.dat.down_intent = input.down(InputAction::Down);
+
     on_screen_tile_ents.clear();
     for_each_tile_on_screen(game.camera_offset, rt_size, |tp, _sp| {
         let tile = game.world.tile_at_mut(tp).mid;
@@ -183,51 +188,45 @@ pub(super) fn player_move_system(
         });
     });
     imm_dbg!(on_screen_tile_ents.len());
-    game.world
-        .player
-        .col_en
-        .move_y(game.world.player.vspeed, |player_en, off| {
-            let mut col = false;
-            for en in on_screen_tile_ents.iter() {
-                if player_en.would_collide(&en.col, off) {
-                    if en.platform {
-                        if game.world.player.vspeed < 0. {
-                            continue;
-                        }
-                        // If the player's feet are below the top of the platform,
-                        // collision shouldn't happen
-                        let player_feet = player_en.pos.y + player_en.bb.y;
-                        if player_feet > en.col.pos.y || game.world.player.down_intent {
-                            continue;
-                        }
-                    }
-                    col = true;
-                    if game.world.player.vspeed > 0. {
-                        game.world.player.jumps_left = 1;
-                    }
-                    game.world.player.vspeed = 0.;
-                }
-            }
-            col
-        });
-    game.world
-        .player
-        .col_en
-        .move_x(game.world.player.hspeed, |player_en, off| {
-            let mut col = false;
-            for en in on_screen_tile_ents.iter() {
+    plr.mov.mob.move_y(plr.mov.vspeed, |player_en, off| {
+        let mut col = false;
+        for en in on_screen_tile_ents.iter() {
+            if player_en.would_collide(&en.col, off) {
                 if en.platform {
-                    continue;
+                    if plr.mov.vspeed < 0. {
+                        continue;
+                    }
+                    // If the player's feet are below the top of the platform,
+                    // collision shouldn't happen
+                    let player_feet = player_en.pos.y + player_en.bb.y;
+                    if player_feet > en.col.pos.y || plr.dat.down_intent {
+                        continue;
+                    }
                 }
-                if player_en.would_collide(&en.col, off) {
-                    col = true;
-                    game.world.player.hspeed = 0.;
+                col = true;
+                if plr.mov.vspeed > 0. {
+                    plr.dat.jumps_left = 1;
                 }
+                plr.mov.vspeed = 0.;
             }
-            col
-        });
-    game.world.player.vspeed += game.gravity;
-    let (x, y, _w, _h) = game.world.player.col_en.en.xywh();
+        }
+        col
+    });
+    plr.mov.mob.move_x(plr.mov.hspeed, |player_en, off| {
+        let mut col = false;
+        for en in on_screen_tile_ents.iter() {
+            if en.platform {
+                continue;
+            }
+            if player_en.would_collide(&en.col, off) {
+                col = true;
+                plr.mov.hspeed = 0.;
+            }
+        }
+        col
+    });
+    plr.mov.vspeed += game.gravity;
+    let (x, y, _w, _h) = plr.mov.mob.en.xywh();
     game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
     game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
 }
@@ -251,9 +250,12 @@ pub(super) fn freecam_move_system(game: &mut GameState, mouse_world_pos: WorldPo
     if input.down(InputAction::Down) {
         game.camera_offset.y = game.camera_offset.y.saturating_add(spd);
     }
+    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+        return;
+    };
     if input.pressed_raw(Key::P) {
-        game.world.player.col_en.en.pos.x = mouse_world_pos.x as i32;
-        game.world.player.col_en.en.pos.y = mouse_world_pos.y as i32;
+        plr.mov.mob.en.pos.x = mouse_world_pos.x as i32;
+        plr.mov.mob.en.pos.y = mouse_world_pos.y as i32;
     }
 }
 
@@ -337,8 +339,12 @@ pub(super) fn item_drop_claim_system(
         });
         itemdrop.vspeed += game.gravity;
         let mut retain = true;
+        let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+            log::error!("No player");
+            return true;
+        };
         #[expect(clippy::collapsible_if)]
-        if game.world.player.col_en.en.collides(&itemdrop.s2dc_en.en) {
+        if plr.mov.mob.en.collides(&itemdrop.s2dc_en.en) {
             if game.inventory.add(itemdrop.id, 1) {
                 snd.play(aud, "etc/pickup");
                 retain = false;

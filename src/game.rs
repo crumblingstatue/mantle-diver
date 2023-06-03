@@ -10,6 +10,7 @@ use {
         inventory::{Inventory, ItemDb},
         itemdrop::Itemdrop,
         math::{wp_to_tp, WorldPos},
+        player::PlayerBundle,
         res::{Res, ResAudio},
         save::Save,
         tiles::TileDb,
@@ -42,6 +43,7 @@ pub struct GameState {
     pub last_mine_attempt: u64,
     pub item_drops: Vec<Itemdrop>,
     pub menu: Menu,
+    pub ecw: hecs::World,
 }
 
 #[derive(Debug)]
@@ -85,18 +87,22 @@ impl GameState {
         let mut itemdb = ItemDb::load_or_default("data");
         itemdb.update_rects(&res.atlas.rects);
         let mut inventory = Inventory::new_debug();
-        let mut world;
+        let world;
+        let mut plr = PlayerBundle::new_at(spawn_point);
         match Save::load(&path) {
             Ok(save) => {
                 inventory = save.inventory;
-                world = World::new(spawn_point, &world_name, path, save.world_seed);
-                world.player.update_from_save(&save.player);
+                world = World::new(&world_name, path, save.world_seed);
+                plr.dat.update_from_save(&save.player);
             }
             Err(e) => {
                 log::error!("Failed to load save: {e}");
-                world = World::new(spawn_point, &world_name, path, thread_rng().gen());
+                world = World::new(&world_name, path, thread_rng().gen());
             }
         }
+        let mut ecw = hecs::World::new();
+        ecw.spawn(plr);
+        log::info!("=== Spawned Player ===");
         Self {
             camera_offset: spawn_point,
             world,
@@ -115,6 +121,7 @@ impl GameState {
             item_drops: Default::default(),
             menu: Menu::default(),
             char_db: CharDb::load().unwrap(),
+            ecw,
         }
     }
 
@@ -144,6 +151,7 @@ impl GameState {
         } else {
             systems::player_move_system(self, input, rt_size, on_screen_tile_ents);
         }
+        systems::move_system(self);
         systems::item_use_system(self, input, mouse_tpos, aud, snd);
         systems::biome_watch_system(self, music_sink, res);
         systems::inventory_input_system(self, input);

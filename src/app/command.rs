@@ -1,6 +1,8 @@
 use {
     super::App,
-    crate::{command::Cmd, game::GameState, res::Res, texture_atlas::AtlasBundle},
+    crate::{
+        command::Cmd, game::GameState, player::PlayerQuery, res::Res, texture_atlas::AtlasBundle,
+    },
     std::fmt::Write,
 };
 
@@ -10,16 +12,20 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res) {
             Cmd::QuitApp => app.should_quit = true,
             Cmd::ToggleFreecam => app.debug.freecam ^= true,
             Cmd::TeleportPlayer { pos, relative } => {
-                if relative {
-                    let s2dc = pos.to_s2dc();
-                    app.game.world.player.col_en.en.pos.x += s2dc.x;
-                    app.game.world.player.col_en.en.pos.y += s2dc.y;
-                } else {
-                    app.game.world.player.col_en.en.pos = pos.to_s2dc()
+                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
+                    if relative {
+                        let s2dc = pos.to_s2dc();
+                        plr.mov.mob.en.pos.x += s2dc.x;
+                        plr.mov.mob.en.pos.y += s2dc.y;
+                    } else {
+                        plr.mov.mob.en.pos = pos.to_s2dc()
+                    }
                 }
             }
             Cmd::TeleportPlayerSpawn => {
-                app.game.world.player.col_en.en.pos = app.game.spawn_point.to_s2dc()
+                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
+                    plr.mov.mob.en.pos = app.game.spawn_point.to_s2dc()
+                }
             }
             Cmd::GiveItemByName { name, amount } => {
                 for (id, item) in app.game.itemdb.iter() {
