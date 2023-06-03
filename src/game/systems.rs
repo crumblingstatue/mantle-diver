@@ -204,11 +204,12 @@ fn calc_mov_wrect(mov: &MovingEnt) -> WorldRect {
 
 fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<TileColEn> {
     let mut ents = vec![];
+    // FIXME: We need to massively overcompensate the size of the area to check
+    // due to incorrect/imprecise calculations.
     let x = (wrect.topleft.x / TILE_SIZE as u32) - 1;
     let y = (wrect.topleft.y / TILE_SIZE as u32) - 1;
-    // Plus one just to be safe
-    let w = (wrect.w / TILE_SIZE as u32) + 3;
-    let h = (wrect.h / TILE_SIZE as u32) + 3;
+    let w = (wrect.w / TILE_SIZE as u32) + 4;
+    let h = (wrect.h / TILE_SIZE as u32) + 4;
     DBG_OVR.push(DbgOvr::WldRect {
         r: WorldRect {
             topleft: WorldPos {
