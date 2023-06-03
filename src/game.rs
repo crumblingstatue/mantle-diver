@@ -147,8 +147,11 @@ impl GameState {
         worlds_dir: &Path,
     ) {
         systems::general_input_system(self, input);
-        if self.menu.open || self.paused {
+        if self.menu.open {
             systems::pause_menu_system(self, input, cmd, worlds_dir);
+            return;
+        }
+        if self.paused {
             return;
         }
         if self.pause_next_frame {

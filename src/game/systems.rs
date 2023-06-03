@@ -373,6 +373,7 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
 }
 
 pub struct Menu {
+    pub first_frame: bool,
     pub stack: MenuStack,
     pub cursor: usize,
     pub open: bool,
@@ -383,6 +384,7 @@ pub struct Menu {
 impl Default for Menu {
     fn default() -> Self {
         Self {
+            first_frame: true,
             stack: Default::default(),
             cursor: Default::default(),
             open: Default::default(),
@@ -488,9 +490,10 @@ pub(super) fn pause_menu_system(
             }
         }
     }
-    if input.pressed_raw(Key::Escape) {
+    if input.pressed_raw(Key::Escape) && !game.menu.first_frame {
         game.menu.cursor = 0;
         game.menu.stack.pop();
+        dbg!(&game.menu.stack.len());
         if game.menu.stack.is_empty() {
             game.menu.open = false;
         }
@@ -509,6 +512,7 @@ pub(super) fn pause_menu_system(
             }
         }
     }
+    game.menu.first_frame = false;
 }
 
 fn build_keyconfig_menu(input: &Input) -> Vec<MenuItem> {
@@ -527,7 +531,7 @@ fn build_keyconfig_menu(input: &Input) -> Vec<MenuItem> {
 }
 
 pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
-    if input.pressed_raw(Key::Escape) {
+    if input.pressed_raw(Key::Escape) && !game.menu.open {
         let list = vec![
             MenuItem {
                 text: "New world (random)".into(),
@@ -548,6 +552,7 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
         ];
         game.menu.stack.push(list);
         game.menu.open = true;
+        game.menu.first_frame = true;
     }
     if input.pressed_raw(Key::P) {
         game.paused ^= true;
