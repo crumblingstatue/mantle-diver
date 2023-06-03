@@ -1,5 +1,5 @@
 use {
-    self::systems::Menu,
+    self::systems::{update_on_screen_tile_ents, Menu},
     crate::{
         app::{SoundPlayer, TileColEn},
         char::CharDb,
@@ -8,7 +8,6 @@ use {
         graphics::{ScreenSc, ScreenVec},
         input::Input,
         inventory::{Inventory, ItemDb},
-        itemdrop::Itemdrop,
         math::{wp_to_tp, WorldPos},
         player::PlayerBundle,
         res::{Res, ResAudio},
@@ -41,9 +40,10 @@ pub struct GameState {
     pub spawn_point: WorldPos,
     pub transient_block_state: FnvHashMap<TilePos, TransientBlockState>,
     pub last_mine_attempt: u64,
-    pub item_drops: Vec<Itemdrop>,
     pub menu: Menu,
     pub ecw: hecs::World,
+    pub ecb: hecs::CommandBuffer,
+    pub player_en: hecs::Entity,
 }
 
 #[derive(Debug)]
@@ -101,7 +101,7 @@ impl GameState {
             }
         }
         let mut ecw = hecs::World::new();
-        ecw.spawn(plr);
+        let player_en = ecw.spawn(plr);
         log::info!("=== Spawned Player ===");
         Self {
             camera_offset: spawn_point,
@@ -118,10 +118,11 @@ impl GameState {
             spawn_point,
             transient_block_state: Default::default(),
             last_mine_attempt: 0,
-            item_drops: Default::default(),
             menu: Menu::default(),
             char_db: CharDb::load().unwrap(),
             ecw,
+            ecb: hecs::CommandBuffer::default(),
+            player_en,
         }
     }
 
@@ -146,16 +147,17 @@ impl GameState {
             return;
         }
         systems::general_input_system(self, input);
+        update_on_screen_tile_ents(self, on_screen_tile_ents, rt_size);
         if debug.freecam {
             systems::freecam_move_system(self, mouse_world_pos, input);
         } else {
-            systems::player_move_system(self, input, rt_size, on_screen_tile_ents);
+            systems::player_move_system(self, input);
         }
-        systems::move_system(self);
+        systems::move_system(self, on_screen_tile_ents, rt_size);
         systems::item_use_system(self, input, mouse_tpos, aud, snd);
         systems::biome_watch_system(self, music_sink, res);
         systems::inventory_input_system(self, input);
-        systems::item_drop_claim_system(self, on_screen_tile_ents, snd, aud);
+        systems::item_drop_claim_system(self, snd, aud);
         systems::transient_blocks_system(self);
         self.world.ticks += 1;
     }

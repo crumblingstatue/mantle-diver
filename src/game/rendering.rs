@@ -3,8 +3,9 @@ use {
     crate::{
         debug::DebugState,
         graphics::ScreenVec,
+        inventory::ItemId,
         math::{smoothwave, WorldPos, TILE_SIZE},
-        player::{FacingDir, PlayerQuery},
+        player::{FacingDir, MovingEnt, PlayerQuery},
         res::Res,
     },
     gamedebug_core::imm_dbg,
@@ -90,9 +91,9 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
 pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);
     s.set_origin((16., 16.));
-    for drop in &game.item_drops {
-        let pos = drop.s2dc_en.en.pos;
-        let item_def = &game.itemdb.get(drop.id).unwrap();
+    for (_en, (id, mov)) in game.ecw.query_mut::<(&ItemId, &MovingEnt)>() {
+        let pos = mov.mob.en.pos;
+        let item_def = &game.itemdb.get(*id).unwrap();
         imm_dbg!(&item_def.name);
         imm_dbg!(&item_def.graphic_name);
         s.set_position((

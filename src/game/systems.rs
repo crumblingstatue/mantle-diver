@@ -6,9 +6,9 @@ use {
         game::for_each_tile_on_screen,
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
-        itemdrop::Itemdrop,
+        itemdrop::ItemdropBundle,
         math::{step_towards, WorldPos, TILE_SIZE},
-        player::{FacingDir, MovingEnt, PlayerQuery},
+        player::{FacingDir, MovingEnt, PlayerData, PlayerQuery},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
@@ -99,10 +99,64 @@ pub(super) fn item_use_system(
     }
 }
 
-pub(super) fn move_system(game: &mut GameState) {
-    for (_en, mov) in game.ecw.query_mut::<&mut MovingEnt>() {
+pub(super) fn move_system(
+    game: &mut GameState,
+    on_screen_tile_ents: &[TileColEn],
+    rt_size: Vector2u,
+) {
+    for (en, (mov, mut plr_dat)) in game
+        .ecw
+        .query_mut::<(&mut MovingEnt, Option<&mut PlayerData>)>()
+    {
         let terminal_velocity = 60.0;
         mov.vspeed = mov.vspeed.clamp(-terminal_velocity, terminal_velocity);
+        mov.mob.move_y(mov.vspeed, |player_en, off| {
+            let mut col = false;
+            for en in on_screen_tile_ents.iter() {
+                if player_en.would_collide(&en.col, off) {
+                    if en.platform {
+                        if mov.vspeed < 0. {
+                            continue;
+                        }
+                        // If the feet are below the top of the platform,
+                        // collision shouldn't happen
+                        let feet = player_en.pos.y + player_en.bb.y;
+                        if feet > en.col.pos.y
+                            || plr_dat.as_ref().map_or(false, |dat| dat.down_intent)
+                        {
+                            continue;
+                        }
+                    }
+                    col = true;
+                    if let Some(dat) = &mut plr_dat {
+                        if mov.vspeed > 0. {
+                            dat.jumps_left = 1;
+                        }
+                    }
+                    mov.vspeed = 0.;
+                }
+            }
+            col
+        });
+        mov.mob.move_x(mov.hspeed, |player_en, off| {
+            let mut col = false;
+            for en in on_screen_tile_ents.iter() {
+                if en.platform {
+                    continue;
+                }
+                if player_en.would_collide(&en.col, off) {
+                    col = true;
+                    mov.hspeed = 0.;
+                }
+            }
+            col
+        });
+        mov.vspeed += game.gravity;
+        if en == game.player_en {
+            let (x, y, _w, _h) = mov.mob.en.xywh();
+            game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
+            game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
+        }
     }
 }
 
@@ -133,37 +187,11 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
     }
 }
 
-pub(super) fn player_move_system(
+pub(super) fn update_on_screen_tile_ents(
     game: &mut GameState,
-    input: &Input,
-    rt_size: Vector2u,
     on_screen_tile_ents: &mut Vec<TileColEn>,
+    rt_size: Vector2u,
 ) {
-    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
-        return;
-    };
-    let spd = if input.down_raw(Key::LShift) {
-        8.0
-    } else if input.down_raw(Key::LControl) {
-        128.0
-    } else {
-        3.0
-    };
-    plr.mov.hspeed = 0.;
-    if input.down(InputAction::Left) {
-        plr.mov.hspeed = -spd;
-        plr.dat.facing_dir = FacingDir::Left;
-    }
-    if input.down(InputAction::Right) {
-        plr.mov.hspeed = spd;
-        plr.dat.facing_dir = FacingDir::Right;
-    }
-    if input.down(InputAction::Jump) && plr.dat.can_jump() {
-        plr.mov.vspeed = -10.0;
-        plr.dat.jumps_left = 0;
-    }
-    plr.dat.down_intent = input.down(InputAction::Down);
-
     on_screen_tile_ents.clear();
     for_each_tile_on_screen(game.camera_offset, rt_size, |tp, _sp| {
         let tile = game.world.tile_at_mut(tp).mid;
@@ -188,47 +216,33 @@ pub(super) fn player_move_system(
         });
     });
     imm_dbg!(on_screen_tile_ents.len());
-    plr.mov.mob.move_y(plr.mov.vspeed, |player_en, off| {
-        let mut col = false;
-        for en in on_screen_tile_ents.iter() {
-            if player_en.would_collide(&en.col, off) {
-                if en.platform {
-                    if plr.mov.vspeed < 0. {
-                        continue;
-                    }
-                    // If the player's feet are below the top of the platform,
-                    // collision shouldn't happen
-                    let player_feet = player_en.pos.y + player_en.bb.y;
-                    if player_feet > en.col.pos.y || plr.dat.down_intent {
-                        continue;
-                    }
-                }
-                col = true;
-                if plr.mov.vspeed > 0. {
-                    plr.dat.jumps_left = 1;
-                }
-                plr.mov.vspeed = 0.;
-            }
-        }
-        col
-    });
-    plr.mov.mob.move_x(plr.mov.hspeed, |player_en, off| {
-        let mut col = false;
-        for en in on_screen_tile_ents.iter() {
-            if en.platform {
-                continue;
-            }
-            if player_en.would_collide(&en.col, off) {
-                col = true;
-                plr.mov.hspeed = 0.;
-            }
-        }
-        col
-    });
-    plr.mov.vspeed += game.gravity;
-    let (x, y, _w, _h) = plr.mov.mob.en.xywh();
-    game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
-    game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
+}
+
+pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
+    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+        return;
+    };
+    let spd = if input.down_raw(Key::LShift) {
+        8.0
+    } else if input.down_raw(Key::LControl) {
+        128.0
+    } else {
+        3.0
+    };
+    plr.mov.hspeed = 0.;
+    if input.down(InputAction::Left) {
+        plr.mov.hspeed = -spd;
+        plr.dat.facing_dir = FacingDir::Left;
+    }
+    if input.down(InputAction::Right) {
+        plr.mov.hspeed = spd;
+        plr.dat.facing_dir = FacingDir::Right;
+    }
+    if input.down(InputAction::Jump) && plr.dat.can_jump() {
+        plr.mov.vspeed = -10.0;
+        plr.dat.jumps_left = 0;
+    }
+    plr.dat.down_intent = input.down(InputAction::Down);
 }
 pub(super) fn freecam_move_system(game: &mut GameState, mouse_world_pos: WorldPos, input: &Input) {
     let spd = if input.down_raw(Key::LShift) {
@@ -300,10 +314,10 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
         let mut retain = true;
         if state.health <= 0.0 {
             let tile = &mut game.world.tile_at_mut(*pos);
-            process_tile_item_drop(&game.tile_db, &mut game.item_drops, tile.mid, pos);
+            process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, pos);
             tile.mid = TileId::EMPTY;
             // If the mid is destroyed, the front content pops off as well
-            process_tile_item_drop(&game.tile_db, &mut game.item_drops, tile.fg, pos);
+            process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, pos);
             tile.fg = TileId::EMPTY;
             retain = false;
         }
@@ -311,52 +325,29 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
     });
 }
 /// Claim item drops player contacts with
-pub(super) fn item_drop_claim_system(
-    game: &mut GameState,
-    on_screen_tile_ents: &[TileColEn],
-    snd: &mut SoundPlayer,
-    aud: &ResAudio,
-) {
-    game.item_drops.retain_mut(|itemdrop| {
-        itemdrop.s2dc_en.move_x(itemdrop.hspeed, |en, off| {
-            for t_en in on_screen_tile_ents {
-                if en.would_collide(&t_en.col, off) {
-                    itemdrop.hspeed = 0.0;
-                    return true;
-                }
-            }
-            false
-        });
-        step_towards(&mut itemdrop.hspeed, 0.0, 0.03);
-        itemdrop.s2dc_en.move_y(itemdrop.vspeed, |en, off| {
-            for t_en in on_screen_tile_ents {
-                if en.would_collide(&t_en.col, off) {
-                    itemdrop.vspeed = 0.0;
-                    return true;
-                }
-            }
-            false
-        });
-        itemdrop.vspeed += game.gravity;
-        let mut retain = true;
-        let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
-            log::error!("No player");
-            return true;
-        };
+pub(super) fn item_drop_claim_system(game: &mut GameState, snd: &mut SoundPlayer, aud: &ResAudio) {
+    let mut plr_query = game.ecw.query::<PlayerQuery>();
+    let Some((_en, plr)) = plr_query.iter().next() else {
+        log::error!("No player");
+        return;
+    };
+    for (en, (id, mov)) in game.ecw.query::<(&ItemId, &mut MovingEnt)>().iter() {
+        step_towards(&mut mov.hspeed, 0.0, 0.03);
         #[expect(clippy::collapsible_if)]
-        if plr.mov.mob.en.collides(&itemdrop.s2dc_en.en) {
-            if game.inventory.add(itemdrop.id, 1) {
+        if plr.mov.mob.en.collides(&mov.mob.en) {
+            if game.inventory.add(*id, 1) {
                 snd.play(aud, "etc/pickup");
-                retain = false;
+                game.ecb.despawn(en);
             }
         }
-        retain
-    });
+    }
+    drop(plr_query);
+    game.ecb.run_on(&mut game.ecw);
 }
 
 fn process_tile_item_drop<L: tiles::TileLayer>(
     tile_db: &TileDb,
-    item_drops: &mut Vec<Itemdrop>,
+    wld: &mut hecs::World,
     id: TileId<L>,
     pos: &TilePos,
 ) where
@@ -371,7 +362,7 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
     };
     let amount = thread_rng().gen_range(drop.qty_range.clone());
     for _ in 0..amount {
-        item_drops.push(Itemdrop::new_at(
+        wld.spawn(ItemdropBundle::new_at(
             drop.id,
             WorldPos {
                 x: pos.x * TILE_SIZE as u32 + TILE_SIZE as u32 / 2,
