@@ -14,6 +14,37 @@ pub struct WorldPos {
     pub y: WPosSc,
 }
 
+impl WorldPos {
+    /// This is fine because all entity coordinates are confined to be positive
+    pub fn from_en(en: &s2dc::Entity) -> Self {
+        Self {
+            x: en.pos.x as WPosSc,
+            y: en.pos.y as WPosSc,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct WorldRect {
+    pub topleft: WorldPos,
+    pub w: WPosSc,
+    pub h: WPosSc,
+}
+impl WorldRect {
+    /// This is fine because all entity coordinates are confined to be positive
+    pub(crate) fn from_s2dc_en(en: &s2dc::Entity) -> Self {
+        let (x, y, w, h) = en.xywh();
+        Self {
+            topleft: WorldPos {
+                x: x as u32,
+                y: y as u32,
+            },
+            w: w as u32,
+            h: h as u32,
+        }
+    }
+}
+
 /// Tile size in pixels
 pub const TILE_SIZE: u8 = 32;
 /// Pixels per meter.

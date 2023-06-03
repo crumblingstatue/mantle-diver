@@ -1,4 +1,8 @@
-use {self::item_db_edit::ItemDbEdit, crate::player::PlayerQuery};
+use {
+    self::item_db_edit::ItemDbEdit,
+    crate::{math::WorldRect, player::PlayerQuery},
+    gamedebug_core::MsgBuf,
+};
 
 mod char_db_edit;
 mod console;
@@ -31,7 +35,7 @@ pub struct DebugState {
     pub tiledb_edit: TileDbEdit,
     pub show_atlas: bool,
     pub console: Console,
-    pub player_bb: bool,
+    pub dbg_overlay: bool,
     pub chardb_edit: CharDbEdit,
     pub itemdb_edit: ItemDbEdit,
     world_mgr: WorldManager,
@@ -87,8 +91,8 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     color_edit_button(ui, &mut plr.dat.pants_color);
                     ui.label("Shoes color");
                     color_edit_button(ui, &mut plr.dat.shoes_color);
-                    ui.checkbox(&mut debug.player_bb, "Draw bb");
                 });
+                ui.checkbox(&mut debug.dbg_overlay, "Draw debug overlay");
                 ui.separator();
             }
             egui::ScrollArea::vertical().show(ui, |ui| {
@@ -130,3 +134,9 @@ pub(crate) fn do_debug_ui(
     console_ui(ctx, debug, cmd);
     debug.world_mgr.ui(ctx, game, worlds_path, cmd);
 }
+
+pub enum DbgOvr {
+    WldRect { r: WorldRect, c: Color },
+}
+
+pub static DBG_OVR: MsgBuf<DbgOvr> = MsgBuf::new(true);

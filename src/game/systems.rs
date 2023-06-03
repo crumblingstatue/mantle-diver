@@ -3,18 +3,17 @@ use {
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
-        game::for_each_tile_on_screen,
+        debug::{DbgOvr, DBG_OVR},
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
-        math::{step_towards, WorldPos, TILE_SIZE},
+        math::{step_towards, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, MovingEnt, PlayerData, PlayerQuery},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
-        world::TilePos,
+        world::{TilePos, World},
     },
-    gamedebug_core::imm_dbg,
     rand::{seq::SliceRandom, thread_rng, Rng},
     rodio::Decoder,
     sfml::{graphics::Color, system::Vector2u, window::Key},
@@ -99,20 +98,40 @@ pub(super) fn item_use_system(
     }
 }
 
-pub(super) fn move_system(
-    game: &mut GameState,
-    on_screen_tile_ents: &[TileColEn],
-    rt_size: Vector2u,
-) {
+pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u) {
     for (en, (mov, mut plr_dat)) in game
         .ecw
         .query_mut::<(&mut MovingEnt, Option<&mut PlayerData>)>()
     {
+        DBG_OVR.push(DbgOvr::WldRect {
+            r: WorldRect {
+                topleft: WorldPos::from_en(&mov.mob.en),
+                w: 3,
+                h: 3,
+            },
+            c: Color::RED,
+        });
+        let wrect = calc_mov_wrect(mov);
+        DBG_OVR.push(DbgOvr::WldRect {
+            r: wrect,
+            c: Color::YELLOW,
+        });
+        DBG_OVR.push(DbgOvr::WldRect {
+            r: WorldRect::from_s2dc_en(&mov.mob.en),
+            c: Color::BLUE,
+        });
+        let tile_ents: Vec<TileColEn> = calc_tile_ents(&mut game.world, &game.tile_db, wrect);
+        for en in &tile_ents {
+            DBG_OVR.push(DbgOvr::WldRect {
+                r: WorldRect::from_s2dc_en(&en.col),
+                c: Color::GREEN,
+            });
+        }
         let terminal_velocity = 60.0;
         mov.vspeed = mov.vspeed.clamp(-terminal_velocity, terminal_velocity);
         mov.mob.move_y(mov.vspeed, |player_en, off| {
             let mut col = false;
-            for en in on_screen_tile_ents.iter() {
+            for en in tile_ents.iter() {
                 if player_en.would_collide(&en.col, off) {
                     if en.platform {
                         if mov.vspeed < 0. {
@@ -140,7 +159,7 @@ pub(super) fn move_system(
         });
         mov.mob.move_x(mov.hspeed, |player_en, off| {
             let mut col = false;
-            for en in on_screen_tile_ents.iter() {
+            for en in tile_ents.iter() {
                 if en.platform {
                     continue;
                 }
@@ -158,6 +177,75 @@ pub(super) fn move_system(
             game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
         }
     }
+}
+
+/// Calculate tile check pixel rectangle, for which tiles to check for collision
+fn calc_mov_wrect(mov: &MovingEnt) -> WorldRect {
+    let mut hvec = mov.hspeed.round() as i32;
+    let mut vvec = mov.vspeed.round() as i32;
+    // We add 1 just to be on the safe side
+    hvec += (mov.mob.en.bb.x + 1) * hvec.signum();
+    vvec += (mov.mob.en.bb.y + 1) * vvec.signum();
+    let y = mov.mob.en.pos.y;
+    let x = mov.mob.en.pos.x;
+    let top = y.min(y + vvec);
+    let left = x.min(x + hvec);
+    let w = hvec.unsigned_abs();
+    let h = vvec.unsigned_abs();
+    WorldRect {
+        topleft: WorldPos {
+            x: left as u32,
+            y: top as u32,
+        },
+        w,
+        h,
+    }
+}
+
+fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<TileColEn> {
+    let mut ents = vec![];
+    let x = (wrect.topleft.x / TILE_SIZE as u32) - 1;
+    let y = (wrect.topleft.y / TILE_SIZE as u32) - 1;
+    // Plus one just to be safe
+    let w = (wrect.w / TILE_SIZE as u32) + 3;
+    let h = (wrect.h / TILE_SIZE as u32) + 3;
+    DBG_OVR.push(DbgOvr::WldRect {
+        r: WorldRect {
+            topleft: WorldPos {
+                x: x * TILE_SIZE as u32,
+                y: y * TILE_SIZE as u32,
+            },
+            w: w * TILE_SIZE as u32,
+            h: h * TILE_SIZE as u32,
+        },
+        c: Color::MAGENTA,
+    });
+    for y in y..y + h {
+        for x in x..x + w {
+            let tp = TilePos { x, y };
+            let tile = world.tile_at_mut(tp).mid;
+            if tile.empty() {
+                continue;
+            }
+            let tdef = &tile_db[tile];
+            let Some(bb) = tdef.layer.bb else {
+                    continue;
+                };
+            let x = tp.x as i32 * TILE_SIZE as i32;
+            let y = tp.y as i32 * TILE_SIZE as i32;
+            let en = s2dc::Entity::from_rect_corners(
+                x + bb.x as i32,
+                y + bb.y as i32,
+                x + bb.w as i32,
+                y + bb.h as i32,
+            );
+            ents.push(TileColEn {
+                col: en,
+                platform: tdef.layer.platform,
+            });
+        }
+    }
+    ents
 }
 
 pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::Sink, res: &Res) {
@@ -185,37 +273,6 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
             }
         }
     }
-}
-
-pub(super) fn update_on_screen_tile_ents(
-    game: &mut GameState,
-    on_screen_tile_ents: &mut Vec<TileColEn>,
-    rt_size: Vector2u,
-) {
-    on_screen_tile_ents.clear();
-    for_each_tile_on_screen(game.camera_offset, rt_size, |tp, _sp| {
-        let tile = game.world.tile_at_mut(tp).mid;
-        if tile.empty() {
-            return;
-        }
-        let tdef = &game.tile_db[tile];
-        let Some(bb) = tdef.layer.bb else {
-            return;
-        };
-        let x = tp.x as i32 * TILE_SIZE as i32;
-        let y = tp.y as i32 * TILE_SIZE as i32;
-        let en = s2dc::Entity::from_rect_corners(
-            x + bb.x as i32,
-            y + bb.y as i32,
-            x + bb.w as i32,
-            y + bb.h as i32,
-        );
-        on_screen_tile_ents.push(TileColEn {
-            col: en,
-            platform: tdef.layer.platform,
-        });
-    });
-    imm_dbg!(on_screen_tile_ents.len());
 }
 
 pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
@@ -561,5 +618,9 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
     if input.pressed_raw(Key::Period) {
         game.paused = false;
         game.pause_next_frame = true;
+    }
+    if input.pressed_raw(Key::R) {
+        // Reverse gravity
+        game.gravity = -game.gravity;
     }
 }

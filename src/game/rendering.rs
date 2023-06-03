@@ -1,7 +1,7 @@
 use {
     super::{for_each_tile_on_screen, GameState, LightSource, SfVec2fExt},
     crate::{
-        debug::DebugState,
+        debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
         inventory::ItemId,
         math::{smoothwave, WorldPos, TILE_SIZE},
@@ -109,7 +109,7 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, de
 
 fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState, res: &Res) {
     draw_player_sprites(game, rt, res);
-    if debug.player_bb {
+    if debug.dbg_overlay {
         draw_player_bb(game, rt);
     }
 }
@@ -408,4 +408,22 @@ fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool,
     };
     rect.left += x * TILE_SIZE as i32;
     rect.top += y * TILE_SIZE as i32;
+}
+
+pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
+    let mut rs = RectangleShape::new();
+    let (cx, cy) = (game.camera_offset.x, game.camera_offset.y);
+    DBG_OVR.for_each(|msg| match msg {
+        crate::debug::DbgOvr::WldRect { r, c } => {
+            let (Some(x), Some(y)) = (r.topleft.x.checked_sub(cx), r.topleft.y.checked_sub(cy)) else {
+                return
+            };
+            rs.set_position((x as f32, y as f32));
+            rs.set_size((r.w as f32, r.h as f32));
+            rs.set_outline_color(*c);
+            rs.set_fill_color(Color::TRANSPARENT);
+            rs.set_outline_thickness(1.0);
+            rt.draw(&rs);
+        },
+    });
 }

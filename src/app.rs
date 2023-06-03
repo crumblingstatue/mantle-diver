@@ -2,7 +2,7 @@ use {
     crate::{
         command::CmdVec,
         config::Config,
-        debug::{self, DebugState},
+        debug::{self, DebugState, DBG_OVR},
         game::{rendering, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
@@ -16,7 +16,7 @@ use {
     anyhow::Context,
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
-    gamedebug_core::imm,
+    gamedebug_core::{imm, imm_dbg},
     rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
     sfml::{
@@ -149,6 +149,10 @@ impl App {
             self.do_rendering(res);
             self.input.clear_pressed();
             gamedebug_core::inc_frame();
+            imm_dbg!(DBG_OVR.len());
+            if !self.game.paused {
+                DBG_OVR.clear();
+            }
         }
         self.game.tile_db.try_save("data");
         self.game.itemdb.try_save("data");
@@ -242,7 +246,6 @@ impl App {
             &mut self.music_sink,
             res,
             &mut self.snd,
-            &mut self.on_screen_tile_ents,
             aud,
             &mut self.cmdvec,
             &self.worlds_dir,
@@ -254,6 +257,9 @@ impl App {
         self.rt.clear(Color::rgb(55, 221, 231));
         rendering::draw_world(&mut self.game, &mut self.rt, res);
         rendering::draw_entities(&mut self.game, &mut self.rt, res, &self.debug);
+        if self.debug.dbg_overlay {
+            rendering::draw_debug_overlay(&mut self.rt, &mut self.game);
+        }
         self.rt.display();
         let mut spr = Sprite::with_texture(self.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));

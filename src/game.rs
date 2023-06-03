@@ -1,10 +1,10 @@
 use {
-    self::systems::{update_on_screen_tile_ents, Menu},
+    self::systems::Menu,
     crate::{
-        app::{SoundPlayer, TileColEn},
+        app::SoundPlayer,
         char::CharDb,
         command::CmdVec,
-        debug::DebugState,
+        debug::{DebugState, DBG_OVR},
         graphics::{ScreenSc, ScreenVec},
         input::Input,
         inventory::{Inventory, ItemDb},
@@ -141,7 +141,6 @@ impl GameState {
         music_sink: &mut rodio::Sink,
         res: &Res,
         snd: &mut SoundPlayer,
-        on_screen_tile_ents: &mut Vec<TileColEn>,
         aud: &ResAudio,
         cmd: &mut CmdVec,
         worlds_dir: &Path,
@@ -156,14 +155,15 @@ impl GameState {
         }
         if self.pause_next_frame {
             self.paused = true;
+            self.pause_next_frame = false;
+            DBG_OVR.clear();
         }
-        update_on_screen_tile_ents(self, on_screen_tile_ents, rt_size);
         if debug.freecam {
             systems::freecam_move_system(self, mouse_world_pos, input);
         } else {
             systems::player_move_system(self, input);
         }
-        systems::move_system(self, on_screen_tile_ents, rt_size);
+        systems::move_system(self, rt_size);
         systems::item_use_system(self, input, mouse_tpos, aud, snd);
         systems::biome_watch_system(self, music_sink, res);
         systems::inventory_input_system(self, input);

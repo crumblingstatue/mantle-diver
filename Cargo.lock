@@ -765,7 +765,7 @@ dependencies = [
 [[package]]
 name = "gamedebug_core"
 version = "0.1.0"
-source = "git+https://github.com/crumblingstatue/gamedebug_core.git#5a65448f6797c701eb08e50f7e71562bdf57a5e8"
+source = "git+https://github.com/crumblingstatue/gamedebug_core.git#f4fff766db3a406f7bfaf28e0468ac93491e0630"
 
 [[package]]
 name = "gdk-pixbuf-sys"
