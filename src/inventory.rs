@@ -126,7 +126,7 @@ pub enum TileLayer {
     Fg,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[expect(clippy::enum_variant_names)]
 pub enum UseAction {
     PlaceBgTile { id: BgTileId },
