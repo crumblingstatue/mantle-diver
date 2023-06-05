@@ -106,8 +106,9 @@ ItemDb(
                 x: 9,
                 y: 6,
             ),
-            use_action: RemoveTile(
-                layer: Mid,
+            use_action: MineTile(
+                power: 1000.0,
+                delay: 1,
             ),
             consumable: false,
         ),
