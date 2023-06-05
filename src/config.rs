@@ -1,7 +1,10 @@
 use {
     ron::{extensions::Extensions, ser::PrettyConfig},
-    serde::{Deserialize, Serialize},
-    std::path::Path,
+    serde::{Deserialize, Serialize, Serializer},
+    std::{
+        collections::{BTreeMap, HashMap},
+        path::Path,
+    },
 };
 
 #[derive(Serialize, Deserialize)]
@@ -47,4 +50,16 @@ pub fn ron_pretty_cfg() -> PrettyConfig {
         .enumerate_arrays(true)
         .struct_names(true)
         .extensions(Extensions::IMPLICIT_SOME | Extensions::UNWRAP_NEWTYPES)
+}
+
+/// Based on https://stackoverflow.com/a/42723390
+pub fn ordered_map<S, K: Ord + Serialize, V: Serialize>(
+    hm: &HashMap<K, V>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let ordered: BTreeMap<_, _> = hm.iter().collect();
+    ordered.serialize(serializer)
 }

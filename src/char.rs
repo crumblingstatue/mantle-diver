@@ -7,6 +7,7 @@ use {
 /// Character (graphics) database
 #[derive(Serialize, Deserialize, Default)]
 pub struct CharDb {
+    #[serde(serialize_with = "crate::config::ordered_map")]
     pub graphic_offsets: HashMap<String, Offset>,
 }
 
