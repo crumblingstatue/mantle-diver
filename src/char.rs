@@ -1,5 +1,5 @@
 use {
-    crate::graphics::ScreenVec,
+    crate::{config::ron_pretty_cfg, graphics::ScreenVec},
     serde::{Deserialize, Serialize},
     std::collections::HashMap,
 };
@@ -12,7 +12,7 @@ pub struct CharDb {
 
 impl CharDb {
     pub fn save(&self) -> anyhow::Result<()> {
-        let s = ron::ser::to_string_pretty(self, ron::ser::PrettyConfig::default())?;
+        let s = ron::ser::to_string_pretty(self, ron_pretty_cfg())?;
         std::fs::write("data/char.ron", s.as_bytes())?;
         Ok(())
     }

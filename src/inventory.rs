@@ -1,10 +1,10 @@
 use {
     crate::{
+        config::ron_pretty_cfg,
         graphics::ScreenVec,
         math::{IntRect, TILE_SIZE},
         tiles::{BgTileId, FgTileId, MidTileId},
     },
-    ron::ser::PrettyConfig,
     serde::{Deserialize, Serialize},
 };
 
@@ -167,7 +167,7 @@ impl ItemDb {
         }
     }
     pub fn try_save(&self, data_path: &str) {
-        match ron::ser::to_string_pretty(self, PrettyConfig::default()) {
+        match ron::ser::to_string_pretty(self, ron_pretty_cfg()) {
             Ok(str) => match std::fs::write(format!("{data_path}/{PATH}"), str) {
                 Ok(()) => {}
                 Err(e) => log::warn!("Failed to save item db: {e}"),

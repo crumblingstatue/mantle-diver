@@ -1,4 +1,5 @@
 use {
+    ron::{extensions::Extensions, ser::PrettyConfig},
     serde::{Deserialize, Serialize},
     std::path::Path,
 };
@@ -36,7 +37,14 @@ impl Config {
     }
     pub fn save(&self, base_dir: &Path) -> anyhow::Result<()> {
         let path = base_dir.join("config.ron");
-        let data = ron::ser::to_string_pretty(self, ron::ser::PrettyConfig::default())?;
+        let data = ron::ser::to_string_pretty(self, ron_pretty_cfg())?;
         Ok(std::fs::write(path, data)?)
     }
+}
+
+pub fn ron_pretty_cfg() -> PrettyConfig {
+    PrettyConfig::default()
+        .enumerate_arrays(true)
+        .struct_names(true)
+        .extensions(Extensions::IMPLICIT_SOME | Extensions::UNWRAP_NEWTYPES)
 }

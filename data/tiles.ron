@@ -1,13 +1,15 @@
-(
-    unknown_bg: (
-        light: Some((
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+TileDb(
+    unknown_bg: TileDef(
+        light: ScreenVec(
             x: 0,
             y: 0,
-        )),
+        ),
         graphic_name: "tiles/unknown_bg",
         layer: (),
         neigh_aware: false,
-        draw_offs: (
+        draw_offs: ScreenVec(
             x: 0,
             y: 0,
         ),
@@ -15,23 +17,23 @@
         hit_sound: None,
         item_drop: None,
     ),
-    unknown_mid: (
-        light: Some((
+    unknown_mid: TileDef(
+        light: ScreenVec(
             x: 0,
             y: 0,
-        )),
+        ),
         graphic_name: "tiles/unknown_mid",
-        layer: (
+        layer: MidDef(
             platform: true,
-            bb: Some((
+            bb: TileBb(
                 x: 0,
                 y: 0,
                 w: 32,
                 h: 32,
-            )),
+            ),
         ),
         neigh_aware: false,
-        draw_offs: (
+        draw_offs: ScreenVec(
             x: 0,
             y: 0,
         ),
@@ -39,15 +41,15 @@
         hit_sound: None,
         item_drop: None,
     ),
-    unknown_fg: (
-        light: Some((
+    unknown_fg: TileDef(
+        light: ScreenVec(
             x: 0,
             y: 0,
-        )),
+        ),
         graphic_name: "tiles/unknown_fg",
         layer: (),
         neigh_aware: false,
-        draw_offs: (
+        draw_offs: ScreenVec(
             x: 0,
             y: 0,
         ),
@@ -56,12 +58,12 @@
         item_drop: None,
     ),
     bg: [
-        (
+        /*[0]*/ TileDef(
             light: None,
             graphic_name: "tiles/dirtback",
             layer: (),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
@@ -69,12 +71,12 @@
             hit_sound: None,
             item_drop: None,
         ),
-        (
+        /*[1]*/ TileDef(
             light: None,
             graphic_name: "tiles/stoneback",
             layer: (),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
@@ -84,226 +86,226 @@
         ),
     ],
     mid: [
-        (
+        /*[0]*/ TileDef(
             light: None,
             graphic_name: "tiles/dirt",
-            layer: (
+            layer: MidDef(
                 platform: false,
-                bb: Some((
+                bb: TileBb(
                     x: 0,
                     y: 0,
                     w: 32,
                     h: 32,
-                )),
+                ),
             ),
             neigh_aware: true,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
             health: 3.0,
-            hit_sound: Some("dig/dirt"),
-            item_drop: Some((
-                qty_range: (
+            hit_sound: "dig/dirt",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (1),
-            )),
+                id: 1,
+            ),
         ),
-        (
+        /*[1]*/ TileDef(
             light: None,
             graphic_name: "tiles/stone",
-            layer: (
+            layer: MidDef(
                 platform: false,
-                bb: Some((
+                bb: TileBb(
                     x: 0,
                     y: 0,
                     w: 32,
                     h: 32,
-                )),
+                ),
             ),
             neigh_aware: true,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
             health: 6.0,
-            hit_sound: Some("dig/stone"),
-            item_drop: Some((
-                qty_range: (
+            hit_sound: "dig/stone",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (7),
-            )),
+                id: 7,
+            ),
         ),
-        (
-            light: Some((
+        /*[2]*/ TileDef(
+            light: ScreenVec(
                 x: 12,
                 y: -2,
-            )),
+            ),
             graphic_name: "tiles/torch",
-            layer: (
+            layer: MidDef(
                 platform: false,
                 bb: None,
             ),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 12,
                 y: 1,
             ),
             health: 2.0,
             hit_sound: None,
-            item_drop: Some((
-                qty_range: (
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (2),
-            )),
+                id: 2,
+            ),
         ),
-        (
+        /*[3]*/ TileDef(
             light: None,
             graphic_name: "tiles/platform",
-            layer: (
+            layer: MidDef(
                 platform: true,
-                bb: Some((
+                bb: TileBb(
                     x: 0,
                     y: 0,
                     w: 32,
                     h: 1,
-                )),
+                ),
             ),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
             health: 5.0,
             hit_sound: None,
-            item_drop: Some((
-                qty_range: (
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (3),
-            )),
+                id: 3,
+            ),
         ),
-        (
+        /*[4]*/ TileDef(
             light: None,
             graphic_name: "tiles/panzerium",
-            layer: (
+            layer: MidDef(
                 platform: false,
-                bb: Some((
+                bb: TileBb(
                     x: 0,
                     y: 0,
                     w: 32,
                     h: 32,
-                )),
+                ),
             ),
             neigh_aware: true,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
             health: 50.0,
             hit_sound: None,
-            item_drop: Some((
-                qty_range: (
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (5),
-            )),
+                id: 5,
+            ),
         ),
-        (
+        /*[5]*/ TileDef(
             light: None,
             graphic_name: "tiles/tree",
-            layer: (
+            layer: MidDef(
                 platform: false,
                 bb: None,
             ),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: -16,
                 y: -174,
             ),
             health: 10.0,
-            hit_sound: Some("dig/tree"),
+            hit_sound: "dig/tree",
             item_drop: None,
         ),
-        (
+        /*[6]*/ TileDef(
             light: None,
             graphic_name: "tiles/smallrock",
-            layer: (
+            layer: MidDef(
                 platform: false,
                 bb: None,
             ),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 22,
             ),
             health: 10.0,
-            hit_sound: Some("dig/stone"),
-            item_drop: Some((
-                qty_range: (
+            hit_sound: "dig/stone",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (10),
-            )),
+                id: 10,
+            ),
         ),
-        (
+        /*[7]*/ TileDef(
             light: None,
             graphic_name: "tiles/stick",
-            layer: (
+            layer: MidDef(
                 platform: false,
                 bb: None,
             ),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 24,
             ),
             health: 10.0,
-            hit_sound: Some("dig/tree"),
-            item_drop: Some((
-                qty_range: (
+            hit_sound: "dig/tree",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 1,
                 ),
-                id: (11),
-            )),
+                id: 11,
+            ),
         ),
     ],
     fg: [
-        (
+        /*[0]*/ TileDef(
             light: None,
             graphic_name: "tiles/coal",
             layer: (),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),
             health: 0.0,
             hit_sound: None,
-            item_drop: Some((
-                qty_range: (
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
                     start: 1,
                     end: 3,
                 ),
-                id: (8),
-            )),
+                id: 8,
+            ),
         ),
-        (
+        /*[1]*/ TileDef(
             light: None,
             graphic_name: "tiles/grass",
             layer: (),
             neigh_aware: false,
-            draw_offs: (
+            draw_offs: ScreenVec(
                 x: 0,
                 y: 0,
             ),

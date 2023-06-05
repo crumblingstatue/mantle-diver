@@ -1,92 +1,94 @@
-(
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+CharDb(
     graphic_offsets: {
-        "items/woodpick": (
-            left: (
-                x: -14,
-                y: 0,
-            ),
-            right: (
-                x: 56,
-                y: 0,
-            ),
-        ),
-        "char/torso1": (
-            left: (
+        "char/torso1": Offset(
+            left: ScreenVec(
                 x: 5,
                 y: 0,
             ),
-            right: (
+            right: ScreenVec(
                 x: 36,
                 y: 0,
             ),
         ),
-        "char/legs1": (
-            left: (
-                x: 4,
+        "items/woodpick": Offset(
+            left: ScreenVec(
+                x: -14,
                 y: 0,
             ),
-            right: (
-                x: 37,
-                y: 0,
-            ),
-        ),
-        "char/shirt1": (
-            left: (
-                x: 7,
-                y: 0,
-            ),
-            right: (
-                x: 34,
+            right: ScreenVec(
+                x: 56,
                 y: 0,
             ),
         ),
-        "char/eye1": (
-            left: (
+        "char/eye1": Offset(
+            left: ScreenVec(
                 x: 9,
                 y: 0,
             ),
-            right: (
+            right: ScreenVec(
                 x: 32,
                 y: 0,
             ),
         ),
-        "char/hair1": (
-            left: (
-                x: 1,
-                y: 0,
-            ),
-            right: (
-                x: 38,
-                y: 0,
-            ),
-        ),
-        "char/pants1": (
-            left: (
-                x: 7,
-                y: 0,
-            ),
-            right: (
-                x: 34,
-                y: 0,
-            ),
-        ),
-        "char/head1": (
-            left: (
+        "char/head1": Offset(
+            left: ScreenVec(
                 x: 5,
                 y: 10,
             ),
-            right: (
+            right: ScreenVec(
                 x: 35,
                 y: 13,
             ),
         ),
-        "char/shoes1": (
-            left: (
+        "char/legs1": Offset(
+            left: ScreenVec(
                 x: 4,
                 y: 0,
             ),
-            right: (
+            right: ScreenVec(
                 x: 37,
+                y: 0,
+            ),
+        ),
+        "char/shoes1": Offset(
+            left: ScreenVec(
+                x: 4,
+                y: 0,
+            ),
+            right: ScreenVec(
+                x: 37,
+                y: 0,
+            ),
+        ),
+        "char/hair1": Offset(
+            left: ScreenVec(
+                x: 1,
+                y: 0,
+            ),
+            right: ScreenVec(
+                x: 38,
+                y: 0,
+            ),
+        ),
+        "char/shirt1": Offset(
+            left: ScreenVec(
+                x: 7,
+                y: 0,
+            ),
+            right: ScreenVec(
+                x: 34,
+                y: 0,
+            ),
+        ),
+        "char/pants1": Offset(
+            left: ScreenVec(
+                x: 7,
+                y: 0,
+            ),
+            right: ScreenVec(
+                x: 34,
                 y: 0,
             ),
         ),

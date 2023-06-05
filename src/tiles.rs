@@ -1,3 +1,5 @@
+use crate::config::ron_pretty_cfg;
+
 pub mod tiledb_edit_ui;
 use {
     crate::{
@@ -6,7 +8,6 @@ use {
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },
-    ron::ser::PrettyConfig,
     serde::{Deserialize, Serialize},
     std::{
         fmt::Debug,
@@ -16,7 +17,7 @@ use {
 };
 
 #[derive(Serialize, Deserialize)]
-pub struct TileId<Layer>(pub u16, PhantomData<Layer>);
+pub struct TileId<Layer>(pub u16, #[serde(skip)] PhantomData<Layer>);
 
 impl<Layer> PartialEq for TileId<Layer> {
     fn eq(&self, other: &Self) -> bool {
@@ -307,7 +308,7 @@ impl TileDb {
         }
     }
     pub fn try_save(&self, data_path: &str) {
-        match ron::ser::to_string_pretty(self, PrettyConfig::default()) {
+        match ron::ser::to_string_pretty(self, ron_pretty_cfg()) {
             Ok(str) => match std::fs::write(format!("{data_path}/{PATH}"), str) {
                 Ok(()) => {}
                 Err(e) => log::warn!("Failed to save tile db: {e}"),

@@ -1,45 +1,47 @@
-(
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+ItemDb(
     db: [
-        (
+        /*[0]*/ ItemDef(
             name: "Dirt Block",
             graphic_name: "tiles/dirt",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 4,
             ),
             use_action: PlaceMidTile(
-                id: (1, ()),
+                id: TileId(1),
             ),
             consumable: true,
         ),
-        (
+        /*[1]*/ ItemDef(
             name: "Torch",
             graphic_name: "tiles/torch",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 16,
                 y: 5,
             ),
             use_action: PlaceMidTile(
-                id: (3, ()),
+                id: TileId(3),
             ),
             consumable: true,
         ),
-        (
+        /*[2]*/ ItemDef(
             name: "Platform",
             graphic_name: "tiles/platform",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 17,
             ),
             use_action: PlaceMidTile(
-                id: (4, ()),
+                id: TileId(4),
             ),
             consumable: true,
         ),
-        (
+        /*[3]*/ ItemDef(
             name: "Wood Pick",
             graphic_name: "items/woodpick",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 9,
                 y: 6,
             ),
@@ -49,58 +51,58 @@
             ),
             consumable: false,
         ),
-        (
+        /*[4]*/ ItemDef(
             name: "Panzerium",
             graphic_name: "tiles/panzerium",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 4,
             ),
             use_action: PlaceMidTile(
-                id: (5, ()),
+                id: TileId(5),
             ),
             consumable: true,
         ),
-        (
+        /*[5]*/ ItemDef(
             name: "Stone wall",
             graphic_name: "tiles/stoneback",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 4,
             ),
             use_action: PlaceBgTile(
-                id: (2, ()),
+                id: TileId(2),
             ),
             consumable: true,
         ),
-        (
+        /*[6]*/ ItemDef(
             name: "Stone block",
             graphic_name: "tiles/stone",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 4,
             ),
             use_action: PlaceMidTile(
-                id: (2, ()),
+                id: TileId(2),
             ),
             consumable: true,
         ),
-        (
+        /*[7]*/ ItemDef(
             name: "Coal (place test)",
             graphic_name: "tiles/coal",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 8,
                 y: 7,
             ),
             use_action: PlaceFgTile(
-                id: (1, ()),
+                id: TileId(1),
             ),
             consumable: true,
         ),
-        (
+        /*[8]*/ ItemDef(
             name: "Dev Pick",
             graphic_name: "items/devpick",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 9,
                 y: 6,
             ),
@@ -109,10 +111,10 @@
             ),
             consumable: false,
         ),
-        (
+        /*[9]*/ ItemDef(
             name: "Small rock",
             graphic_name: "tiles/smallrock",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 5,
                 y: 12,
             ),
@@ -122,10 +124,10 @@
             ),
             consumable: true,
         ),
-        (
+        /*[10]*/ ItemDef(
             name: "Stick",
             graphic_name: "tiles/stick",
-            draw_off: (
+            draw_off: ScreenVec(
                 x: 4,
                 y: 12,
             ),
