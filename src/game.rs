@@ -163,7 +163,7 @@ impl GameState {
         } else {
             systems::player_move_system(self, input);
         }
-        systems::move_system(self, rt_size);
+        systems::move_system(self, rt_size, debug);
         systems::item_use_system(self, input, mouse_tpos, aud, snd);
         systems::biome_watch_system(self, music_sink, res);
         systems::inventory_input_system(self, input);

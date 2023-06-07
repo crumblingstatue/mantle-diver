@@ -3,7 +3,7 @@ use {
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
-        debug::{DbgOvr, DBG_OVR},
+        debug::{DbgOvr, DebugState, DBG_OVR},
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
@@ -98,7 +98,7 @@ pub(super) fn item_use_system(
     }
 }
 
-pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u) {
+pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u, debug: &DebugState) {
     for (en, (mov, mut plr_dat)) in game
         .ecw
         .query_mut::<(&mut MovingEnt, Option<&mut PlayerData>)>()
@@ -171,7 +171,7 @@ pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u) {
             col
         });
         mov.vspeed += game.gravity;
-        if en == game.player_en {
+        if !debug.freecam && en == game.player_en {
             let (x, y, _w, _h) = mov.mob.en.xywh();
             game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
             game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
