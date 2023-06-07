@@ -64,9 +64,9 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
 
             for (_en, plr) in game.ecw.query_mut::<PlayerQuery>() {
                 ui.collapsing("Player", |ui| {
-                    ui.label(format!("Player Depth: {}", plr.mov.depth_disp()));
+                    ui.label(format!("Depth: {}", plr.mov.depth_disp()));
                     ui.label(format!(
-                        "Player offset from center: {}",
+                        "Offset from center: {}",
                         LengthDisp(plr.mov.mob.en.pos.x as f32 - WorldPos::CENTER as f32)
                     ));
                     ui.label(format!(
@@ -79,18 +79,21 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                         plr.mov.vspeed,
                         px_per_frame_to_km_h(plr.mov.vspeed)
                     ));
-                    ui.label("Skin color");
-                    color_edit_button(ui, &mut plr.dat.skin_color);
-                    ui.label("Eye color");
-                    color_edit_button(ui, &mut plr.dat.eye_color);
-                    ui.label("Hair color");
-                    color_edit_button(ui, &mut plr.dat.hair_color);
-                    ui.label("Shirt color");
-                    color_edit_button(ui, &mut plr.dat.shirt_color);
-                    ui.label("Pants color");
-                    color_edit_button(ui, &mut plr.dat.pants_color);
-                    ui.label("Shoes color");
-                    color_edit_button(ui, &mut plr.dat.shoes_color);
+                    ui.heading("Colors");
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label("Skin");
+                        color_edit_button(ui, &mut plr.dat.skin_color);
+                        ui.label("Eye");
+                        color_edit_button(ui, &mut plr.dat.eye_color);
+                        ui.label("Hair");
+                        color_edit_button(ui, &mut plr.dat.hair_color);
+                        ui.label("Shirt");
+                        color_edit_button(ui, &mut plr.dat.shirt_color);
+                        ui.label("Pants");
+                        color_edit_button(ui, &mut plr.dat.pants_color);
+                        ui.label("Shoes");
+                        color_edit_button(ui, &mut plr.dat.shoes_color);
+                    });
                 });
                 if ui
                     .checkbox(&mut debug.dbg_overlay, "Draw debug overlay")
