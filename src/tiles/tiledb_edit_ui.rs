@@ -235,8 +235,8 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
             }
         }
         Layer::special_ui(&mut def.layer, ui);
-        ui.label("P to paint tile at cursor");
-        if ui.input(|inp| inp.key_down(egui::Key::P)) {
+        ui.label("O to paint tile at cursor");
+        if ui.input(|inp| inp.key_down(egui::Key::O)) {
             Layer::paint(*sel_idx + 1, cmd)
         }
     }
