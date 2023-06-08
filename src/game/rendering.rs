@@ -495,7 +495,6 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
         } else {
             20
         };
-        light_state.light_map[src.map_idx] = src.intensity;
         // check each neighboring cell
         // if its 'brightness' is less than the current brightness minus some falloff value,
         // then update its brightness and mark it as well.
@@ -505,6 +504,7 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
             let val = light_state.light_map[idx];
             let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
                 light_state.light_sources.push_back(LightSrc {
                     map_idx: idx,
                     intensity: new_intensity,
@@ -517,6 +517,7 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
             let val = light_state.light_map[idx];
             let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
                 light_state.light_sources.push_back(LightSrc {
                     map_idx: idx,
                     intensity: new_intensity,
@@ -529,6 +530,7 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
             let val = light_state.light_map[idx];
             let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
                 light_state.light_sources.push_back(LightSrc {
                     map_idx: idx,
                     intensity: new_intensity,
@@ -541,6 +543,7 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
             let val = light_state.light_map[idx];
             let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
                 light_state.light_sources.push_back(LightSrc {
                     map_idx: idx,
                     intensity: new_intensity,
