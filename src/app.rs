@@ -143,7 +143,7 @@ impl App {
             debug.dbg_overlay = true;
             DBG_OVR.set_enabled(true);
         }
-        Ok(Self {
+        let mut this = Self {
             rw,
             should_quit: false,
             game: GameState::new(wld_name.to_owned(), path, res),
@@ -168,7 +168,9 @@ impl App {
             stream,
             stream_handle,
             tiles_on_screen: U16Vec::default(),
-        })
+        };
+        this.adapt_to_window_size(rw_size.x, rw_size.y);
+        Ok(this)
     }
 
     pub fn do_game_loop(mut self, res: &mut Res, aud: &ResAudio) {
@@ -221,20 +223,7 @@ impl App {
             match ev {
                 Event::Closed => self.should_quit = true,
                 Event::Resized { width, height } => {
-                    log::info!("Resize event: {width}x{height}");
-                    // Base size is the in-game surface size that can get scaled up to enlargen graphics.
-                    let base_w = width / self.scale as u32;
-                    let base_h = height / self.scale as u32;
-                    self.rt = RenderTexture::new(base_w, base_h).unwrap();
-                    self.light_state.blend_tex = RenderTexture::new(base_w, base_h).unwrap();
-                    // We add 2 to include partially visible tiles
-                    let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
-                    let th = (base_h / TILE_SIZE as u32) as u16 + 2;
-                    self.tiles_on_screen.x = tw;
-                    self.tiles_on_screen.y = th;
-                    self.light_state.light_map = vec![0; tw as usize * th as usize];
-                    let view = View::from_rect(Rect::new(0., 0., width as f32, height as f32));
-                    self.rw.set_view(&view);
+                    self.adapt_to_window_size(width, height);
                 }
                 Event::KeyPressed { code, .. } => match code {
                     Key::F11 => {
@@ -247,6 +236,23 @@ impl App {
                 _ => {}
             }
         }
+    }
+
+    fn adapt_to_window_size(&mut self, width: u32, height: u32) {
+        log::info!("Adapting to window size: {width}x{height}");
+        // Base size is the in-game surface size that can get scaled up to enlargen graphics.
+        let base_w = width / self.scale as u32;
+        let base_h = height / self.scale as u32;
+        self.rt = RenderTexture::new(base_w, base_h).unwrap();
+        self.light_state.blend_tex = RenderTexture::new(base_w, base_h).unwrap();
+        // We add 2 to include partially visible tiles
+        let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
+        let th = (base_h / TILE_SIZE as u32) as u16 + 2;
+        self.tiles_on_screen.x = tw;
+        self.tiles_on_screen.y = th;
+        self.light_state.light_map = vec![0; tw as usize * th as usize];
+        let view = View::from_rect(Rect::new(0., 0., width as f32, height as f32));
+        self.rw.set_view(&view);
     }
 
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
