@@ -382,32 +382,24 @@ pub(crate) fn light_blend_pass(
 }
 
 fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool, below: bool) {
-    /*
-         0 1 2 3 x
-       0 X - - -
-       1 | [ - ]
-       2 | |   |
-       3 | [ _ ]
-       y
-    */
     let (x, y) = match (left, right, above, below) {
         // l   r     a     b
-        (true, true, true, true) => (2, 2),
-        (true, true, true, false) => (2, 3),
-        (true, true, false, true) => (2, 1),
-        (true, true, false, false) => (2, 0),
-        (true, false, true, true) => (3, 2),
-        (true, false, true, false) => (3, 3),
-        (true, false, false, true) => (3, 1),
-        (true, false, false, false) => (3, 0),
-        (false, true, true, true) => (1, 2),
-        (false, true, true, false) => (1, 3),
-        (false, true, false, true) => (1, 1),
-        (false, true, false, false) => (1, 0),
-        (false, false, true, true) => (0, 2),
-        (false, false, true, false) => (0, 3),
-        (false, false, false, true) => (0, 1),
-        (false, false, false, false) => (0, 0),
+        (true, true, true, true) => (9, 2),
+        (true, true, true, false) => (9, 3),
+        (true, true, false, true) => (10, 0),
+        (true, true, false, false) => (2, 3),
+        (true, false, true, true) => (11, 2),
+        (true, false, true, false) => (11, 3),
+        (true, false, false, true) => (11, 0),
+        (true, false, false, false) => (3, 3),
+        (false, true, true, true) => (8, 1),
+        (false, true, true, false) => (8, 3),
+        (false, true, false, true) => (8, 0),
+        (false, true, false, false) => (1, 3),
+        (false, false, true, true) => (0, 1),
+        (false, false, true, false) => (0, 2),
+        (false, false, false, true) => (0, 0),
+        (false, false, false, false) => (0, 3),
     };
     rect.left += x * TILE_SIZE as i32;
     rect.top += y * TILE_SIZE as i32;

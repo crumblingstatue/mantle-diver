@@ -1,0 +1,28 @@
+bg/sky.png
+
+Author: Bart Kelsey
+URL: https://opengameart.org/content/sky-backdrop
+License: CC-BY 3.0
+
+---
+
+music/cave.ogg
+
+URL: https://opengameart.org/content/cave-theme
+License: CC0
+
+---
+
+music/calm.ogg
+
+Author: syncopika
+URL: https://opengameart.org/content/calm-bgm
+License: CC-BY 3.0
+
+---
+
+tiles/dirt.png
+tiles/torch.png
+items/woodpick.png
+
+Author: ShatteredReality

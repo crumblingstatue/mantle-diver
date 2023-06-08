@@ -45,7 +45,7 @@ impl Chunk {
                 t.mid = MidTileId::DIRT;
                 t.bg = BgTileId::DIRT;
                 if y == ceil {
-                    t.fg = FgTileId::GRASS;
+                    //t.fg = FgTileId::GRASS; // Removed for now
                 } else if y > ceil + 2 && noise as u32 % 37 == 0 {
                     t.fg = FgTileId::COAL;
                 }

@@ -42,8 +42,8 @@ ItemDb(
             name: "Wood Pick",
             graphic_name: "items/woodpick",
             draw_off: ScreenVec(
-                x: 9,
-                y: 6,
+                x: 5,
+                y: 4,
             ),
             use_action: MineTile(
                 power: 1.0,
