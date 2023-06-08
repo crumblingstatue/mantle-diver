@@ -75,7 +75,6 @@ pub struct LightState {
 
 pub struct LightSrc {
     pub map_idx: usize,
-    pub intensity: u8,
 }
 
 pub struct SoundPlayer {
