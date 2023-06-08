@@ -35,6 +35,9 @@ pub struct CliArgs {
     world_name: Option<String>,
     #[arg(long = "rand")]
     rand_world: bool,
+    /// Show debug overlay
+    #[arg(short, long)]
+    debug: bool,
 }
 
 fn try_main() -> anyhow::Result<()> {

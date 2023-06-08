@@ -118,13 +118,18 @@ impl App {
         let music_sink = rodio::Sink::try_new(&stream_handle).unwrap();
         music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
         music_sink.play();
+        let mut debug = DebugState::default();
+        if args.debug {
+            debug.dbg_overlay = true;
+            DBG_OVR.set_enabled(true);
+        }
         Ok(Self {
             rw,
             should_quit: false,
             game: GameState::new(wld_name.to_owned(), path, res),
             sf_egui,
             input: Input::default(),
-            debug: DebugState::default(),
+            debug,
             scale: cfg.scale,
             rt,
             light_map,
