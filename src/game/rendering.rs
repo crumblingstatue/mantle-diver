@@ -449,9 +449,10 @@ pub(crate) fn enumerate_light_sources(
         if ls {
             if i > tiles_on_screen.x as usize {
                 let idx = i - tiles_on_screen.x as usize - 1;
-                light_state
-                    .light_sources
-                    .push_back(LightSrc { map_idx: idx });
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: 255,
+                });
             }
             DBG_OVR.push(DbgOvr::WldRect {
                 r: WorldRect {
@@ -482,14 +483,10 @@ pub(crate) fn enumerate_light_sources(
 }
 
 pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) {
-    // Do a quick lightmap init prepass for initial light sources
-    light_state.light_map.fill(0);
-    for src in &light_state.light_sources {
-        light_state.light_map[src.map_idx] = 255;
-    }
     let stride = tiles_on_screen.x as usize;
     imm_dbg!(light_state.light_sources.len());
     imm_dbg!(light_state.light_blockers.len());
+    light_state.light_map.fill(0);
     let len = light_state.light_map.len();
     // for each marked cell:
     while let Some(src) = light_state.light_sources.pop_front() {
@@ -502,52 +499,55 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
         // if its 'brightness' is less than the current brightness minus some falloff value,
         // then update its brightness and mark it as well.
         // Left
-        let intensity = light_state.light_map[src.map_idx];
         if src.map_idx > 0 {
             let idx = src.map_idx - 1;
             let val = light_state.light_map[idx];
-            let new_intensity = intensity.saturating_sub(fall_off);
+            let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
                 light_state.light_map[idx] = new_intensity;
-                light_state
-                    .light_sources
-                    .push_back(LightSrc { map_idx: idx });
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
             }
         }
         // Right
         if src.map_idx + 1 < len {
             let idx = src.map_idx + 1;
             let val = light_state.light_map[idx];
-            let new_intensity = intensity.saturating_sub(fall_off);
+            let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
                 light_state.light_map[idx] = new_intensity;
-                light_state
-                    .light_sources
-                    .push_back(LightSrc { map_idx: idx });
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
             }
         }
         // Up
         if src.map_idx > stride {
             let idx = src.map_idx - stride;
             let val = light_state.light_map[idx];
-            let new_intensity = intensity.saturating_sub(fall_off);
+            let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
                 light_state.light_map[idx] = new_intensity;
-                light_state
-                    .light_sources
-                    .push_back(LightSrc { map_idx: idx });
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
             }
         }
         // Down
         if src.map_idx + stride < len {
             let idx = src.map_idx + stride;
             let val = light_state.light_map[idx];
-            let new_intensity = intensity.saturating_sub(fall_off);
+            let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
                 light_state.light_map[idx] = new_intensity;
-                light_state
-                    .light_sources
-                    .push_back(LightSrc { map_idx: idx });
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
             }
         }
     }
