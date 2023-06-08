@@ -51,7 +51,6 @@ pub struct App {
     worlds_dir: std::path::PathBuf,
     pub snd: SoundPlayer,
     pub cfg: Config,
-    pub on_screen_tile_ents: Vec<TileColEn>,
     /// Last computed mouse tile position
     pub last_mouse_tpos: TilePos,
     pub music_sink: rodio::Sink,
@@ -134,7 +133,6 @@ impl App {
             worlds_dir,
             snd: SoundPlayer::new(stream_handle.clone()),
             cfg,
-            on_screen_tile_ents: Default::default(),
             last_mouse_tpos: TilePos { x: 0, y: 0 },
             music_sink,
             stream,
