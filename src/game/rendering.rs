@@ -1,12 +1,14 @@
 use {
     super::{for_each_tile_on_screen, GameState, LightSource, SfVec2fExt},
     crate::{
-        debug::{DebugState, DBG_OVR},
+        app::{LightSrc, LightState, U16Vec},
+        debug::{DbgOvr, DebugState, DBG_OVR},
         graphics::ScreenVec,
         inventory::ItemId,
-        math::{smoothwave, WorldPos, TILE_SIZE},
+        math::{WorldRect, TILE_SIZE},
         player::{FacingDir, MovingEnt, PlayerQuery},
         res::Res,
+        tiles::MidTileId,
     },
     gamedebug_core::imm_dbg,
     sfml::{
@@ -14,7 +16,7 @@ use {
             Color, Rect, RectangleShape, RenderTarget, RenderTexture, Shape, Sprite, Text,
             Transformable,
         },
-        system::Vector2f,
+        system::{Vector2f, Vector2u},
     },
 };
 
@@ -354,27 +356,28 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
     }
 }
 
-pub(crate) fn light_pass(game: &mut GameState, lightmap: &mut RenderTexture, res: &Res) {
-    let how_much_below_surface = game.camera_offset.y.saturating_sub(WorldPos::SURFACE);
-    let light_dropoff = (how_much_below_surface / 8).min(255) as u8;
-    let daylight = 255u8;
-    game.ambient_light = daylight.saturating_sub(light_dropoff);
-    // Clear light map
-    // You can clear to a brighter color to increase ambient light level
-    lightmap.clear(Color::rgba(
-        game.ambient_light,
-        game.ambient_light,
-        game.ambient_light,
-        255,
-    ));
-    let mut s = Sprite::with_texture(&res.atlas.tex);
-    s.set_texture_rect(res.atlas.rects["light/1"].to_sf());
-    for ls in &game.light_sources {
-        let flicker = smoothwave(game.world.ticks, 40) as f32 / 64.0;
-        s.set_scale((4. + flicker, 4. + flicker));
-        s.set_origin((128., 128.));
-        s.set_position((ls.pos.x.into(), ls.pos.y.into()));
-        lightmap.draw(&s);
+pub(crate) fn light_blend_pass(
+    game: &mut GameState,
+    lt_tex: &mut RenderTexture,
+    lightmap: &[u8],
+    _res: &Res,
+    tiles_on_screen: U16Vec,
+) {
+    lt_tex.clear(Color::BLACK);
+    let mut rs = RectangleShape::with_size((TILE_SIZE as f32, TILE_SIZE as f32).into());
+    let mut i = 0;
+    let xoff = (game.camera_offset.x % TILE_SIZE as u32) as f32;
+    let yoff = (game.camera_offset.y % TILE_SIZE as u32) as f32;
+    for y in 0..tiles_on_screen.y {
+        for x in 0..tiles_on_screen.x {
+            let level = lightmap[i];
+            rs.set_fill_color(Color::rgba(255, 255, 255, level));
+            let x = x as f32 * TILE_SIZE as f32;
+            let y = y as f32 * TILE_SIZE as f32;
+            rs.set_position((x - xoff, y - yoff));
+            lt_tex.draw(&rs);
+            i += 1;
+        }
     }
 }
 
@@ -426,4 +429,127 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
             rt.draw(&rs);
         },
     });
+}
+
+/// Gather up all the information on light sources that can have a visible effect on the screen.
+///
+/// This should fill up the `light_sources` array
+pub(crate) fn enumerate_light_sources(
+    game: &mut GameState,
+    light_state: &mut LightState,
+    rt_size: Vector2u,
+    tiles_on_screen: U16Vec,
+) {
+    light_state.light_sources.clear();
+    light_state.light_blockers.clear();
+    let mut i = 0usize;
+    for_each_tile_on_screen(game.camera_offset, rt_size, |tp, _sp| {
+        let t = game.world.tile_at_mut(tp);
+        let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
+        if ls {
+            if i > tiles_on_screen.x as usize {
+                let idx = i - tiles_on_screen.x as usize - 1;
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: 255,
+                });
+            }
+            DBG_OVR.push(DbgOvr::WldRect {
+                r: WorldRect {
+                    topleft: tp.to_world(),
+                    w: 32,
+                    h: 32,
+                },
+                c: Color::YELLOW,
+            });
+        }
+        let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
+        if lb {
+            if i > tiles_on_screen.x as usize {
+                let idx = i - tiles_on_screen.x as usize - 1;
+                light_state.light_blockers.insert(idx);
+            }
+            DBG_OVR.push(DbgOvr::WldRect {
+                r: WorldRect {
+                    topleft: tp.to_world(),
+                    w: 32,
+                    h: 32,
+                },
+                c: Color::RED,
+            });
+        }
+        i += 1;
+    });
+}
+
+pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) {
+    let stride = tiles_on_screen.x as usize;
+    imm_dbg!(light_state.light_sources.len());
+    imm_dbg!(light_state.light_blockers.len());
+    light_state.light_map.fill(0);
+    let len = light_state.light_map.len();
+    // for each marked cell:
+    while let Some(src) = light_state.light_sources.pop_front() {
+        let fall_off = if light_state.light_blockers.contains(&src.map_idx) {
+            80
+        } else {
+            20
+        };
+        // check each neighboring cell
+        // if its 'brightness' is less than the current brightness minus some falloff value,
+        // then update its brightness and mark it as well.
+        // Left
+        if src.map_idx > 0 {
+            let idx = src.map_idx - 1;
+            let val = light_state.light_map[idx];
+            let new_intensity = src.intensity.saturating_sub(fall_off);
+            if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
+            }
+        }
+        // Right
+        if src.map_idx + 1 < len {
+            let idx = src.map_idx + 1;
+            let val = light_state.light_map[idx];
+            let new_intensity = src.intensity.saturating_sub(fall_off);
+            if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
+            }
+        }
+        // Up
+        if src.map_idx > stride {
+            let idx = src.map_idx - stride;
+            let val = light_state.light_map[idx];
+            let new_intensity = src.intensity.saturating_sub(fall_off);
+            if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
+            }
+        }
+        // Down
+        if src.map_idx + stride < len {
+            let idx = src.map_idx + stride;
+            let val = light_state.light_map[idx];
+            let new_intensity = src.intensity.saturating_sub(fall_off);
+            if val < new_intensity {
+                light_state.light_map[idx] = new_intensity;
+                light_state.light_sources.push_back(LightSrc {
+                    map_idx: idx,
+                    intensity: new_intensity,
+                });
+            }
+        }
+    }
+    // continue until there are no more marked cells
 }

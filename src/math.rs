@@ -112,6 +112,7 @@ pub fn center_offset<N: From<u8> + Copy + Signed>(xw: N, yw: N) -> N {
 }
 
 /// A smooth triangle-wave like transform of the input value, oscillating between 0 and the ceiling.
+#[cfg_attr(not(test), expect(dead_code))]
 pub fn smoothwave<T: Num + From<u8> + PartialOrd + Copy>(input: T, max: T) -> T {
     let period = max * T::from(2);
     let value = input % period;

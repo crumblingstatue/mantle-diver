@@ -6,7 +6,7 @@ use {
         game::{rendering, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
-        math::center_offset,
+        math::{center_offset, TILE_SIZE},
         player::PlayerQuery,
         res::{Res, ResAudio},
         save::Save,
@@ -16,6 +16,7 @@ use {
     anyhow::Context,
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
+    fnv::FnvHashSet,
     gamedebug_core::{imm, imm_dbg},
     rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
@@ -44,8 +45,6 @@ pub struct App {
     pub scale: u8,
     /// RenderTexture for rendering the game at its native resolution
     pub rt: RenderTexture,
-    /// Light map overlay, blended together with the non-lighted version of the scene
-    pub light_map: RenderTexture,
     pub project_dirs: ProjectDirs,
     pub cmdvec: CmdVec,
     worlds_dir: std::path::PathBuf,
@@ -56,6 +55,27 @@ pub struct App {
     pub music_sink: rodio::Sink,
     pub stream: rodio::OutputStream,
     pub stream_handle: rodio::OutputStreamHandle,
+    pub light_state: LightState,
+    pub tiles_on_screen: U16Vec,
+}
+
+#[derive(Default, Clone, Copy)]
+pub struct U16Vec {
+    pub x: u16,
+    pub y: u16,
+}
+
+pub struct LightState {
+    /// Light map overlay, blended together with the non-lighted version of the scene
+    pub blend_tex: RenderTexture,
+    pub light_map: Vec<u8>,
+    pub light_sources: VecDeque<LightSrc>,
+    pub light_blockers: FnvHashSet<usize>,
+}
+
+pub struct LightSrc {
+    pub map_idx: usize,
+    pub intensity: u8,
 }
 
 pub struct SoundPlayer {
@@ -100,7 +120,7 @@ impl App {
         let rw_size = rw.size();
         let rt =
             RenderTexture::new(rw_size.x, rw_size.y).context("Failed to create render texture")?;
-        let light_map = RenderTexture::new(rw_size.x, rw_size.y)
+        let light_blend_tex = RenderTexture::new(rw_size.x, rw_size.y)
             .context("Failed to create lightmap texture")?;
         let worlds_dir = project_dirs.data_dir().join("worlds");
         let rand_name;
@@ -132,7 +152,12 @@ impl App {
             debug,
             scale: cfg.scale,
             rt,
-            light_map,
+            light_state: LightState {
+                blend_tex: light_blend_tex,
+                light_map: Vec::new(),
+                light_sources: VecDeque::new(),
+                light_blockers: fnv::FnvHashSet::default(),
+            },
             project_dirs,
             cmdvec: CmdVec::default(),
             worlds_dir,
@@ -142,6 +167,7 @@ impl App {
             music_sink,
             stream,
             stream_handle,
+            tiles_on_screen: U16Vec::default(),
         })
     }
 
@@ -195,12 +221,18 @@ impl App {
             match ev {
                 Event::Closed => self.should_quit = true,
                 Event::Resized { width, height } => {
-                    self.rt =
-                        RenderTexture::new(width / self.scale as u32, height / self.scale as u32)
-                            .unwrap();
-                    self.light_map =
-                        RenderTexture::new(width / self.scale as u32, height / self.scale as u32)
-                            .unwrap();
+                    log::info!("Resize event: {width}x{height}");
+                    // Base size is the in-game surface size that can get scaled up to enlargen graphics.
+                    let base_w = width / self.scale as u32;
+                    let base_h = height / self.scale as u32;
+                    self.rt = RenderTexture::new(base_w, base_h).unwrap();
+                    self.light_state.blend_tex = RenderTexture::new(base_w, base_h).unwrap();
+                    // We add 2 to include partially visible tiles
+                    let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
+                    let th = (base_h / TILE_SIZE as u32) as u16 + 2;
+                    self.tiles_on_screen.x = tw;
+                    self.tiles_on_screen.y = th;
+                    self.light_state.light_map = vec![0; tw as usize * th as usize];
                     let view = View::from_rect(Rect::new(0., 0., width as f32, height as f32));
                     self.rw.set_view(&view);
                 }
@@ -256,7 +288,20 @@ impl App {
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
-        rendering::light_pass(&mut self.game, &mut self.light_map, res);
+        rendering::enumerate_light_sources(
+            &mut self.game,
+            &mut self.light_state,
+            self.rt.size(),
+            self.tiles_on_screen,
+        );
+        rendering::light_fill(&mut self.light_state, self.tiles_on_screen);
+        rendering::light_blend_pass(
+            &mut self.game,
+            &mut self.light_state.blend_tex,
+            &self.light_state.light_map,
+            res,
+            self.tiles_on_screen,
+        );
         self.rt.clear(Color::rgb(55, 221, 231));
         rendering::draw_world(&mut self.game, &mut self.rt, res);
         rendering::draw_entities(&mut self.game, &mut self.rt, res, &self.debug);
@@ -273,8 +318,8 @@ impl App {
         // Draw light overlay with multiply blending
         let mut rst = RenderStates::default();
         rst.blend_mode = BlendMode::MULTIPLY;
-        self.light_map.display();
-        spr.set_texture(self.light_map.texture(), false);
+        self.light_state.blend_tex.display();
+        spr.set_texture(self.light_state.blend_tex.texture(), false);
         self.rw.draw_with_renderstates(&spr, &rst);
         drop(spr);
         // Draw ui on top of in-game scene

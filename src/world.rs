@@ -1,3 +1,5 @@
+use crate::math::{WorldPos, TILE_SIZE};
+
 mod gen;
 mod reg_chunk_existence;
 mod serialization;
@@ -149,6 +151,13 @@ impl TilePos {
         Self {
             x: self.x,
             y: self.y.saturating_add_signed(off),
+        }
+    }
+
+    pub(crate) fn to_world(self) -> WorldPos {
+        WorldPos {
+            x: self.x * TILE_SIZE as u32,
+            y: self.y * TILE_SIZE as u32,
         }
     }
 }
