@@ -53,6 +53,31 @@ fn try_main() -> anyhow::Result<()> {
 }
 
 fn main() {
+    std::panic::set_hook(Box::new(|panic_info| {
+        let payload = panic_info.payload();
+        let msg = if let Some(s) = payload.downcast_ref::<&str>() {
+            s
+        } else if let Some(s) = payload.downcast_ref::<String>() {
+            s
+        } else {
+            "Unknown panic payload"
+        };
+        let (file, line, column) = match panic_info.location() {
+            Some(loc) => (loc.file(), loc.line().to_string(), loc.column().to_string()),
+            None => ("unknown", "unknown".into(), "unknown".into()),
+        };
+        rfd::MessageDialog::new()
+            .set_title("Mantle Diver panicked!")
+            .set_description(&format!(
+                "\
+                {msg}\n\n\
+                Location:\n\
+                {file}:{line}:{column}\n\n\
+                Terminating."
+            ))
+            .set_level(rfd::MessageLevel::Error)
+            .show();
+    }));
     env_logger::builder()
         .filter_level(log::LevelFilter::Info)
         .init();
