@@ -239,7 +239,10 @@ impl App {
     }
 
     fn adapt_to_window_size_and_scale(&mut self, width: u32, height: u32) {
-        log::info!("Adapting to window size: {width}x{height}");
+        log::info!(
+            "Adapting to window size: {width}x{height}, scale: {}",
+            self.scale
+        );
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
         let base_w = width / self.scale as u32;
         let base_h = height / self.scale as u32;
