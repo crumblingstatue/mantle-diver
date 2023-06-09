@@ -43,8 +43,6 @@ pub struct App {
     pub debug: DebugState,
     /// Integer scale for rendering the game
     pub scale: u8,
-    /// RenderTexture for rendering the game at its native resolution
-    pub rt: RenderTexture,
     pub project_dirs: ProjectDirs,
     pub cmdvec: CmdVec,
     worlds_dir: std::path::PathBuf,
@@ -133,7 +131,6 @@ impl App {
             input: Input::default(),
             debug,
             scale: cfg.scale,
-            rt,
             light_state: LightState {
                 light_map: Vec::new(),
                 light_sources: VecDeque::new(),
@@ -151,6 +148,7 @@ impl App {
             tiles_on_screen: U16Vec::default(),
             render: RenderState {
                 light_blend_rt: light_blend_tex,
+                rt,
             },
         };
         this.adapt_to_window_size_and_scale(rw_size.x, rw_size.y);
@@ -238,7 +236,7 @@ impl App {
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
         let base_w = width / self.scale as u32;
         let base_h = height / self.scale as u32;
-        self.rt = RenderTexture::new(base_w, base_h).unwrap();
+        self.render.rt = RenderTexture::new(base_w, base_h).unwrap();
         self.render.light_blend_rt = RenderTexture::new(base_w, base_h).unwrap();
         // We add 2 to include partially visible tiles
         let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
@@ -251,7 +249,7 @@ impl App {
     }
 
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
-        let rt_size = self.rt.size();
+        let rt_size = self.render.rt.size();
         let mut mouse_world_pos = self.game.camera_offset;
         let mut loc = self.input.mouse_down_loc / self.scale as ScreenSc;
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
@@ -292,7 +290,7 @@ impl App {
         light::enumerate_light_sources(
             &mut self.game,
             &mut self.light_state,
-            self.rt.size(),
+            self.render.rt.size(),
             self.tiles_on_screen,
         );
         light::light_fill(&mut self.light_state, self.tiles_on_screen);
@@ -303,16 +301,16 @@ impl App {
             res,
             self.tiles_on_screen,
         );
-        self.rt.clear(Color::rgb(55, 221, 231));
-        rendering::draw_world(&mut self.game, &mut self.rt, res);
-        rendering::draw_entities(&mut self.game, &mut self.rt, res, &self.debug);
+        self.render.rt.clear(Color::rgb(55, 221, 231));
+        rendering::draw_world(&mut self.game, &mut self.render.rt, res);
+        rendering::draw_entities(&mut self.game, &mut self.render.rt, res, &self.debug);
         if self.debug.dbg_overlay {
-            rendering::draw_debug_overlay(&mut self.rt, &mut self.game);
+            rendering::draw_debug_overlay(&mut self.render.rt, &mut self.game);
         }
-        self.rt.display();
-        let mut spr = Sprite::with_texture(self.rt.texture());
+        self.render.rt.display();
+        let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));
-        let vco = viewport_center_offset(self.rw.size(), self.rt.size(), self.scale);
+        let vco = viewport_center_offset(self.rw.size(), self.render.rt.size(), self.scale);
         spr.set_position((vco.x as f32, vco.y as f32));
         self.rw.clear(Color::rgb(40, 10, 70));
         self.rw.draw(&spr);
@@ -324,14 +322,14 @@ impl App {
         self.rw.draw_with_renderstates(&spr, &rst);
         drop(spr);
         // Draw ui on top of in-game scene
-        self.rt.clear(Color::TRANSPARENT);
+        self.render.rt.clear(Color::TRANSPARENT);
         let ui_dims = Vector2 {
             x: (self.rw.size().x / self.scale as u32) as f32,
             y: (self.rw.size().y / self.scale as u32) as f32,
         };
-        rendering::draw_ui(&mut self.game, &mut self.rt, res, ui_dims);
-        self.rt.display();
-        let mut spr = Sprite::with_texture(self.rt.texture());
+        rendering::draw_ui(&mut self.game, &mut self.render.rt, res, ui_dims);
+        self.render.rt.display();
+        let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((self.scale as f32, self.scale as f32));
         self.rw.draw(&spr);
         self.sf_egui
