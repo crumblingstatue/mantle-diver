@@ -21,8 +21,9 @@ License: CC-BY 3.0
 
 ---
 
-tiles/dirt.png
-tiles/torch.png
-items/woodpick.png
+graphics/tiles/dirt.png
+graphics/tiles/torch.png
+graphics/tiles/stone.png
+graphics/items/woodpick.png
 
 Author: ShatteredReality
