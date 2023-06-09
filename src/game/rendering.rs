@@ -5,7 +5,7 @@ use {
         graphics::ScreenVec,
         inventory::ItemId,
         light::U16Vec,
-        math::TILE_SIZE,
+        math::{WorldPos, TILE_SIZE},
         player::{FacingDir, MovingEnt, PlayerQuery},
         res::Res,
     },
@@ -363,7 +363,7 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
 }
 
 pub(crate) fn light_blend_pass(
-    game: &mut GameState,
+    camera_offset: WorldPos,
     lt_tex: &mut RenderTexture,
     lightmap: &[u8],
     tiles_on_screen: U16Vec,
@@ -371,8 +371,8 @@ pub(crate) fn light_blend_pass(
     lt_tex.clear(Color::BLACK);
     let mut rs = RectangleShape::with_size((TILE_SIZE as f32, TILE_SIZE as f32).into());
     let mut i = 0;
-    let xoff = (game.camera_offset.x % TILE_SIZE as u32) as f32;
-    let yoff = (game.camera_offset.y % TILE_SIZE as u32) as f32;
+    let xoff = (camera_offset.x % TILE_SIZE as u32) as f32;
+    let yoff = (camera_offset.y % TILE_SIZE as u32) as f32;
     for y in 0..tiles_on_screen.y {
         for x in 0..tiles_on_screen.x {
             let level = lightmap[i];

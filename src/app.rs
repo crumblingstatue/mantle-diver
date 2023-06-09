@@ -295,7 +295,7 @@ impl App {
         );
         light::light_fill(&mut self.light_state, self.tiles_on_screen);
         rendering::light_blend_pass(
-            &mut self.game,
+            self.game.camera_offset,
             &mut self.render.light_blend_rt,
             &self.light_state.light_map,
             self.tiles_on_screen,
