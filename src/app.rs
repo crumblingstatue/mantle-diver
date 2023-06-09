@@ -6,6 +6,7 @@ use {
         game::{rendering, GameState},
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
+        light::{self, LightState, U16Vec},
         math::{center_offset, TILE_SIZE},
         player::PlayerQuery,
         res::{Res, ResAudio},
@@ -16,7 +17,6 @@ use {
     anyhow::Context,
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
-    fnv::FnvHashSet,
     gamedebug_core::{imm, imm_dbg},
     rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
@@ -57,25 +57,6 @@ pub struct App {
     pub stream_handle: rodio::OutputStreamHandle,
     pub light_state: LightState,
     pub tiles_on_screen: U16Vec,
-}
-
-#[derive(Default, Clone, Copy)]
-pub struct U16Vec {
-    pub x: u16,
-    pub y: u16,
-}
-
-pub struct LightState {
-    /// Light map overlay, blended together with the non-lighted version of the scene
-    pub blend_tex: RenderTexture,
-    pub light_map: Vec<u8>,
-    pub light_sources: VecDeque<LightSrc>,
-    pub light_blockers: FnvHashSet<usize>,
-}
-
-pub struct LightSrc {
-    pub map_idx: usize,
-    pub intensity: u8,
 }
 
 pub struct SoundPlayer {
@@ -305,13 +286,13 @@ impl App {
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
-        rendering::enumerate_light_sources(
+        light::enumerate_light_sources(
             &mut self.game,
             &mut self.light_state,
             self.rt.size(),
             self.tiles_on_screen,
         );
-        rendering::light_fill(&mut self.light_state, self.tiles_on_screen);
+        light::light_fill(&mut self.light_state, self.tiles_on_screen);
         rendering::light_blend_pass(
             &mut self.game,
             &mut self.light_state.blend_tex,

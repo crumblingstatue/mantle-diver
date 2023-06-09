@@ -21,6 +21,7 @@ mod graphics;
 mod input;
 mod inventory;
 mod itemdrop;
+mod light;
 mod math;
 mod player;
 mod res;
