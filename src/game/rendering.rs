@@ -19,6 +19,11 @@ use {
     },
 };
 
+pub struct RenderState {
+    /// Light map overlay, blended together with the non-lighted version of the scene
+    pub blend_tex: RenderTexture,
+}
+
 trait SpriteExt {
     fn fit_to_size(&mut self, size: Vector2f);
 }

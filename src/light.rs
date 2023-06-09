@@ -7,10 +7,7 @@ use {
     },
     fnv::FnvHashSet,
     gamedebug_core::imm_dbg,
-    sfml::{
-        graphics::{Color, RenderTexture},
-        system::Vector2u,
-    },
+    sfml::{graphics::Color, system::Vector2u},
     std::collections::VecDeque,
 };
 
@@ -20,8 +17,6 @@ pub struct LightSrc {
 }
 
 pub struct LightState {
-    /// Light map overlay, blended together with the non-lighted version of the scene
-    pub blend_tex: RenderTexture,
     pub light_map: Vec<u8>,
     pub light_sources: VecDeque<LightSrc>,
     pub light_blockers: FnvHashSet<usize>,
