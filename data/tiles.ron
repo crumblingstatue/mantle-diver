@@ -152,7 +152,7 @@ TileDb(
             ),
             neigh_aware: false,
             draw_offs: ScreenVec(
-                x: 12,
+                x: 6,
                 y: 1,
             ),
             health: 2.0,

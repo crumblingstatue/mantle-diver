@@ -18,7 +18,7 @@ ItemDb(
             name: "Torch",
             graphic_name: "tiles/torch",
             draw_off: ScreenVec(
-                x: 16,
+                x: 10,
                 y: 5,
             ),
             use_action: PlaceMidTile(
