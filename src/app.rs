@@ -169,7 +169,7 @@ impl App {
             stream_handle,
             tiles_on_screen: U16Vec::default(),
         };
-        this.adapt_to_window_size(rw_size.x, rw_size.y);
+        this.adapt_to_window_size_and_scale(rw_size.x, rw_size.y);
         Ok(this)
     }
 
@@ -223,7 +223,7 @@ impl App {
             match ev {
                 Event::Closed => self.should_quit = true,
                 Event::Resized { width, height } => {
-                    self.adapt_to_window_size(width, height);
+                    self.adapt_to_window_size_and_scale(width, height);
                 }
                 Event::KeyPressed { code, .. } => match code {
                     Key::F11 => {
@@ -238,7 +238,7 @@ impl App {
         }
     }
 
-    fn adapt_to_window_size(&mut self, width: u32, height: u32) {
+    fn adapt_to_window_size_and_scale(&mut self, width: u32, height: u32) {
         log::info!("Adapting to window size: {width}x{height}");
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
         let base_w = width / self.scale as u32;

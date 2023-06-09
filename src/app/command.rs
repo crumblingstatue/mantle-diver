@@ -3,11 +3,12 @@ use {
     crate::{
         command::Cmd, game::GameState, player::PlayerQuery, res::Res, texture_atlas::AtlasBundle,
     },
+    sfml::{graphics::RenderTarget, system::Vector2u},
     std::fmt::Write,
 };
 
 pub(super) fn dispatch(app: &mut App, res: &mut Res) {
-    for cmd in app.cmdvec.drain(..) {
+    for cmd in std::mem::take(&mut app.cmdvec) {
         match cmd {
             Cmd::QuitApp => app.should_quit = true,
             Cmd::ToggleFreecam => app.debug.freecam ^= true,
@@ -41,7 +42,11 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res) {
                 .unwrap();
             }
             Cmd::ToggleTileDbEdit => app.debug.tiledb_edit.open ^= true,
-            Cmd::SetScale(scale) => app.scale = scale,
+            Cmd::SetScale(scale) => {
+                app.scale = scale;
+                let Vector2u { x, y } = app.rw.size();
+                app.adapt_to_window_size_and_scale(x, y);
+            }
             Cmd::LoadWorld(name) => {
                 app.game.world.save();
                 let path = app.worlds_dir.join(&name);
