@@ -66,6 +66,7 @@ fn main() {
             Some(loc) => (loc.file(), loc.line().to_string(), loc.column().to_string()),
             None => ("unknown", "unknown".into(), "unknown".into()),
         };
+        eprintln!("{msg}\n{file}:{line}:{column}");
         rfd::MessageDialog::new()
             .set_title("Mantle Diver panicked!")
             .set_description(&format!(
