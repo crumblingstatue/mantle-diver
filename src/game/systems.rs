@@ -302,7 +302,7 @@ pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
     }
     plr.dat.down_intent = input.down(InputAction::Down);
 }
-pub(super) fn freecam_move_system(game: &mut GameState, mouse_world_pos: WorldPos, input: &Input) {
+pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
     let spd = if input.down_raw(Key::LShift) {
         100
     } else if input.down_raw(Key::LControl) {
@@ -321,13 +321,6 @@ pub(super) fn freecam_move_system(game: &mut GameState, mouse_world_pos: WorldPo
     }
     if input.down(InputAction::Down) {
         game.camera_offset.y = game.camera_offset.y.saturating_add(spd);
-    }
-    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
-        return;
-    };
-    if input.pressed_raw(Key::P) {
-        plr.mov.mob.en.pos.x = mouse_world_pos.x as i32;
-        plr.mov.mob.en.pos.y = mouse_world_pos.y as i32;
     }
 }
 

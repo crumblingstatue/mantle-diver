@@ -24,6 +24,7 @@ pub enum Cmd {
     SetBgTileAtCursor(BgTileId),
     SetMidTileAtCursor(MidTileId),
     SetFgTileAtCursor(FgTileId),
+    TeleportPlayerCursor,
 }
 
 pub type CmdVec = Vec<Cmd>;

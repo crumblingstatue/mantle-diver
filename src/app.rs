@@ -281,7 +281,6 @@ impl App {
         self.game.run_systems(
             &self.debug,
             &mut self.input,
-            mouse_world_pos,
             mouse_tpos,
             rt_size,
             &mut self.music_sink,
@@ -291,6 +290,7 @@ impl App {
             &mut self.cmdvec,
             &self.worlds_dir,
         );
+        self::command::dispatch(self, res, mouse_world_pos);
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
@@ -364,8 +364,6 @@ impl App {
         };
         self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
         self.rw.display();
-        drop(spr);
-        self::command::dispatch(self, res);
     }
 }
 

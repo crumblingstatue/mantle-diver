@@ -6,11 +6,19 @@ use {
 
 #[derive(Parser)]
 pub enum CmdLine {
+    /// Quit the game
     Quit,
+    /// Toggle free camera mode
     Freecam,
+    /// Clear the console log
     Clear,
+    /// Teleport player to coordinates
     Tp(Tp),
+    /// Teleport player to cursor
+    Tpc,
+    /// Teleport player back to spawn
     Spawn,
+    /// Give the player an item
     Give(Give),
     /// Char db editor
     Chardb,
@@ -18,10 +26,13 @@ pub enum CmdLine {
     Tiledb,
     /// Item db editor
     Itemdb,
-    /// Set scale
+    /// Set graphics scaling
     Scale(Scale),
+    /// Open world management menu
     World(World),
+    /// Toggle showing the texture atlas
     Atlas,
+    /// Reload graphics
     Greload,
 }
 
@@ -84,6 +95,7 @@ impl CmdLine {
                 pos: tp.to_world_pos(),
                 relative: tp.rel,
             }),
+            CmdLine::Tpc => Dispatch::Cmd(Cmd::TeleportPlayerCursor),
             CmdLine::Spawn => Dispatch::Cmd(Cmd::TeleportPlayerSpawn),
             CmdLine::Give(give) => Dispatch::Cmd(Cmd::GiveItemByName {
                 name: give.name,

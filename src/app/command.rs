@@ -1,13 +1,14 @@
 use {
     super::App,
     crate::{
-        command::Cmd, game::GameState, player::PlayerQuery, res::Res, texture_atlas::AtlasBundle,
+        command::Cmd, game::GameState, math::WorldPos, player::PlayerQuery, res::Res,
+        texture_atlas::AtlasBundle,
     },
     sfml::{graphics::RenderTarget, system::Vector2u},
     std::fmt::Write,
 };
 
-pub(super) fn dispatch(app: &mut App, res: &mut Res) {
+pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) {
     for cmd in std::mem::take(&mut app.cmdvec) {
         match cmd {
             Cmd::QuitApp => app.should_quit = true,
@@ -21,6 +22,12 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res) {
                     } else {
                         plr.mov.mob.en.pos = pos.to_s2dc()
                     }
+                }
+            }
+            Cmd::TeleportPlayerCursor => {
+                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
+                    plr.mov.mob.en.pos.x = mouse_world_pos.x as i32;
+                    plr.mov.mob.en.pos.y = mouse_world_pos.y as i32;
                 }
             }
             Cmd::TeleportPlayerSpawn => {
