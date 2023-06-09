@@ -366,7 +366,6 @@ pub(crate) fn light_blend_pass(
     game: &mut GameState,
     lt_tex: &mut RenderTexture,
     lightmap: &[u8],
-    _res: &Res,
     tiles_on_screen: U16Vec,
 ) {
     lt_tex.clear(Color::BLACK);

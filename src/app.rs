@@ -298,7 +298,6 @@ impl App {
             &mut self.game,
             &mut self.render.light_blend_rt,
             &self.light_state.light_map,
-            res,
             self.tiles_on_screen,
         );
         self.render.rt.clear(Color::rgb(55, 221, 231));
