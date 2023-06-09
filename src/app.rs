@@ -258,7 +258,7 @@ impl App {
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
         let rt_size = self.rt.size();
         let mut mouse_world_pos = self.game.camera_offset;
-        let mut loc = self.input.mouse_down_loc;
+        let mut loc = self.input.mouse_down_loc / self.scale as ScreenSc;
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
         mouse_world_pos.y = mouse_world_pos.y.saturating_add_signed(loc.y.into());
         let vco = viewport_center_offset(self.rw.size(), rt_size, self.scale);

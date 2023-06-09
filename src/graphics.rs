@@ -7,6 +7,7 @@ use {
         window::{ContextSettings, Style, VideoMode},
     },
     sfml_xt::graphics::RenderWindowExt,
+    std::ops::Div,
 };
 
 pub struct ScreenRes {
@@ -37,6 +38,17 @@ pub type ScreenSc = i16;
 impl ScreenVec {
     pub fn to_sf_vec(self) -> Vector2f {
         Vector2f::new(self.x.into(), self.y.into())
+    }
+}
+
+impl Div<ScreenSc> for ScreenVec {
+    type Output = Self;
+
+    fn div(self, rhs: ScreenSc) -> Self::Output {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
     }
 }
 
