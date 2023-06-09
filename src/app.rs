@@ -243,6 +243,14 @@ impl App {
             "Adapting to window size: {width}x{height}, scale: {}",
             self.scale
         );
+        if self.scale == 0 {
+            log::warn!("Adjusting bad 0 scale value to 1");
+            self.scale = 1;
+        }
+        if self.scale > 5 {
+            log::warn!("Clamping scale value to 5");
+            self.scale = 5;
+        }
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
         let base_w = width / self.scale as u32;
         let base_h = height / self.scale as u32;
