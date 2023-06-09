@@ -9,6 +9,7 @@ pub enum CmdLine {
     /// Quit the game
     Quit,
     /// Toggle free camera mode
+    #[clap(alias = "fc")]
     Freecam,
     /// Clear the console log
     Clear,
