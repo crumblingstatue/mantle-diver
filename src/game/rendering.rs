@@ -21,7 +21,7 @@ use {
 
 pub struct RenderState {
     /// Light map overlay, blended together with the non-lighted version of the scene
-    pub blend_tex: RenderTexture,
+    pub light_blend_rt: RenderTexture,
 }
 
 trait SpriteExt {

@@ -150,7 +150,7 @@ impl App {
             stream_handle,
             tiles_on_screen: U16Vec::default(),
             render: RenderState {
-                blend_tex: light_blend_tex,
+                light_blend_rt: light_blend_tex,
             },
         };
         this.adapt_to_window_size_and_scale(rw_size.x, rw_size.y);
@@ -239,7 +239,7 @@ impl App {
         let base_w = width / self.scale as u32;
         let base_h = height / self.scale as u32;
         self.rt = RenderTexture::new(base_w, base_h).unwrap();
-        self.render.blend_tex = RenderTexture::new(base_w, base_h).unwrap();
+        self.render.light_blend_rt = RenderTexture::new(base_w, base_h).unwrap();
         // We add 2 to include partially visible tiles
         let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
         let th = (base_h / TILE_SIZE as u32) as u16 + 2;
@@ -298,7 +298,7 @@ impl App {
         light::light_fill(&mut self.light_state, self.tiles_on_screen);
         rendering::light_blend_pass(
             &mut self.game,
-            &mut self.render.blend_tex,
+            &mut self.render.light_blend_rt,
             &self.light_state.light_map,
             res,
             self.tiles_on_screen,
@@ -319,8 +319,8 @@ impl App {
         // Draw light overlay with multiply blending
         let mut rst = RenderStates::default();
         rst.blend_mode = BlendMode::MULTIPLY;
-        self.render.blend_tex.display();
-        spr.set_texture(self.render.blend_tex.texture(), false);
+        self.render.light_blend_rt.display();
+        spr.set_texture(self.render.light_blend_rt.texture(), false);
         self.rw.draw_with_renderstates(&spr, &rst);
         drop(spr);
         // Draw ui on top of in-game scene
