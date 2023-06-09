@@ -18,7 +18,7 @@ serde = { version = "1.0.163", features = ["derive"] }
 log = "0.4.17"
 env_logger = "0.10.0"
 zstd = "0.12.3"
-clap = { version = "4.2.7", features = ["derive"] }
+clap = { version = "4.2.7", default-features = false, features = ["std", "help", "derive"] }
 directories = "5.0.1"
 texture_packer = "0.25.0"
 walkdir = "2.3.3"
