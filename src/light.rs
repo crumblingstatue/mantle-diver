@@ -42,7 +42,10 @@ pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) 
         // Left
         if src.map_idx > 0 {
             let idx = src.map_idx - 1;
-            let val = light_state.light_map[idx];
+            let Some(&val) = light_state.light_map.get(idx) else {
+                log::error!("Index {idx} out of bounds (len: {})", light_state.light_map.len());
+                return;
+            };
             let new_intensity = src.intensity.saturating_sub(fall_off);
             if val < new_intensity {
                 light_state.light_map[idx] = new_intensity;
