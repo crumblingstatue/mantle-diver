@@ -108,6 +108,7 @@ pub fn wp_to_tp(wp: WPosSc) -> TPosSc {
 // This is the offset that this function calculates.
 //
 // We can calulate it by subtracting `xw` from `yw` (10), and dividing it by 2.
+#[expect(dead_code, reason = "Might be useful in the future")]
 pub fn center_offset<N: From<u8> + Copy + Signed>(xw: N, yw: N) -> N {
     let diff = yw - xw;
     diff / N::from(2)

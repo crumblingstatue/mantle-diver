@@ -7,7 +7,7 @@ use {
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
         light::{self, LightState, U16Vec},
-        math::{center_offset, TILE_SIZE},
+        math::TILE_SIZE,
         player::PlayerQuery,
         res::{Res, ResAudio},
         save::Save,
@@ -25,7 +25,7 @@ use {
             BlendMode, Color, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
             RenderWindow, Shape, Sprite, Texture, Transformable, View,
         },
-        system::{Vector2, Vector2u},
+        system::Vector2,
         window::{Event, Key},
     },
     std::collections::VecDeque,
@@ -259,9 +259,6 @@ impl App {
         let mut loc = self.input.mouse_down_loc / ScreenSc::from(self.scale);
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
         mouse_world_pos.y = mouse_world_pos.y.saturating_add_signed(loc.y.into());
-        let vco = viewport_center_offset(self.rw.size(), rt_size, self.scale);
-        loc.x -= vco.x;
-        loc.y -= vco.y;
         loc.x /= ScreenSc::from(self.scale);
         loc.y /= ScreenSc::from(self.scale);
         let mouse_tpos = mouse_world_pos.tile_pos();
@@ -314,8 +311,6 @@ impl App {
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
-        let vco = viewport_center_offset(self.rw.size(), self.render.rt.size(), self.scale);
-        spr.set_position((f32::from(vco.x), f32::from(vco.y)));
         self.rw.clear(Color::rgb(40, 10, 70));
         self.rw.draw(&spr);
         // Draw light overlay with multiply blending
@@ -379,15 +374,4 @@ impl<'a> UserTexSource for EguiUserTex<'a> {
 pub struct TileColEn {
     pub col: s2dc::Entity,
     pub platform: bool,
-}
-
-fn viewport_center_offset(rw_size: Vector2u, rt_size: Vector2u, scale: u8) -> ScreenVec {
-    let rw_size = rw_size;
-    let rt_size = rt_size * u32::from(scale);
-    let x = center_offset(rt_size.x as i32, rw_size.x as i32);
-    let y = center_offset(rt_size.y as i32, rw_size.y as i32);
-    ScreenVec {
-        x: x as ScreenSc,
-        y: y as ScreenSc,
-    }
 }
