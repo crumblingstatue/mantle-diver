@@ -93,7 +93,7 @@ impl WorldPos {
 }
 
 pub fn wp_to_tp(wp: WPosSc) -> TPosSc {
-    (wp / TILE_SIZE as WPosSc) as TPosSc
+    wp / TILE_SIZE as WPosSc
 }
 
 // Get the offset required to center an object of `xw` width inside an object of `yw` width.

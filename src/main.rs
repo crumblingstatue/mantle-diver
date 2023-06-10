@@ -1,4 +1,5 @@
 #![feature(lint_reasons)]
+#![warn(trivial_casts, trivial_numeric_casts)]
 
 use {
     app::App,
