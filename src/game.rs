@@ -179,17 +179,18 @@ pub fn for_each_tile_on_screen(
 ) {
     let ts_i16 = i16::from(TILE_SIZE);
     let ts_us = usize::from(TILE_SIZE);
-    let ts_i64 = i64::from(TILE_SIZE);
+    let ts_i32 = i32::from(TILE_SIZE);
     for y in (-ts_i16..rt_size.y + ts_i16).step_by(ts_us) {
         for x in (-ts_i16..rt_size.x + ts_i16).step_by(ts_us) {
+            let (scx, scy) = camera_offset.to_signed();
             f(
                 TilePos {
                     x: wp_to_tp(camera_offset.x.saturating_add(x.try_into().unwrap_or(0))),
                     y: wp_to_tp(camera_offset.y.saturating_add(y.try_into().unwrap_or(0))),
                 },
                 ScreenVec {
-                    x: ((i64::from(x)) - ((i64::from(camera_offset.x)) % ts_i64)) as ScreenSc,
-                    y: ((i64::from(y)) - ((i64::from(camera_offset.y)) % ts_i64)) as ScreenSc,
+                    x: ((i32::from(x)) - (scx % ts_i32)) as ScreenSc,
+                    y: ((i32::from(y)) - (scy % ts_i32)) as ScreenSc,
                 },
             )
         }

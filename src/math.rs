@@ -8,6 +8,11 @@ use {
 
 pub type WPosSc = u32;
 
+/// World pixel position
+///
+/// Invariants:
+///
+/// - Not larger than 8 million (world boundary)
 #[derive(Clone, Copy, Debug)]
 pub struct WorldPos {
     pub x: WPosSc,
@@ -21,6 +26,13 @@ impl WorldPos {
             x: en.pos.x as WPosSc,
             y: en.pos.y as WPosSc,
         }
+    }
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "Position is assumed to be smaller than 8 million"
+    )]
+    pub(crate) fn to_signed(self) -> (i32, i32) {
+        (self.x as i32, self.y as i32)
     }
 }
 
