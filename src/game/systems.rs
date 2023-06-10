@@ -43,23 +43,27 @@ pub(super) fn item_use_system(
     };
     let ticks = game.world.ticks;
     let t = game.world.tile_at_mut(mouse_tpos);
+    let tile_place_cooldown = 8;
     match &itemdef.use_action {
         UseAction::PlaceBgTile { id } => {
-            if t.bg.empty() {
+            if t.bg.empty() && ticks - game.last_tile_place > tile_place_cooldown {
                 t.bg = *id;
                 active_slot.qty -= 1;
+                game.last_tile_place = ticks;
             }
         }
         UseAction::PlaceMidTile { id } => {
-            if t.mid.empty() {
+            if t.mid.empty() && ticks - game.last_tile_place > tile_place_cooldown {
                 t.mid = *id;
                 active_slot.qty -= 1;
+                game.last_tile_place = ticks;
             }
         }
         UseAction::PlaceFgTile { id } => {
-            if t.fg.empty() {
+            if t.fg.empty() && ticks - game.last_tile_place > tile_place_cooldown {
                 t.fg = *id;
                 active_slot.qty -= 1;
+                game.last_tile_place = ticks;
             }
         }
         UseAction::RemoveTile { layer } => match layer {
