@@ -100,8 +100,11 @@ impl WorldPos {
     /// Horizontal center of the world
     pub const CENTER: WPosSc = (WORLD_EXTENT / 2) * TILE_SIZE as WPosSc;
     /// Vertical surface level.
-    /// You can build 10 km high.
-    pub const SURFACE: WPosSc = 20_000 * TILE_SIZE as WPosSc;
+    /// You can build roughly 21 km high.
+    /// This configuration allows for:
+    /// - The player being able to reach 20 kms high comfortably
+    /// - Reaching 100 kms deep with a comfortable buffer zone until bottom boundary
+    pub const SURFACE: WPosSc = 42_000 * TILE_SIZE as WPosSc;
     pub const SURFACE_CENTER: Self = Self {
         x: Self::CENTER,
         y: Self::SURFACE,
