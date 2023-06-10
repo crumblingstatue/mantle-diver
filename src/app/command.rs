@@ -1,10 +1,10 @@
 use {
     super::App,
     crate::{
-        command::Cmd, game::GameState, math::WorldPos, player::PlayerQuery, res::Res,
-        texture_atlas::AtlasBundle,
+        command::Cmd, game::GameState, graphics::ScreenVec, math::WorldPos, player::PlayerQuery,
+        res::Res, texture_atlas::AtlasBundle,
     },
-    sfml::{graphics::RenderTarget, system::Vector2u},
+    sfml::graphics::RenderTarget,
     std::fmt::Write,
 };
 
@@ -51,8 +51,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             Cmd::ToggleTileDbEdit => app.debug.tiledb_edit.open ^= true,
             Cmd::SetScale(scale) => {
                 app.scale = scale;
-                let Vector2u { x, y } = app.rw.size();
-                app.adapt_to_window_size_and_scale(x, y);
+                app.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(app.rw.size()));
             }
             Cmd::LoadWorld(name) => {
                 app.game.world.save();

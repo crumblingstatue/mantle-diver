@@ -39,6 +39,13 @@ impl ScreenVec {
     pub fn to_sf_vec(self) -> Vector2f {
         Vector2f::new(self.x.into(), self.y.into())
     }
+
+    pub(crate) fn from_sf2u(size: sfml::system::Vector2<u32>) -> Self {
+        Self {
+            x: size.x as ScreenSc,
+            y: size.y as ScreenSc,
+        }
+    }
 }
 
 impl Div<ScreenSc> for ScreenVec {

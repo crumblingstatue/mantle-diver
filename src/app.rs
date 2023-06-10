@@ -151,7 +151,7 @@ impl App {
                 rt,
             },
         };
-        this.adapt_to_window_size_and_scale(rw_size.x, rw_size.y);
+        this.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(rw_size));
         Ok(this)
     }
 
@@ -205,7 +205,10 @@ impl App {
             match ev {
                 Event::Closed => self.should_quit = true,
                 Event::Resized { width, height } => {
-                    self.adapt_to_window_size_and_scale(width, height);
+                    self.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(Vector2 {
+                        x: width,
+                        y: height,
+                    }));
                 }
                 Event::KeyPressed { code, .. } => match code {
                     Key::F11 => {
@@ -220,10 +223,12 @@ impl App {
         }
     }
 
-    fn adapt_to_window_size_and_scale(&mut self, width: u32, height: u32) {
+    fn adapt_to_window_size_and_scale(&mut self, size: ScreenVec) {
         log::info!(
-            "Adapting to window size: {width}x{height}, scale: {}",
-            self.scale
+            "Adapting to window size: {width}x{height}, scale: {scale}",
+            width = size.x,
+            height = size.y,
+            scale = self.scale
         );
         if self.scale == 0 {
             log::warn!("Adjusting bad 0 scale value to 1");
@@ -234,17 +239,17 @@ impl App {
             self.scale = 5;
         }
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
-        let base_w = width / u32::from(self.scale);
-        let base_h = height / u32::from(self.scale);
-        self.render.rt = RenderTexture::new(base_w, base_h).unwrap();
-        self.render.light_blend_rt = RenderTexture::new(base_w, base_h).unwrap();
+        let base_w = size.x / ScreenSc::from(self.scale);
+        let base_h = size.y / ScreenSc::from(self.scale);
+        self.render.rt = RenderTexture::new(base_w as u32, base_h as u32).unwrap();
+        self.render.light_blend_rt = RenderTexture::new(base_w as u32, base_h as u32).unwrap();
         // We add 2 to include partially visible tiles
-        let tw = (base_w / u32::from(TILE_SIZE)) as u16 + 2;
-        let th = (base_h / u32::from(TILE_SIZE)) as u16 + 2;
+        let tw = (base_w / ScreenSc::from(TILE_SIZE)) as u16 + 2;
+        let th = (base_h / ScreenSc::from(TILE_SIZE)) as u16 + 2;
         self.tiles_on_screen.x = tw;
         self.tiles_on_screen.y = th;
         self.light_state.light_map = vec![0; tw as usize * th as usize];
-        let view = View::from_rect(Rect::new(0., 0., width as f32, height as f32));
+        let view = View::from_rect(Rect::new(0., 0., f32::from(size.x), f32::from(size.y)));
         self.rw.set_view(&view);
     }
 
