@@ -16,6 +16,7 @@ pub enum CmdLine {
     /// Teleport player to coordinates
     Tp(Tp),
     /// Teleport player to cursor
+    #[clap(alias = "tc")]
     Tpc,
     /// Teleport player back to spawn
     Spawn,

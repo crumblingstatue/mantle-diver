@@ -23,7 +23,7 @@ Player character is about 3 blocks high. (slightly less so they fit comfortably)
 
 ## Map Size
 
-World is roughly 100,000x100,000 blocks large.
+World is roughly 250,000x250,000 blocks large.
 I've done some measurements and I believe it's large enough that it should convey
 the scale of digging very deep, which is what the game is about.
 Layer below 30 km is the mantle (after which the game is named).
