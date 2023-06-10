@@ -20,8 +20,8 @@ pub struct AtlasBundle {
 impl AtlasBundle {
     pub fn new(res_path: &str) -> anyhow::Result<Self> {
         let cfg = TexturePackerConfig {
-            max_width: 1024,
-            max_height: 1024,
+            max_width: 4096,
+            max_height: 4096,
             allow_rotation: false,
             border_padding: 0,
             texture_padding: 0,
