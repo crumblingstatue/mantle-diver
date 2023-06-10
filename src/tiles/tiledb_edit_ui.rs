@@ -161,7 +161,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
             ui.add(
                 egui::Image::new(
                     egui::TextureId::User(0),
-                    egui::vec2(TILE_SIZE as f32, TILE_SIZE as f32),
+                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
                 )
                 .uv(def.tex_rect.to_egui_uv(atlas_size)),
             );
@@ -186,8 +186,8 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
             None => {
                 if ui.button("Insert light emit").clicked() {
                     def.light = Some(ScreenVec {
-                        x: TILE_SIZE as ScreenSc / 2,
-                        y: TILE_SIZE as ScreenSc / 2,
+                        x: ScreenSc::from(TILE_SIZE) / 2,
+                        y: ScreenSc::from(TILE_SIZE) / 2,
                     });
                 }
             }

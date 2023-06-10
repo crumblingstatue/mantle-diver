@@ -1,5 +1,5 @@
 #![feature(lint_reasons)]
-#![warn(trivial_casts, trivial_numeric_casts)]
+#![warn(trivial_casts, trivial_numeric_casts, clippy::cast_lossless)]
 
 use {
     app::App,

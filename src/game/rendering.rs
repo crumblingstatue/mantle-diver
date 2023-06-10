@@ -65,8 +65,8 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
             let rect = if !def.neigh_aware {
                 rect
             } else {
-                rect.width = TILE_SIZE as i32;
-                rect.height = TILE_SIZE as i32;
+                rect.width = i32::from(TILE_SIZE);
+                rect.height = i32::from(TILE_SIZE);
                 let left = game.world.tile_at_mut(tp.x_off(-1)).mid == tile.mid;
                 let right = game.world.tile_at_mut(tp.x_off(1)).mid == tile.mid;
                 let above = game.world.tile_at_mut(tp.y_off(-1)).mid == tile.mid;
@@ -147,61 +147,61 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     match plr.dat.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
-                head_x = offs.left.x as f32;
+                head_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/eye1") {
-                eye_x = offs.left.x as f32;
+                eye_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/hair1") {
-                hair_x = offs.left.x as f32;
+                hair_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/torso1") {
-                torso_x = offs.left.x as f32;
+                torso_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
-                legs_x = offs.left.x as f32;
+                legs_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
-                pants_x = offs.left.x as f32;
+                pants_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
-                shirt_x = offs.left.x as f32;
+                shirt_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
-                shoes_x = offs.left.x as f32;
+                shoes_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
-                tool_x = offs.left.x as f32;
+                tool_x = f32::from(offs.left.x);
             }
         }
         FacingDir::Right => {
             s.set_scale((-1.0, 1.0));
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
-                head_x = offs.right.x as f32;
+                head_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/eye1") {
-                eye_x = offs.right.x as f32;
+                eye_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/hair1") {
-                hair_x = offs.right.x as f32;
+                hair_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/torso1") {
-                torso_x = offs.right.x as f32;
+                torso_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
-                legs_x = offs.right.x as f32;
+                legs_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
-                pants_x = offs.right.x as f32;
+                pants_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
-                shirt_x = offs.right.x as f32;
+                shirt_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
-                shoes_x = offs.right.x as f32;
+                shoes_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("items/woodpick") {
-                tool_x = offs.right.x as f32;
+                tool_x = f32::from(offs.right.x);
             }
         }
     }
@@ -305,8 +305,8 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
             };
         if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
             let mut rect = rect.to_sf();
-            rect.width = rect.width.min(TILE_SIZE as i32);
-            rect.height = rect.height.min(TILE_SIZE as i32);
+            rect.width = rect.width.min(i32::from(TILE_SIZE));
+            rect.height = rect.height.min(i32::from(TILE_SIZE));
             s.set_texture_rect(rect);
             s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
             rt.draw(&s);
@@ -369,16 +369,16 @@ pub(crate) fn light_blend_pass(
     tiles_on_screen: U16Vec,
 ) {
     lt_tex.clear(Color::BLACK);
-    let mut rs = RectangleShape::with_size((TILE_SIZE as f32, TILE_SIZE as f32).into());
+    let mut rs = RectangleShape::with_size((f32::from(TILE_SIZE), f32::from(TILE_SIZE)).into());
     let mut i = 0;
-    let xoff = (camera_offset.x % TILE_SIZE as u32) as f32;
-    let yoff = (camera_offset.y % TILE_SIZE as u32) as f32;
+    let xoff = (camera_offset.x % u32::from(TILE_SIZE)) as f32;
+    let yoff = (camera_offset.y % u32::from(TILE_SIZE)) as f32;
     for y in 0..tiles_on_screen.y {
         for x in 0..tiles_on_screen.x {
             let level = lightmap[i];
             rs.set_fill_color(Color::rgba(255, 255, 255, level));
-            let x = x as f32 * TILE_SIZE as f32;
-            let y = y as f32 * TILE_SIZE as f32;
+            let x = f32::from(x) * f32::from(TILE_SIZE);
+            let y = f32::from(y) * f32::from(TILE_SIZE);
             rs.set_position((x - xoff, y - yoff));
             lt_tex.draw(&rs);
             i += 1;
@@ -406,8 +406,8 @@ fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool,
         (false, false, false, true) => (0, 0),
         (false, false, false, false) => (0, 3),
     };
-    rect.left += x * TILE_SIZE as i32;
-    rect.top += y * TILE_SIZE as i32;
+    rect.left += x * i32::from(TILE_SIZE);
+    rect.top += y * i32::from(TILE_SIZE);
 }
 
 pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {

@@ -206,18 +206,18 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
     let mut ents = vec![];
     // FIXME: We need to massively overcompensate the size of the area to check
     // due to incorrect/imprecise calculations.
-    let x = (wrect.topleft.x / TILE_SIZE as u32) - 1;
-    let y = (wrect.topleft.y / TILE_SIZE as u32) - 1;
-    let w = (wrect.w / TILE_SIZE as u32) + 4;
-    let h = (wrect.h / TILE_SIZE as u32) + 4;
+    let x = (wrect.topleft.x / u32::from(TILE_SIZE)) - 1;
+    let y = (wrect.topleft.y / u32::from(TILE_SIZE)) - 1;
+    let w = (wrect.w / u32::from(TILE_SIZE)) + 4;
+    let h = (wrect.h / u32::from(TILE_SIZE)) + 4;
     DBG_OVR.push(DbgOvr::WldRect {
         r: WorldRect {
             topleft: WorldPos {
-                x: x * TILE_SIZE as u32,
-                y: y * TILE_SIZE as u32,
+                x: x * u32::from(TILE_SIZE),
+                y: y * u32::from(TILE_SIZE),
             },
-            w: w * TILE_SIZE as u32,
-            h: h * TILE_SIZE as u32,
+            w: w * u32::from(TILE_SIZE),
+            h: h * u32::from(TILE_SIZE),
         },
         c: Color::MAGENTA,
     });
@@ -232,13 +232,13 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
             let Some(bb) = tdef.layer.bb else {
                     continue;
                 };
-            let x = tp.x as i32 * TILE_SIZE as i32;
-            let y = tp.y as i32 * TILE_SIZE as i32;
+            let x = tp.x as i32 * i32::from(TILE_SIZE);
+            let y = tp.y as i32 * i32::from(TILE_SIZE);
             let en = s2dc::Entity::from_rect_corners(
-                x + bb.x as i32,
-                y + bb.y as i32,
-                x + bb.w as i32,
-                y + bb.h as i32,
+                x + i32::from(bb.x),
+                y + i32::from(bb.y),
+                x + i32::from(bb.w),
+                y + i32::from(bb.h),
             );
             ents.push(TileColEn {
                 col: en,
@@ -416,8 +416,8 @@ fn process_tile_item_drop<L: tiles::TileLayer>(
         wld.spawn(ItemdropBundle::new_at(
             drop.id,
             WorldPos {
-                x: pos.x * TILE_SIZE as u32 + TILE_SIZE as u32 / 2,
-                y: pos.y * TILE_SIZE as u32 + TILE_SIZE as u32 / 2,
+                x: pos.x * u32::from(TILE_SIZE) + u32::from(TILE_SIZE) / 2,
+                y: pos.y * u32::from(TILE_SIZE) + u32::from(TILE_SIZE) / 2,
             },
         ));
     }

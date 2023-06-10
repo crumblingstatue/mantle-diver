@@ -74,8 +74,8 @@ trait SfVec2fExt {
 impl SfVec2fExt for Vector2f {
     fn scv_off(&self, off: ScreenVec) -> Self {
         Self {
-            x: self.x + off.x as f32,
-            y: self.y + off.y as f32,
+            x: self.x + f32::from(off.x),
+            y: self.y + f32::from(off.y),
         }
     }
 }
@@ -177,9 +177,9 @@ pub fn for_each_tile_on_screen(
     rt_size: Vector2u,
     mut f: impl FnMut(TilePos, ScreenVec),
 ) {
-    let ts_i16 = TILE_SIZE as i16;
-    let ts_us = TILE_SIZE as usize;
-    let ts_i64 = TILE_SIZE as i64;
+    let ts_i16 = i16::from(TILE_SIZE);
+    let ts_us = usize::from(TILE_SIZE);
+    let ts_i64 = i64::from(TILE_SIZE);
     for y in (-ts_i16..(rt_size.y as i16) + ts_i16).step_by(ts_us) {
         for x in (-ts_i16..(rt_size.x as i16) + ts_i16).step_by(ts_us) {
             f(
@@ -188,8 +188,8 @@ pub fn for_each_tile_on_screen(
                     y: wp_to_tp(camera_offset.y.saturating_add(y.try_into().unwrap_or(0))),
                 },
                 ScreenVec {
-                    x: ((x as i64) - ((camera_offset.x as i64) % ts_i64)) as ScreenSc,
-                    y: ((y as i64) - ((camera_offset.y as i64) % ts_i64)) as ScreenSc,
+                    x: ((i64::from(x)) - ((i64::from(camera_offset.x)) % ts_i64)) as ScreenSc,
+                    y: ((i64::from(y)) - ((i64::from(camera_offset.y)) % ts_i64)) as ScreenSc,
                 },
             )
         }

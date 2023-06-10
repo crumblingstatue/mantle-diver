@@ -31,15 +31,15 @@ impl ChunkPos {
     /// Returns the region this chunk position belongs to
     pub fn region(&self) -> (u8, u8) {
         (
-            (self.x / REGION_CHUNK_EXTENT as ChkPosSc) as u8,
-            (self.y / REGION_CHUNK_EXTENT as ChkPosSc) as u8,
+            (self.x / ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
+            (self.y / ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
         )
     }
     /// Returns the local position in the region (0-7)
     pub fn local(&self) -> (u8, u8) {
         (
-            (self.x % REGION_CHUNK_EXTENT as ChkPosSc) as u8,
-            (self.y % REGION_CHUNK_EXTENT as ChkPosSc) as u8,
+            (self.x % ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
+            (self.y % ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
         )
     }
 }
@@ -156,14 +156,14 @@ impl TilePos {
 
     pub(crate) fn to_world(self) -> WorldPos {
         WorldPos {
-            x: self.x * TILE_SIZE as u32,
-            y: self.y * TILE_SIZE as u32,
+            x: self.x * u32::from(TILE_SIZE),
+            y: self.y * u32::from(TILE_SIZE),
         }
     }
 }
 
 fn chk_pos(tile: TPosSc) -> ChkPosSc {
-    (tile / CHUNK_EXTENT as TPosSc) as ChkPosSc
+    (tile / TPosSc::from(CHUNK_EXTENT)) as ChkPosSc
 }
 
 #[test]
@@ -175,7 +175,7 @@ fn test_chk_pos() {
 }
 
 fn chunk_local(global: TPosSc) -> ChkLocalTPosSc {
-    (global % CHUNK_EXTENT as TPosSc) as ChkLocalTPosSc
+    (global % TPosSc::from(CHUNK_EXTENT)) as ChkLocalTPosSc
 }
 
 #[test]

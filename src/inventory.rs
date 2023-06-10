@@ -181,8 +181,8 @@ impl ItemDb {
             if !def.graphic_name.is_empty() {
                 if let Some(rect) = rects.get(def.graphic_name.as_str()) {
                     def.tex_rect = *rect;
-                    def.tex_rect.w = rect.w.min(TILE_SIZE as _);
-                    def.tex_rect.h = rect.h.min(TILE_SIZE as _);
+                    def.tex_rect.w = rect.w.min(TILE_SIZE.into());
+                    def.tex_rect.h = rect.h.min(TILE_SIZE.into());
                     log::info!("Updated rect for {}: {:?}", def.graphic_name.as_str(), rect);
                 } else {
                     log::error!("Missing texture for {:?}", def.graphic_name.as_str());

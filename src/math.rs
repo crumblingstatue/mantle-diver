@@ -57,7 +57,7 @@ pub const FPS_TARGET: u8 = 60;
 
 pub fn px_per_frame_to_m_per_s(px_per_frame: f32) -> f32 {
     let m_per_frame = px_per_frame / PX_PER_M;
-    m_per_frame * FPS_TARGET as f32
+    m_per_frame * f32::from(FPS_TARGET)
 }
 
 pub fn px_per_frame_to_km_h(px_per_frame: f32) -> f32 {
@@ -93,7 +93,7 @@ impl WorldPos {
 }
 
 pub fn wp_to_tp(wp: WPosSc) -> TPosSc {
-    wp / TILE_SIZE as WPosSc
+    wp / WPosSc::from(TILE_SIZE)
 }
 
 // Get the offset required to center an object of `xw` width inside an object of `yw` width.

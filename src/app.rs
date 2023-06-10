@@ -234,13 +234,13 @@ impl App {
             self.scale = 5;
         }
         // Base size is the in-game surface size that can get scaled up to enlargen graphics.
-        let base_w = width / self.scale as u32;
-        let base_h = height / self.scale as u32;
+        let base_w = width / u32::from(self.scale);
+        let base_h = height / u32::from(self.scale);
         self.render.rt = RenderTexture::new(base_w, base_h).unwrap();
         self.render.light_blend_rt = RenderTexture::new(base_w, base_h).unwrap();
         // We add 2 to include partially visible tiles
-        let tw = (base_w / TILE_SIZE as u32) as u16 + 2;
-        let th = (base_h / TILE_SIZE as u32) as u16 + 2;
+        let tw = (base_w / u32::from(TILE_SIZE)) as u16 + 2;
+        let th = (base_h / u32::from(TILE_SIZE)) as u16 + 2;
         self.tiles_on_screen.x = tw;
         self.tiles_on_screen.y = th;
         self.light_state.light_map = vec![0; tw as usize * th as usize];
@@ -251,14 +251,14 @@ impl App {
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
         let rt_size = self.render.rt.size();
         let mut mouse_world_pos = self.game.camera_offset;
-        let mut loc = self.input.mouse_down_loc / self.scale as ScreenSc;
+        let mut loc = self.input.mouse_down_loc / ScreenSc::from(self.scale);
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
         mouse_world_pos.y = mouse_world_pos.y.saturating_add_signed(loc.y.into());
         let vco = viewport_center_offset(self.rw.size(), rt_size, self.scale);
         loc.x -= vco.x;
         loc.y -= vco.y;
-        loc.x /= self.scale as ScreenSc;
-        loc.y /= self.scale as ScreenSc;
+        loc.x /= ScreenSc::from(self.scale);
+        loc.y /= ScreenSc::from(self.scale);
         let mouse_tpos = mouse_world_pos.tile_pos();
         self.last_mouse_tpos = mouse_tpos;
         imm!(
@@ -308,9 +308,9 @@ impl App {
         }
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
-        spr.set_scale((self.scale as f32, self.scale as f32));
+        spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
         let vco = viewport_center_offset(self.rw.size(), self.render.rt.size(), self.scale);
-        spr.set_position((vco.x as f32, vco.y as f32));
+        spr.set_position((f32::from(vco.x), f32::from(vco.y)));
         self.rw.clear(Color::rgb(40, 10, 70));
         self.rw.draw(&spr);
         // Draw light overlay with multiply blending
@@ -323,13 +323,13 @@ impl App {
         // Draw ui on top of in-game scene
         self.render.rt.clear(Color::TRANSPARENT);
         let ui_dims = Vector2 {
-            x: (self.rw.size().x / self.scale as u32) as f32,
-            y: (self.rw.size().y / self.scale as u32) as f32,
+            x: (self.rw.size().x / u32::from(self.scale)) as f32,
+            y: (self.rw.size().y / u32::from(self.scale)) as f32,
         };
         rendering::draw_ui(&mut self.game, &mut self.render.rt, res, ui_dims);
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
-        spr.set_scale((self.scale as f32, self.scale as f32));
+        spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
         self.rw.draw(&spr);
         self.sf_egui
             .do_frame(|ctx| {
@@ -378,7 +378,7 @@ pub struct TileColEn {
 
 fn viewport_center_offset(rw_size: Vector2u, rt_size: Vector2u, scale: u8) -> ScreenVec {
     let rw_size = rw_size;
-    let rt_size = rt_size * scale as u32;
+    let rt_size = rt_size * u32::from(scale);
     let x = center_offset(rt_size.x as i32, rw_size.x as i32);
     let y = center_offset(rt_size.y as i32, rw_size.y as i32);
     ScreenVec {

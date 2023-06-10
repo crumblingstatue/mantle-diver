@@ -18,8 +18,8 @@ pub struct ScreenRes {
 impl ScreenRes {
     fn to_sf(&self) -> VideoMode {
         VideoMode {
-            width: self.w as _,
-            height: self.h as _,
+            width: self.w.into(),
+            height: self.h.into(),
             bits_per_pixel: 32,
         }
     }
