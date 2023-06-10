@@ -39,11 +39,11 @@ impl Chunk {
             let ceil = surf.saturating_add_signed(hnoise[local_x as usize] as i32 / 4);
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
             if y == ceil - 1 {
-                if noise as u32 % 19 == 0 {
+                if noise as i32 % 19 == 0 {
                     t.mid = MidTileId::TREE;
-                } else if noise as u32 % 17 == 0 {
+                } else if noise as i32 % 17 == 0 {
                     t.mid = MidTileId::SMALL_ROCK;
-                } else if noise as u32 % 15 == 0 {
+                } else if noise as i32 % 15 == 0 {
                     t.mid = MidTileId::STICK;
                 }
             }
@@ -58,7 +58,7 @@ impl Chunk {
                 t.bg = BgTileId::DIRT;
                 if y == ceil {
                     //t.fg = FgTileId::GRASS; // Removed for now
-                } else if y > ceil + 2 && noise as u32 % 37 == 0 {
+                } else if y > ceil + 2 && noise as i32 % 37 == 0 {
                     t.fg = FgTileId::COAL;
                 }
                 continue;

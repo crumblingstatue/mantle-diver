@@ -61,6 +61,23 @@ impl ScreenVec {
             y: y as ScreenSc,
         }
     }
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "Assumed to be called on sizes, which are positive"
+    )]
+    pub fn size_to_sf_resolution(self) -> Vector2<u32> {
+        Vector2 {
+            x: self.x as u32,
+            y: self.y as u32,
+        }
+    }
+
+    pub(crate) fn div_by_scale(&self, scale: u8) -> Self {
+        Self {
+            x: self.x / ScreenSc::from(scale),
+            y: self.y / ScreenSc::from(scale),
+        }
+    }
 }
 
 impl Div<ScreenSc> for ScreenVec {

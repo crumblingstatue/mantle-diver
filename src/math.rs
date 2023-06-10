@@ -22,7 +22,7 @@ pub struct WorldPos {
     pub y: WPosSc,
 }
 
-#[allow(
+#[expect(
     clippy::cast_possible_wrap,
     reason = "World pos doesn't exceed i32::MAX"
 )]
@@ -31,7 +31,10 @@ pub fn world_y_depth(y: WPosSc) -> i32 {
 }
 
 impl WorldPos {
-    /// This is fine because all entity coordinates are confined to be positive
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "All entity coordinates are confined to be positive"
+    )]
     pub fn from_en(en: &s2dc::Entity) -> Self {
         Self {
             x: en.pos.x as WPosSc,
@@ -48,7 +51,7 @@ impl WorldPos {
             y: (self.y % u32::from(TILE_SIZE)) as ScreenSc,
         }
     }
-    #[allow(
+    #[expect(
         clippy::cast_possible_wrap,
         reason = "World pos doesn't exceed i32::MAX"
     )]
@@ -66,14 +69,11 @@ pub struct WorldRect {
 impl WorldRect {
     /// This is fine because all entity coordinates are confined to be positive
     pub(crate) fn from_s2dc_en(en: &s2dc::Entity) -> Self {
-        let (x, y, w, h) = en.xywh();
+        let (x, y, w, h) = en.xywh_unsigned();
         Self {
-            topleft: WorldPos {
-                x: x as u32,
-                y: y as u32,
-            },
-            w: w as u32,
-            h: h as u32,
+            topleft: WorldPos { x, y },
+            w,
+            h,
         }
     }
 }
@@ -104,7 +104,7 @@ const _: () = assert!(
     WORLD_EXTENT < TPOS_SC_MAX,
     "World extent can't be larger than maximum sound TPosSc value"
 );
-#[allow(
+#[expect(
     clippy::cast_possible_truncation,
     reason = "Sound due to world extent limit"
 )]
@@ -129,7 +129,7 @@ impl WorldPos {
         x: Self::CENTER,
         y: Self::SURFACE,
     };
-    #[allow(
+    #[expect(
         clippy::cast_possible_wrap,
         reason = "World pos doesn't exceed i32::MAX"
     )]
@@ -232,4 +232,19 @@ fn test_wp_to_tp() {
     assert_eq!(wp_to_tp(0), 0);
     assert_eq!(wp_to_tp(1), 0);
     assert_eq!(wp_to_tp(33), 1);
+}
+
+trait S2DcEntityExt {
+    fn xywh_unsigned(&self) -> (u32, u32, u32, u32);
+}
+
+impl S2DcEntityExt for s2dc::Entity {
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "Entity coordinates are assumed to be positive"
+    )]
+    fn xywh_unsigned(&self) -> (u32, u32, u32, u32) {
+        let (x, y, w, h) = self.xywh();
+        (x as u32, y as u32, w as u32, h as u32)
+    }
 }

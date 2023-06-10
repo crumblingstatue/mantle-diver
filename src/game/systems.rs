@@ -196,6 +196,10 @@ fn calc_mov_wrect(mov: &MovingEnt) -> WorldRect {
     let left = x.min(x + hvec);
     let w = hvec.unsigned_abs();
     let h = vvec.unsigned_abs();
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "Entity positions are assumed to never be negative"
+    )]
     WorldRect {
         topleft: WorldPos {
             x: left as u32,

@@ -180,7 +180,7 @@ impl TilePos {
             y: self.y * u32::from(TILE_SIZE),
         }
     }
-    #[allow(
+    #[expect(
         clippy::cast_possible_wrap,
         reason = "Tile pos doesn't exceed i32::MAX"
     )]
@@ -192,7 +192,7 @@ impl TilePos {
     }
 }
 
-#[allow(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]
+#[expect(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]
 fn chk_pos(tile: TPosSc) -> ChkPosSc {
     (tile / TPosSc::from(CHUNK_EXTENT)) as ChkPosSc
 }
