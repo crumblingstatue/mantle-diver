@@ -2,7 +2,7 @@ use {
     crate::{
         debug::{DbgOvr, DBG_OVR},
         game::{for_each_tile_on_screen, GameState},
-        math::WorldRect,
+        math::{WorldRect, TILE_SIZE},
         tiles::MidTileId,
     },
     fnv::FnvHashSet,
@@ -126,8 +126,8 @@ pub(crate) fn enumerate_light_sources(
             DBG_OVR.push(DbgOvr::WldRect {
                 r: WorldRect {
                     topleft: tp.to_world(),
-                    w: 32,
-                    h: 32,
+                    w: TILE_SIZE.into(),
+                    h: TILE_SIZE.into(),
                 },
                 c: Color::YELLOW,
             });
@@ -141,8 +141,8 @@ pub(crate) fn enumerate_light_sources(
             DBG_OVR.push(DbgOvr::WldRect {
                 r: WorldRect {
                     topleft: tp.to_world(),
-                    w: 32,
-                    h: 32,
+                    w: TILE_SIZE.into(),
+                    h: TILE_SIZE.into(),
                 },
                 c: Color::RED,
             });

@@ -159,8 +159,11 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
     if let Some(def) = db.get_mut(*sel_idx) {
         ui.horizontal(|ui| {
             ui.add(
-                egui::Image::new(egui::TextureId::User(0), egui::vec2(32., 32.))
-                    .uv(def.tex_rect.to_egui_uv(atlas_size)),
+                egui::Image::new(
+                    egui::TextureId::User(0),
+                    egui::vec2(TILE_SIZE as f32, TILE_SIZE as f32),
+                )
+                .uv(def.tex_rect.to_egui_uv(atlas_size)),
             );
             ui.text_edit_singleline(&mut def.graphic_name);
         });

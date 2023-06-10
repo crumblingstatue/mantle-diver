@@ -46,6 +46,8 @@ impl WorldRect {
 }
 
 /// Tile size in pixels
+/// FIXME: While this is defined as a symbolic constant, the game can verily easily break
+/// if this is not set to 32.
 pub const TILE_SIZE: u8 = 32;
 /// Pixels per meter.
 pub const PX_PER_M: f32 = TILE_SIZE as f32 * 2.;

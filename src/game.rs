@@ -8,7 +8,7 @@ use {
         graphics::{ScreenSc, ScreenVec},
         input::Input,
         inventory::{Inventory, ItemDb},
-        math::{wp_to_tp, WorldPos},
+        math::{wp_to_tp, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
         save::Save,
@@ -177,16 +177,19 @@ pub fn for_each_tile_on_screen(
     rt_size: Vector2u,
     mut f: impl FnMut(TilePos, ScreenVec),
 ) {
-    for y in (-32..(rt_size.y as i16) + 32).step_by(32) {
-        for x in (-32..(rt_size.x as i16) + 32).step_by(32) {
+    let ts_i16 = TILE_SIZE as i16;
+    let ts_us = TILE_SIZE as usize;
+    let ts_i64 = TILE_SIZE as i64;
+    for y in (-ts_i16..(rt_size.y as i16) + ts_i16).step_by(ts_us) {
+        for x in (-ts_i16..(rt_size.x as i16) + ts_i16).step_by(ts_us) {
             f(
                 TilePos {
                     x: wp_to_tp(camera_offset.x.saturating_add(x.try_into().unwrap_or(0))),
                     y: wp_to_tp(camera_offset.y.saturating_add(y.try_into().unwrap_or(0))),
                 },
                 ScreenVec {
-                    x: ((x as i64) - ((camera_offset.x as i64) % 32)) as ScreenSc,
-                    y: ((y as i64) - ((camera_offset.y as i64) % 32)) as ScreenSc,
+                    x: ((x as i64) - ((camera_offset.x as i64) % ts_i64)) as ScreenSc,
+                    y: ((y as i64) - ((camera_offset.y as i64) % ts_i64)) as ScreenSc,
                 },
             )
         }

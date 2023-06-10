@@ -82,8 +82,8 @@ impl Mid {
                 bb: Some(TileBb {
                     x: 0,
                     y: 0,
-                    w: 32,
-                    h: 32,
+                    w: TILE_SIZE,
+                    h: TILE_SIZE,
                 }),
             },
             neigh_aware: false,
