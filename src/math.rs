@@ -1,5 +1,8 @@
 use {
-    crate::world::{TPosSc, TilePos},
+    crate::{
+        graphics::{ScreenSc, ScreenVec},
+        world::{TPosSc, TilePos},
+    },
     num_traits::{Num, Signed},
     serde::{Deserialize, Serialize},
     sfml::system::Vector2u,
@@ -27,12 +30,11 @@ impl WorldPos {
             y: en.pos.y as WPosSc,
         }
     }
-    #[expect(
-        clippy::cast_possible_truncation,
-        reason = "Position is assumed to be smaller than 8 million"
-    )]
-    pub(crate) fn to_signed(self) -> (i32, i32) {
-        (self.x as i32, self.y as i32)
+    pub(crate) fn tile_modulo(&self) -> ScreenVec {
+        ScreenVec {
+            x: (self.x % u32::from(TILE_SIZE)) as ScreenSc,
+            y: (self.y % u32::from(TILE_SIZE)) as ScreenSc,
+        }
     }
 }
 
