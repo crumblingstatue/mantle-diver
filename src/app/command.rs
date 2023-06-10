@@ -26,8 +26,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             }
             Cmd::TeleportPlayerCursor => {
                 for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
-                    plr.mov.mob.en.pos.x = mouse_world_pos.x as i32;
-                    plr.mov.mob.en.pos.y = mouse_world_pos.y as i32;
+                    plr.mov.mob.en.pos = mouse_world_pos.to_s2dc();
                 }
             }
             Cmd::TeleportPlayerSpawn => {
