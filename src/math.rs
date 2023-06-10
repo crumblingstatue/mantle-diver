@@ -109,6 +109,7 @@ const _: () = assert!(
     reason = "Sound due to world extent limit"
 )]
 pub const WORLD_EXTENT_CHUNKS: ChkPosSc = (WORLD_EXTENT / CHUNK_EXTENT as WPosSc) as ChkPosSc;
+pub const WORLD_EXTENT_PX: WPosSc = WORLD_EXTENT * TILE_SIZE as WPosSc;
 
 impl WorldPos {
     pub fn tile_pos(&self) -> TilePos {

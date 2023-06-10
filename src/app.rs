@@ -7,7 +7,7 @@ use {
         graphics::{self, ScreenSc, ScreenVec},
         input::Input,
         light::{self, LightState, U16Vec},
-        math::TILE_SIZE,
+        math::{WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
         player::PlayerQuery,
         res::{Res, ResAudio},
         save::Save,
@@ -159,6 +159,7 @@ impl App {
         while !self.should_quit {
             self.do_event_handling();
             self.do_update(res, aud);
+            self.clamp_camera_offset();
             self.do_rendering(res);
             self.input.clear_pressed();
             gamedebug_core::inc_frame();
@@ -358,6 +359,27 @@ impl App {
         };
         self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
         self.rw.display();
+    }
+    /// Before rendering, we clamp the camera offset to "sensible coordinates", to avoid having
+    /// to deal with edge cases of the camera being near world boundaries.
+    fn clamp_camera_offset(&mut self) {
+        let ts = WPosSc::from(TILE_SIZE);
+        // Let's leave a 100 tile buffer zone just to be safe
+        // We don't need to worry about the max, `WORLD_EXTENT_PX` already accounts for a large
+        // buffer zone
+        let min_buffer_zone = ts * 100;
+        self.game.camera_offset.x = self
+            .game
+            .camera_offset
+            .x
+            .clamp(min_buffer_zone, WORLD_EXTENT_PX);
+        // At the bottom, we leave an extra 10000 space, so player can look at the unbreakable
+        // bottom player
+        self.game.camera_offset.y = self
+            .game
+            .camera_offset
+            .y
+            .clamp(min_buffer_zone, WORLD_EXTENT_PX + 10000);
     }
 }
 
