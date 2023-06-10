@@ -4,6 +4,7 @@ use {
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
         debug::{DbgOvr, DebugState, DBG_OVR},
+        graphics::ScreenVec,
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
@@ -16,7 +17,7 @@ use {
     },
     rand::{seq::SliceRandom, thread_rng, Rng},
     rodio::Decoder,
-    sfml::{graphics::Color, system::Vector2u, window::Key},
+    sfml::{graphics::Color, window::Key},
     std::{ops::Index, path::Path},
 };
 
@@ -98,7 +99,7 @@ pub(super) fn item_use_system(
     }
 }
 
-pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u, debug: &DebugState) {
+pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &DebugState) {
     for (en, (mov, mut plr_dat)) in game
         .ecw
         .query_mut::<(&mut MovingEnt, Option<&mut PlayerData>)>()
@@ -173,8 +174,8 @@ pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u, debug: &Debug
         mov.vspeed += game.gravity;
         if !debug.freecam && en == game.player_en {
             let (x, y, _w, _h) = mov.mob.en.xywh();
-            game.camera_offset.x = (x - rt_size.x as i32 / 2).try_into().unwrap_or(0);
-            game.camera_offset.y = (y - rt_size.y as i32 / 2).try_into().unwrap_or(0);
+            game.camera_offset.x = (x - i32::from(rt_size.x) / 2).try_into().unwrap_or(0);
+            game.camera_offset.y = (y - i32::from(rt_size.y) / 2).try_into().unwrap_or(0);
         }
     }
 }
@@ -233,10 +234,9 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
             }
             let tdef = &tile_db[tile];
             let Some(bb) = tdef.layer.bb else {
-                    continue;
-                };
-            let x = tp.x as i32 * i32::from(TILE_SIZE);
-            let y = tp.y as i32 * i32::from(TILE_SIZE);
+                continue;
+            };
+            let (x, y) = tp.to_s2dc_en_pos();
             let en = s2dc::Entity::from_rect_corners(
                 x + i32::from(bb.x),
                 y + i32::from(bb.y),

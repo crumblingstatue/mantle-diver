@@ -180,6 +180,16 @@ impl TilePos {
             y: self.y * u32::from(TILE_SIZE),
         }
     }
+    #[allow(
+        clippy::cast_possible_wrap,
+        reason = "Tile pos doesn't exceed i32::MAX"
+    )]
+    pub(crate) fn to_s2dc_en_pos(self) -> (i32, i32) {
+        (
+            self.x as i32 * i32::from(TILE_SIZE),
+            self.y as i32 * i32::from(TILE_SIZE),
+        )
+    }
 }
 
 #[allow(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]

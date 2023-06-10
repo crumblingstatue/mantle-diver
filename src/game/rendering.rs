@@ -108,10 +108,8 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, de
         let item_def = &game.itemdb.get(*id).unwrap();
         imm_dbg!(&item_def.name);
         imm_dbg!(&item_def.graphic_name);
-        s.set_position((
-            (pos.x - game.camera_offset.x as i32) as f32,
-            (pos.y - game.camera_offset.y as i32) as f32,
-        ));
+        let (co_x, co_y) = game.camera_offset.to_signed();
+        s.set_position(((pos.x - co_x) as f32, (pos.y - co_y) as f32));
         imm_dbg!(item_def.tex_rect);
         s.set_texture_rect(item_def.tex_rect.to_sf());
         rt.draw(&s);
@@ -133,10 +131,8 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     };
     let mut s = Sprite::with_texture(&res.atlas.tex);
     let (x, y, _w, _h) = plr.mov.mob.en.xywh();
-    let (base_x, base_y) = (
-        (x - game.camera_offset.x as i32) as f32,
-        (y - game.camera_offset.y as i32) as f32,
-    );
+    let (co_x, co_y) = game.camera_offset.to_signed();
+    let (base_x, base_y) = ((x - co_x) as f32, (y - co_y) as f32);
     let (
         mut head_x,
         mut eye_x,
@@ -262,17 +258,15 @@ fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
     let (x, y, w, h) = plr.mov.mob.en.xywh();
     let mut rect_sh = RectangleShape::new();
     rect_sh.set_fill_color(Color::rgba(255, 255, 255, 96));
-    rect_sh.set_position((
-        (x - game.camera_offset.x as i32) as f32,
-        (y - game.camera_offset.y as i32) as f32,
-    ));
+    let (co_x, co_y) = game.camera_offset.to_signed();
+    rect_sh.set_position(((x - co_x) as f32, (y - co_y) as f32));
     rect_sh.set_size((w as f32, h as f32));
     rt.draw(&rect_sh);
     rect_sh.set_size((2., 2.));
     rect_sh.set_fill_color(Color::RED);
     rect_sh.set_position((
-        (plr.mov.mob.en.pos.x - game.camera_offset.x as i32) as f32,
-        (plr.mov.mob.en.pos.y - game.camera_offset.y as i32) as f32,
+        (plr.mov.mob.en.pos.x - co_x) as f32,
+        (plr.mov.mob.en.pos.y - co_y) as f32,
     ));
     rt.draw(&rect_sh);
 }

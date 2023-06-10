@@ -22,6 +22,10 @@ pub struct WorldPos {
     pub y: WPosSc,
 }
 
+#[allow(
+    clippy::cast_possible_wrap,
+    reason = "World pos doesn't exceed i32::MAX"
+)]
 pub fn world_y_depth(y: WPosSc) -> i32 {
     y as i32 - WorldPos::SURFACE as i32
 }
@@ -43,6 +47,13 @@ impl WorldPos {
             x: (self.x % u32::from(TILE_SIZE)) as ScreenSc,
             y: (self.y % u32::from(TILE_SIZE)) as ScreenSc,
         }
+    }
+    #[allow(
+        clippy::cast_possible_wrap,
+        reason = "World pos doesn't exceed i32::MAX"
+    )]
+    pub fn to_signed(self) -> (i32, i32) {
+        (self.x as i32, self.y as i32)
     }
 }
 
@@ -118,7 +129,10 @@ impl WorldPos {
         x: Self::CENTER,
         y: Self::SURFACE,
     };
-
+    #[allow(
+        clippy::cast_possible_wrap,
+        reason = "World pos doesn't exceed i32::MAX"
+    )]
     pub(crate) fn to_s2dc(self) -> s2dc::Vec2 {
         s2dc::Vec2 {
             x: self.x as i32,

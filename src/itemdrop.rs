@@ -19,13 +19,7 @@ impl ItemdropBundle {
             mov: MovingEnt {
                 hspeed: *[-spd, spd].choose(&mut rng).unwrap(),
                 vspeed: 0.0,
-                mob: s2dc::MobileEntity::from_pos_and_bb(
-                    Vec2 {
-                        x: pos.x as i32,
-                        y: pos.y as i32,
-                    },
-                    Vec2 { x: 4, y: 4 },
-                ),
+                mob: s2dc::MobileEntity::from_pos_and_bb(pos.to_s2dc(), Vec2 { x: 4, y: 4 }),
             },
         }
     }

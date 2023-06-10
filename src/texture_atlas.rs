@@ -50,6 +50,10 @@ impl AtlasBundle {
             tex.update_from_pixels(&pixbuf, packer.width(), packer.height(), 0, 0);
         }
         for (k, frame) in packer.get_frames() {
+            #[expect(
+                clippy::cast_possible_wrap,
+                reason = "Frame positions won't exceed i32::MAX"
+            )]
             rects.insert(
                 k.clone(),
                 IntRect {

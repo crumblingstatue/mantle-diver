@@ -27,7 +27,7 @@ impl MovingEnt {
         Self {
             hspeed: 0.0,
             vspeed: 0.0,
-            mob: MobileEntity::from_pos_and_bb(vec2(pos.x as i32, pos.y as i32), size),
+            mob: MobileEntity::from_pos_and_bb(pos.to_s2dc(), size),
         }
     }
     pub fn feet_y(&self) -> i32 {
