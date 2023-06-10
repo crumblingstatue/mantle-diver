@@ -1,6 +1,7 @@
 use {
     super::{Chunk, ChunkPos},
     crate::{
+        math::{WorldPos, TILE_SIZE, WORLD_EXTENT_CHUNKS},
         tiles::{BgTileId, FgTileId, MidTileId},
         world::{default_chunk_tiles, CHUNK_EXTENT, CHUNK_N_TILES},
     },
@@ -33,8 +34,9 @@ impl Chunk {
             let i = i as u32;
             let y = y + i / u32::from(CHUNK_EXTENT);
             let local_x = i % u32::from(CHUNK_EXTENT);
+            let surf = WorldPos::SURFACE / u32::from(TILE_SIZE);
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
-            let ceil = 19_968u32.saturating_add_signed(hnoise[local_x as usize] as i32 / 4);
+            let ceil = surf.saturating_add_signed(hnoise[local_x as usize] as i32 / 4);
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
             if y == ceil - 1 {
                 if noise as u32 % 19 == 0 {
@@ -48,8 +50,9 @@ impl Chunk {
             if y < ceil {
                 continue;
             }
+            let dirt_level = surf + 20;
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
-            if y < 20_060u32.saturating_add_signed(hnoise[local_x as usize] as i32) {
+            if y < dirt_level.saturating_add_signed(hnoise[local_x as usize] as i32) {
                 t.mid = MidTileId::DIRT;
                 t.bg = BgTileId::DIRT;
                 if y == ceil {
@@ -59,6 +62,7 @@ impl Chunk {
                 }
                 continue;
             }
+            // Default "cave level" generation
             t.bg = BgTileId::STONE;
             if noise < 550. {
                 t.mid = MidTileId::STONE;
@@ -71,8 +75,8 @@ impl Chunk {
                 t.fg = FgTileId::COAL;
             }
         }
-        // Unbreakable layer at bottom
-        if pos.y > 798 {
+        // Unbreakable buffer zone at the bottom
+        if pos.y > WORLD_EXTENT_CHUNKS {
             for b in &mut tiles {
                 b.mid = MidTileId::UNBREAKANIUM;
             }
