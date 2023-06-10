@@ -1,14 +1,12 @@
 use {
     crate::{
-        debug::{DbgOvr, DBG_OVR},
-        game::{for_each_tile_on_screen, GameState},
-        graphics::ScreenVec,
-        math::{WorldRect, TILE_SIZE},
+        game::GameState,
+        math::{WPosSc, TILE_SIZE},
         tiles::MidTileId,
+        world::TPosSc,
     },
     fnv::FnvHashSet,
-    gamedebug_core::imm_dbg,
-    sfml::{graphics::Color, system::Vector2u},
+    sfml::system::Vector2u,
     std::collections::VecDeque,
 };
 
@@ -23,12 +21,12 @@ pub struct LightState {
     pub light_blockers: FnvHashSet<usize>,
 }
 
-pub(crate) fn light_fill(light_state: &mut LightState, tiles_on_screen: U16Vec) {
-    let stride = tiles_on_screen.x as usize;
-    imm_dbg!(light_state.light_sources.len());
-    imm_dbg!(light_state.light_blockers.len());
+pub(crate) fn light_fill(light_state: &mut LightState, enum_info: LightEnumInfo) {
+    let lightmap_size = enum_info.width as usize * enum_info.height as usize;
+    light_state.light_map.resize(lightmap_size, 0);
     light_state.light_map.fill(0);
     let len = light_state.light_map.len();
+    let stride = enum_info.width as usize;
     // for each marked cell:
     while let Some(src) = light_state.light_sources.pop_front() {
         let fall_off = if light_state.light_blockers.contains(&src.map_idx) {
@@ -104,6 +102,14 @@ pub struct U16Vec {
     pub y: u16,
 }
 
+#[derive(Clone, Copy)]
+pub struct LightEnumInfo {
+    /// Width of the enumerated area
+    pub width: u16,
+    /// Height of the enumerated area
+    pub height: u16,
+}
+
 /// Gather up all the information on light sources that can have a visible effect on the screen.
 ///
 /// This should fill up the `light_sources` array
@@ -111,52 +117,54 @@ pub(crate) fn enumerate_light_sources(
     game: &mut GameState,
     light_state: &mut LightState,
     rt_size: Vector2u,
-    tiles_on_screen: U16Vec,
-) {
+) -> LightEnumInfo {
     light_state.light_sources.clear();
     light_state.light_blockers.clear();
     let mut i = 0usize;
-    for_each_tile_on_screen(
-        game.camera_offset,
-        ScreenVec::from_sf_resolution(rt_size),
-        |tp, _sp| {
-            let t = game.world.tile_at_mut(tp);
-            let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
-            if ls {
-                if i > tiles_on_screen.x as usize {
-                    let idx = i - tiles_on_screen.x as usize - 1;
-                    light_state.light_sources.push_back(LightSrc {
-                        map_idx: idx,
-                        intensity: 255,
-                    });
-                }
-                DBG_OVR.push(DbgOvr::WldRect {
-                    r: WorldRect {
-                        topleft: tp.to_world(),
-                        w: TILE_SIZE.into(),
-                        h: TILE_SIZE.into(),
-                    },
-                    c: Color::YELLOW,
-                });
-            }
-            let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
-            if lb {
-                if i > tiles_on_screen.x as usize {
-                    let idx = i - tiles_on_screen.x as usize - 1;
-                    light_state.light_blockers.insert(idx);
-                }
-                DBG_OVR.push(DbgOvr::WldRect {
-                    r: WorldRect {
-                        topleft: tp.to_world(),
-                        w: TILE_SIZE.into(),
-                        h: TILE_SIZE.into(),
-                    },
-                    c: Color::RED,
-                });
-            }
-            i += 1;
-        },
-    );
+    // Define width and height
+    let on_screen_w = rt_size.x / WPosSc::from(TILE_SIZE);
+    let on_screen_h = rt_size.y / WPosSc::from(TILE_SIZE);
+    let reach = TPosSc::from(MAX_TILE_REACH);
+    let width = (reach * 2) + on_screen_w;
+    let height = (reach * 2) + on_screen_h;
+    // Start from current camera offset minus light reach
+    let mut tp = game.camera_offset.tile_pos();
+    tp.x -= reach;
+    tp.y -= reach;
+    let tp_x_init = tp.x;
+    // Separate trackers... Sorry, I'm bad at math
+    let mut x = 0;
+    let mut y = 0;
+    loop {
+        let t = game.world.tile_at_mut(tp);
+        let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
+        if ls {
+            light_state.light_sources.push_back(LightSrc {
+                map_idx: i,
+                intensity: 255,
+            });
+        }
+        let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
+        if lb {
+            light_state.light_blockers.insert(i);
+        }
+        i += 1;
+        tp.x += 1;
+        x += 1;
+        if x >= width {
+            tp.x = tp_x_init;
+            x = 0;
+            tp.y += 1;
+            y += 1;
+        }
+        if y >= height {
+            break;
+        }
+    }
+    LightEnumInfo {
+        width: width.try_into().unwrap(),
+        height: height.try_into().unwrap(),
+    }
 }
 
 /// Max light source reach in any on direction, in tiles.

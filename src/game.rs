@@ -25,6 +25,8 @@ pub mod rendering;
 mod systems;
 
 pub struct GameState {
+    /// Camera offset.
+    /// It points to top left corner on the screen.
     pub camera_offset: WorldPos,
     pub world: World,
     pub gravity: f32,

@@ -4,7 +4,7 @@ use {
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
         inventory::ItemId,
-        light::U16Vec,
+        light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, TILE_SIZE},
         player::{FacingDir, MovingEnt, PlayerQuery},
         res::Res,
@@ -365,21 +365,23 @@ pub(crate) fn light_blend_pass(
     lt_tex: &mut RenderTexture,
     lightmap: &[u8],
     tiles_on_screen: U16Vec,
+    light_enum_info: LightEnumInfo,
 ) {
     lt_tex.clear(Color::BLACK);
     let mut rs = RectangleShape::with_size((f32::from(TILE_SIZE), f32::from(TILE_SIZE)).into());
-    let mut i = 0;
     let xoff = (camera_offset.x % u32::from(TILE_SIZE)) as f32;
     let yoff = (camera_offset.y % u32::from(TILE_SIZE)) as f32;
     for y in 0..tiles_on_screen.y {
         for x in 0..tiles_on_screen.x {
+            let lmx = usize::from(x) + usize::from(light::MAX_TILE_REACH);
+            let lmy = usize::from(y) + usize::from(light::MAX_TILE_REACH);
+            let i = lmy * usize::from(light_enum_info.width) + lmx;
             let level = lightmap[i];
             rs.set_fill_color(Color::rgba(255, 255, 255, level));
             let x = f32::from(x) * f32::from(TILE_SIZE);
             let y = f32::from(y) * f32::from(TILE_SIZE);
             rs.set_position((x - xoff, y - yoff));
             lt_tex.draw(&rs);
-            i += 1;
         }
     }
 }

@@ -174,6 +174,7 @@ impl TilePos {
         }
     }
 
+    #[expect(dead_code, reason = "Could be useful in the future")]
     pub(crate) fn to_world(self) -> WorldPos {
         WorldPos {
             x: self.x * u32::from(TILE_SIZE),

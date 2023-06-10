@@ -292,18 +292,18 @@ impl App {
     }
 
     fn do_rendering(&mut self, res: &mut Res) {
-        light::enumerate_light_sources(
+        let enum_info = light::enumerate_light_sources(
             &mut self.game,
             &mut self.light_state,
             self.render.rt.size(),
-            self.tiles_on_screen,
         );
-        light::light_fill(&mut self.light_state, self.tiles_on_screen);
+        light::light_fill(&mut self.light_state, enum_info);
         rendering::light_blend_pass(
             self.game.camera_offset,
             &mut self.render.light_blend_rt,
             &self.light_state.light_map,
             self.tiles_on_screen,
+            enum_info,
         );
         self.render.rt.clear(Color::rgb(55, 221, 231));
         rendering::draw_world(&mut self.game, &mut self.render.rt, res);
