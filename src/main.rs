@@ -1,5 +1,10 @@
 #![feature(lint_reasons)]
-#![warn(trivial_casts, trivial_numeric_casts, clippy::cast_lossless)]
+#![warn(
+    trivial_casts,
+    trivial_numeric_casts,
+    clippy::cast_lossless,
+    clippy::cast_possible_truncation
+)]
 
 use {
     app::App,

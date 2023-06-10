@@ -181,7 +181,10 @@ pub(super) fn move_system(game: &mut GameState, rt_size: Vector2u, debug: &Debug
 
 /// Calculate tile check pixel rectangle, for which tiles to check for collision
 fn calc_mov_wrect(mov: &MovingEnt) -> WorldRect {
+    // Movement speeds are low enough that we don't have to fear truncation
+    #[expect(clippy::cast_possible_truncation)]
     let mut hvec = mov.hspeed.round() as i32;
+    #[expect(clippy::cast_possible_truncation)]
     let mut vvec = mov.vspeed.round() as i32;
     // We add 1 just to be on the safe side
     hvec += (mov.mob.en.bb.x + 1) * hvec.signum();
