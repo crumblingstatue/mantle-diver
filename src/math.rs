@@ -30,6 +30,10 @@ impl WorldPos {
             y: en.pos.y as WPosSc,
         }
     }
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "After modulo with tile size, it fits into a screen scalar"
+    )]
     pub(crate) fn tile_modulo(&self) -> ScreenVec {
         ScreenVec {
             x: (self.x % u32::from(TILE_SIZE)) as ScreenSc,

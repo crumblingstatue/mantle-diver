@@ -51,7 +51,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             Cmd::ToggleTileDbEdit => app.debug.tiledb_edit.open ^= true,
             Cmd::SetScale(scale) => {
                 app.scale = scale;
-                app.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(app.rw.size()));
+                app.adapt_to_window_size_and_scale(ScreenVec::from_sf_resolution(app.rw.size()));
             }
             Cmd::LoadWorld(name) => {
                 app.game.world.save();

@@ -151,7 +151,7 @@ impl App {
                 rt,
             },
         };
-        this.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(rw_size));
+        this.adapt_to_window_size_and_scale(ScreenVec::from_sf_resolution(rw_size));
         Ok(this)
     }
 
@@ -205,7 +205,7 @@ impl App {
             match ev {
                 Event::Closed => self.should_quit = true,
                 Event::Resized { width, height } => {
-                    self.adapt_to_window_size_and_scale(ScreenVec::from_sf2u(Vector2 {
+                    self.adapt_to_window_size_and_scale(ScreenVec::from_sf_resolution(Vector2 {
                         x: width,
                         y: height,
                     }));

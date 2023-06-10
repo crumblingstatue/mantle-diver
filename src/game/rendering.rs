@@ -48,7 +48,7 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
     let mut s = Sprite::with_texture(&res.atlas.tex);
     for_each_tile_on_screen(
         game.camera_offset,
-        ScreenVec::from_sf2u(rt.size()),
+        ScreenVec::from_sf_resolution(rt.size()),
         |tp, sp| {
             let tile = *game.world.tile_at_mut(tp);
             let spr_pos = sp.to_sf_vec();

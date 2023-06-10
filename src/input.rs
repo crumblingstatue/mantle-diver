@@ -52,10 +52,7 @@ impl Input {
                 self.down.remove(code);
             }
             &Event::MouseButtonPressed { button, x, y } => {
-                self.mouse_down_loc = ScreenVec {
-                    x: x as i16,
-                    y: y as i16,
-                };
+                self.mouse_down_loc = ScreenVec::from_reso_i32(x, y);
                 if button == mouse::Button::Left {
                     self.lmb_down = true;
                 }
@@ -74,10 +71,7 @@ impl Input {
                     self.rmb_down = false;
                 }
             }
-            &Event::MouseMoved { x, y } => {
-                self.mouse_down_loc.x = x as i16;
-                self.mouse_down_loc.y = y as i16;
-            }
+            &Event::MouseMoved { x, y } => self.mouse_down_loc = ScreenVec::from_reso_i32(x, y),
             _ => {}
         }
         if egui_kbd {

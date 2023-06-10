@@ -192,7 +192,10 @@ impl ItemDb {
             }
         }
     }
-
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "We won't have more than 65535 items"
+    )]
     pub fn iter(&self) -> impl Iterator<Item = (ItemId, &ItemDef)> {
         self.db
             .iter()

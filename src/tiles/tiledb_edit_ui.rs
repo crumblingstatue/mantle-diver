@@ -91,6 +91,10 @@ trait TileLayerExt: TileLayer {
 
 impl TileLayerExt for Bg {
     fn paint(idx: usize, cmd: &mut CmdVec) {
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "We don't expect to have more than 65535 tiles"
+        )]
         cmd.push(Cmd::SetBgTileAtCursor(BgTileId::from_idx(idx as u16)))
     }
 }
@@ -120,12 +124,20 @@ impl TileLayerExt for Mid {
     }
 
     fn paint(idx: usize, cmd: &mut CmdVec) {
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "We don't expect to have more than 65535 tiles"
+        )]
         cmd.push(Cmd::SetMidTileAtCursor(MidTileId::from_idx(idx as u16)));
     }
 }
 
 impl TileLayerExt for Fg {
     fn paint(idx: usize, cmd: &mut CmdVec) {
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "We don't expect to have more than 65535 tiles"
+        )]
         cmd.push(Cmd::SetFgTileAtCursor(FgTileId::from_idx(idx as u16)));
     }
 }

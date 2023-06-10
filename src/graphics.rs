@@ -3,7 +3,7 @@ use {
     serde::{Deserialize, Serialize},
     sfml::{
         graphics::RenderWindow,
-        system::Vector2f,
+        system::{Vector2, Vector2f},
         window::{ContextSettings, Style, VideoMode},
     },
     sfml_xt::graphics::RenderWindowExt,
@@ -39,11 +39,26 @@ impl ScreenVec {
     pub fn to_sf_vec(self) -> Vector2f {
         Vector2f::new(self.x.into(), self.y.into())
     }
-
-    pub(crate) fn from_sf2u(size: sfml::system::Vector2<u32>) -> Self {
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "We expect that this function will be called only on resolutions,
+                  which are small enough"
+    )]
+    pub(crate) fn from_sf_resolution(size: Vector2<u32>) -> Self {
         Self {
             x: size.x as ScreenSc,
             y: size.y as ScreenSc,
+        }
+    }
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "We expect that this function will be called only on resolutions,
+                  which are small enough"
+    )]
+    pub(crate) fn from_reso_i32(x: i32, y: i32) -> Self {
+        Self {
+            x: x as ScreenSc,
+            y: y as ScreenSc,
         }
     }
 }

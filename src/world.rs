@@ -19,7 +19,19 @@ use {
     },
 };
 
+/// Invariant: Can't exceed CHK_POS_SC_MAX
 pub type ChkPosSc = u16;
+
+/// Each region holds 8 chunks in one direction (8x8).
+/// Region index is a byte, so 255 max.
+/// 255 * 8 = 2040
+#[expect(dead_code)]
+pub const CHK_POS_SC_MAX: ChkPosSc = REGION_CHUNK_EXTENT as ChkPosSc * 255;
+#[expect(clippy::assertions_on_constants)]
+const _: () = assert!(
+    CHK_POS_SC_MAX == 2040,
+    "Assumption about chunk pos scalar max value broken"
+);
 
 #[derive(Hash, PartialEq, Eq, Debug, Clone, Copy)]
 pub struct ChunkPos {
@@ -29,6 +41,10 @@ pub struct ChunkPos {
 
 impl ChunkPos {
     /// Returns the region this chunk position belongs to
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "Fits into u8. See CHK_POS_SC_MAX."
+    )]
     pub fn region(&self) -> (u8, u8) {
         (
             (self.x / ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
@@ -36,6 +52,10 @@ impl ChunkPos {
         )
     }
     /// Returns the local position in the region (0-7)
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "Fits due to prior modulo arithmetic"
+    )]
     pub fn local(&self) -> (u8, u8) {
         (
             (self.x % ChkPosSc::from(REGION_CHUNK_EXTENT)) as u8,
@@ -162,6 +182,7 @@ impl TilePos {
     }
 }
 
+#[allow(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]
 fn chk_pos(tile: TPosSc) -> ChkPosSc {
     (tile / TPosSc::from(CHUNK_EXTENT)) as ChkPosSc
 }
@@ -174,6 +195,10 @@ fn test_chk_pos() {
     assert_eq!(chk_pos(128), 1);
 }
 
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "Sound due to modulo with `CHUNK_EXTENT`"
+)]
 fn chunk_local(global: TPosSc) -> ChkLocalTPosSc {
     (global % TPosSc::from(CHUNK_EXTENT)) as ChkLocalTPosSc
 }
@@ -195,8 +220,15 @@ fn test_to_chunk_and_local() {
     );
 }
 
-// Need to support at least 4 million tiles long
 pub type TPosSc = u32;
+
+#[expect(dead_code)]
+pub const TPOS_SC_MAX: TPosSc = CHK_POS_SC_MAX as TPosSc * CHUNK_EXTENT as TPosSc;
+#[expect(clippy::assertions_on_constants)]
+const _: () = assert!(
+    TPOS_SC_MAX == 261_120,
+    "Assumption about max tilepos value broken"
+);
 
 pub const CHUNK_EXTENT: u16 = 128;
 const CHUNK_N_TILES: usize = CHUNK_EXTENT as usize * CHUNK_EXTENT as usize;

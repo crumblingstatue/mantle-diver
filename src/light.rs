@@ -115,7 +115,7 @@ pub(crate) fn enumerate_light_sources(
     let mut i = 0usize;
     for_each_tile_on_screen(
         game.camera_offset,
-        ScreenVec::from_sf2u(rt_size),
+        ScreenVec::from_sf_resolution(rt_size),
         |tp, _sp| {
             let t = game.world.tile_at_mut(tp);
             let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
