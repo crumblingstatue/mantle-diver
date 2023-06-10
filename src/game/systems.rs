@@ -7,7 +7,7 @@ use {
         input::{Input, InputAction},
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
-        math::{step_towards, WorldPos, WorldRect, TILE_SIZE},
+        math::{step_towards, world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, MovingEnt, PlayerData, PlayerQuery},
         res::{Res, ResAudio},
         save::world_dirs,
@@ -253,7 +253,9 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
 }
 
 pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::Sink, res: &Res) {
-    if game.camera_offset.y > 642_000 {
+    let depth = world_y_depth(game.camera_offset.y);
+    let depth_tiles = depth / i32::from(TILE_SIZE);
+    if depth_tiles > 70 {
         game.current_biome = Biome::Underground;
     } else {
         game.current_biome = Biome::Surface;

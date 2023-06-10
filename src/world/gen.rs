@@ -51,7 +51,7 @@ impl Chunk {
                 continue;
             }
             // Dirt level, just a mass of mostly dirt
-            let dirt_bottom = surf + 50;
+            let dirt_bottom = surf + 80;
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
             if y < dirt_bottom.saturating_add_signed(hnoise[local_x as usize] as i32) {
                 t.mid = MidTileId::DIRT;

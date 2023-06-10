@@ -22,6 +22,10 @@ pub struct WorldPos {
     pub y: WPosSc,
 }
 
+pub fn world_y_depth(y: WPosSc) -> i32 {
+    y as i32 - WorldPos::SURFACE as i32
+}
+
 impl WorldPos {
     /// This is fine because all entity coordinates are confined to be positive
     pub fn from_en(en: &s2dc::Entity) -> Self {
