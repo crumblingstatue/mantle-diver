@@ -373,7 +373,9 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
             process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, pos);
             tile.mid = TileId::EMPTY;
             // If the mid is destroyed, the front content pops off as well
-            process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, pos);
+            if !tile.fg.empty() {
+                process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, pos);
+            }
             tile.fg = TileId::EMPTY;
             retain = false;
         }
