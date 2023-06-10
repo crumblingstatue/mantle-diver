@@ -158,3 +158,13 @@ pub(crate) fn enumerate_light_sources(
         },
     );
 }
+
+/// Max light source reach in any on direction, in tiles.
+///
+/// When enumerating light sources, we need to consider light sources that are off-screen,
+/// but still have an effect on the on-screen lighting.
+///
+/// This means we need to go through a much larger area than just the screen when enumerating.
+/// How much larger? The answer to that is the maximum reach any light source can have in any
+/// one direction. This is what this constant codifies.
+pub const MAX_TILE_REACH: u8 = 10;
