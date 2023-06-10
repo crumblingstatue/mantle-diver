@@ -46,55 +46,59 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
     rt.draw(&s);
     game.light_sources.clear();
     let mut s = Sprite::with_texture(&res.atlas.tex);
-    for_each_tile_on_screen(game.camera_offset, rt.size(), |tp, sp| {
-        let tile = *game.world.tile_at_mut(tp);
-        let spr_pos = sp.to_sf_vec();
-        s.set_rotation(0.);
-        s.set_scale((1.0, 1.0));
-        if !tile.bg.empty() {
-            let def = &game.tile_db[tile.bg];
-            s.set_position(spr_pos.scv_off(def.draw_offs));
-            s.set_texture_rect(def.tex_rect.to_sf());
-            rt.draw(&s);
-        }
-        if !tile.mid.empty() {
-            let def = &game.tile_db[tile.mid];
-            s.set_position(spr_pos.scv_off(def.draw_offs));
-            let mut rect = def.tex_rect.to_sf();
-            // Tile blending prototype code
-            let rect = if !def.neigh_aware {
-                rect
-            } else {
-                rect.width = i32::from(TILE_SIZE);
-                rect.height = i32::from(TILE_SIZE);
-                let left = game.world.tile_at_mut(tp.x_off(-1)).mid == tile.mid;
-                let right = game.world.tile_at_mut(tp.x_off(1)).mid == tile.mid;
-                let above = game.world.tile_at_mut(tp.y_off(-1)).mid == tile.mid;
-                let below = game.world.tile_at_mut(tp.y_off(1)).mid == tile.mid;
-                adjust_blend_rect(&mut rect, left, right, above, below);
-                rect
-            };
-            if let Some(state) = game.transient_block_state.get(&tp) {
-                s.set_rotation(state.rot);
-                s.set_scale((state.scale, state.scale));
+    for_each_tile_on_screen(
+        game.camera_offset,
+        ScreenVec::from_sf2u(rt.size()),
+        |tp, sp| {
+            let tile = *game.world.tile_at_mut(tp);
+            let spr_pos = sp.to_sf_vec();
+            s.set_rotation(0.);
+            s.set_scale((1.0, 1.0));
+            if !tile.bg.empty() {
+                let def = &game.tile_db[tile.bg];
+                s.set_position(spr_pos.scv_off(def.draw_offs));
+                s.set_texture_rect(def.tex_rect.to_sf());
+                rt.draw(&s);
             }
-            s.set_texture_rect(rect);
-            if let Some(light) = game.tile_db[tile.mid].light {
-                let pos = ScreenVec {
-                    x: sp.x + light.x,
-                    y: sp.y + light.y,
+            if !tile.mid.empty() {
+                let def = &game.tile_db[tile.mid];
+                s.set_position(spr_pos.scv_off(def.draw_offs));
+                let mut rect = def.tex_rect.to_sf();
+                // Tile blending prototype code
+                let rect = if !def.neigh_aware {
+                    rect
+                } else {
+                    rect.width = i32::from(TILE_SIZE);
+                    rect.height = i32::from(TILE_SIZE);
+                    let left = game.world.tile_at_mut(tp.x_off(-1)).mid == tile.mid;
+                    let right = game.world.tile_at_mut(tp.x_off(1)).mid == tile.mid;
+                    let above = game.world.tile_at_mut(tp.y_off(-1)).mid == tile.mid;
+                    let below = game.world.tile_at_mut(tp.y_off(1)).mid == tile.mid;
+                    adjust_blend_rect(&mut rect, left, right, above, below);
+                    rect
                 };
-                game.light_sources.push(LightSource { pos });
+                if let Some(state) = game.transient_block_state.get(&tp) {
+                    s.set_rotation(state.rot);
+                    s.set_scale((state.scale, state.scale));
+                }
+                s.set_texture_rect(rect);
+                if let Some(light) = game.tile_db[tile.mid].light {
+                    let pos = ScreenVec {
+                        x: sp.x + light.x,
+                        y: sp.y + light.y,
+                    };
+                    game.light_sources.push(LightSource { pos });
+                }
+                rt.draw(&s);
             }
-            rt.draw(&s);
-        }
-        if !tile.fg.empty() {
-            let def = &game.tile_db[tile.fg];
-            s.set_position(spr_pos.scv_off(def.draw_offs));
-            s.set_texture_rect(def.tex_rect.to_sf());
-            rt.draw(&s);
-        }
-    });
+            if !tile.fg.empty() {
+                let def = &game.tile_db[tile.fg];
+                s.set_position(spr_pos.scv_off(def.draw_offs));
+                s.set_texture_rect(def.tex_rect.to_sf());
+                rt.draw(&s);
+            }
+        },
+    );
 }
 pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);

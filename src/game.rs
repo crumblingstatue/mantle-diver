@@ -174,14 +174,14 @@ impl GameState {
 
 pub fn for_each_tile_on_screen(
     camera_offset: WorldPos,
-    rt_size: Vector2u,
+    rt_size: ScreenVec,
     mut f: impl FnMut(TilePos, ScreenVec),
 ) {
     let ts_i16 = i16::from(TILE_SIZE);
     let ts_us = usize::from(TILE_SIZE);
     let ts_i64 = i64::from(TILE_SIZE);
-    for y in (-ts_i16..(rt_size.y as i16) + ts_i16).step_by(ts_us) {
-        for x in (-ts_i16..(rt_size.x as i16) + ts_i16).step_by(ts_us) {
+    for y in (-ts_i16..rt_size.y + ts_i16).step_by(ts_us) {
+        for x in (-ts_i16..rt_size.x + ts_i16).step_by(ts_us) {
             f(
                 TilePos {
                     x: wp_to_tp(camera_offset.x.saturating_add(x.try_into().unwrap_or(0))),

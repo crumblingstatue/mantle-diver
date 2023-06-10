@@ -2,6 +2,7 @@ use {
     crate::{
         debug::{DbgOvr, DBG_OVR},
         game::{for_each_tile_on_screen, GameState},
+        graphics::ScreenVec,
         math::{WorldRect, TILE_SIZE},
         tiles::MidTileId,
     },
@@ -112,41 +113,45 @@ pub(crate) fn enumerate_light_sources(
     light_state.light_sources.clear();
     light_state.light_blockers.clear();
     let mut i = 0usize;
-    for_each_tile_on_screen(game.camera_offset, rt_size, |tp, _sp| {
-        let t = game.world.tile_at_mut(tp);
-        let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
-        if ls {
-            if i > tiles_on_screen.x as usize {
-                let idx = i - tiles_on_screen.x as usize - 1;
-                light_state.light_sources.push_back(LightSrc {
-                    map_idx: idx,
-                    intensity: 255,
+    for_each_tile_on_screen(
+        game.camera_offset,
+        ScreenVec::from_sf2u(rt_size),
+        |tp, _sp| {
+            let t = game.world.tile_at_mut(tp);
+            let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
+            if ls {
+                if i > tiles_on_screen.x as usize {
+                    let idx = i - tiles_on_screen.x as usize - 1;
+                    light_state.light_sources.push_back(LightSrc {
+                        map_idx: idx,
+                        intensity: 255,
+                    });
+                }
+                DBG_OVR.push(DbgOvr::WldRect {
+                    r: WorldRect {
+                        topleft: tp.to_world(),
+                        w: TILE_SIZE.into(),
+                        h: TILE_SIZE.into(),
+                    },
+                    c: Color::YELLOW,
                 });
             }
-            DBG_OVR.push(DbgOvr::WldRect {
-                r: WorldRect {
-                    topleft: tp.to_world(),
-                    w: TILE_SIZE.into(),
-                    h: TILE_SIZE.into(),
-                },
-                c: Color::YELLOW,
-            });
-        }
-        let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
-        if lb {
-            if i > tiles_on_screen.x as usize {
-                let idx = i - tiles_on_screen.x as usize - 1;
-                light_state.light_blockers.insert(idx);
+            let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
+            if lb {
+                if i > tiles_on_screen.x as usize {
+                    let idx = i - tiles_on_screen.x as usize - 1;
+                    light_state.light_blockers.insert(idx);
+                }
+                DBG_OVR.push(DbgOvr::WldRect {
+                    r: WorldRect {
+                        topleft: tp.to_world(),
+                        w: TILE_SIZE.into(),
+                        h: TILE_SIZE.into(),
+                    },
+                    c: Color::RED,
+                });
             }
-            DBG_OVR.push(DbgOvr::WldRect {
-                r: WorldRect {
-                    topleft: tp.to_world(),
-                    w: TILE_SIZE.into(),
-                    h: TILE_SIZE.into(),
-                },
-                c: Color::RED,
-            });
-        }
-        i += 1;
-    });
+            i += 1;
+        },
+    );
 }
