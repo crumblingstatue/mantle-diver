@@ -33,7 +33,7 @@ impl Res {
         Ok(Self {
             atlas: AtlasBundle::new(res_path)?,
             surf_music: load_sound(format!("{res_path}/music/calm.ogg"))?,
-            und_music: load_sound(format!("{res_path}/music/cave.ogg"))?,
+            und_music: load_sound(format!("{res_path}/music/underground.mp3"))?,
             sans_font: Font::from_file(&format!("{res_path}/fonts/ShareTechMono-Regular.ttf"))
                 .unwrap(),
             forest_bg: Texture::from_file(&format!("{res_path}/bg/sky.png")).unwrap(),
