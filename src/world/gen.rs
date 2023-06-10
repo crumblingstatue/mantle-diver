@@ -50,9 +50,10 @@ impl Chunk {
             if y < ceil {
                 continue;
             }
-            let dirt_level = surf + 20;
+            // Dirt level, just a mass of mostly dirt
+            let dirt_bottom = surf + 50;
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
-            if y < dirt_level.saturating_add_signed(hnoise[local_x as usize] as i32) {
+            if y < dirt_bottom.saturating_add_signed(hnoise[local_x as usize] as i32) {
                 t.mid = MidTileId::DIRT;
                 t.bg = BgTileId::DIRT;
                 if y == ceil {
