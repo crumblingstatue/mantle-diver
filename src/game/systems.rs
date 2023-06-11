@@ -176,7 +176,7 @@ pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &Debu
             col
         });
         mov.vspeed += game.gravity;
-        if !debug.freecam && en == game.player_en {
+        if !debug.freecam && en == game.controlled_en {
             let (x, y, _w, _h) = mov.mob.en.xywh();
             game.camera_offset.x = (x - i32::from(rt_size.x) / 2).try_into().unwrap_or(0);
             game.camera_offset.y = (y - i32::from(rt_size.y) / 2).try_into().unwrap_or(0);
