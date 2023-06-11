@@ -8,7 +8,7 @@ use {
         input::Input,
         light::{self, LightState, U16Vec},
         math::{WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
-        player::PlayerQuery,
+        player::PlayerData,
         res::{Res, ResAudio},
         save::Save,
         world::TilePos,
@@ -176,20 +176,22 @@ impl App {
         self.cfg.last_world = Some(self.game.world.name.clone());
         self.cfg.scale = self.scale;
         self.cfg.save(self.project_dirs.config_dir()).unwrap();
-        let (_en, plr) = self
+        match self
             .game
             .ecw
-            .query_mut::<PlayerQuery>()
-            .into_iter()
-            .next()
-            .unwrap();
-        let result = Save {
-            inventory: self.game.inventory,
-            world_seed: self.game.world.seed,
-            player: plr.dat.sav(),
+            .query_one_mut::<&mut PlayerData>(self.game.player_en)
+        {
+            Ok(plr_dat) => {
+                let result = Save {
+                    inventory: self.game.inventory,
+                    world_seed: self.game.world.seed,
+                    player: plr_dat.sav(),
+                }
+                .save(&self.game.world.path);
+                log::info!("Save result: {result:?}");
+            }
+            Err(_) => log::error!("No player entity, can't save player data"),
         }
-        .save(&self.game.world.path);
-        log::info!("Save result: {result:?}");
     }
 
     fn do_event_handling(&mut self) {
