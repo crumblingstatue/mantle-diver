@@ -8,11 +8,11 @@ pub enum Cmd {
     /// Quit the application
     QuitApp,
     ToggleFreecam,
-    TeleportPlayer {
+    Teleport {
         pos: WorldPos,
         relative: bool,
     },
-    TeleportPlayerSpawn,
+    TeleportSpawn,
     GiveItemByName {
         name: String,
         amount: u16,
@@ -24,7 +24,7 @@ pub enum Cmd {
     SetBgTileAtCursor(BgTileId),
     SetMidTileAtCursor(MidTileId),
     SetFgTileAtCursor(FgTileId),
-    TeleportPlayerCursor,
+    TeleportCursor,
 }
 
 pub type CmdVec = Vec<Cmd>;

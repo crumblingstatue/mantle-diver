@@ -1,7 +1,7 @@
 use {
     super::App,
     crate::{
-        command::Cmd, game::GameState, graphics::ScreenVec, math::WorldPos, player::PlayerQuery,
+        command::Cmd, game::GameState, graphics::ScreenVec, math::WorldPos, player::MovingEnt,
         res::Res, texture_atlas::AtlasBundle,
     },
     sfml::graphics::RenderTarget,
@@ -13,25 +13,37 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
         match cmd {
             Cmd::QuitApp => app.should_quit = true,
             Cmd::ToggleFreecam => app.debug.freecam ^= true,
-            Cmd::TeleportPlayer { pos, relative } => {
-                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
+            Cmd::Teleport { pos, relative } => {
+                if let Ok(mov) = app
+                    .game
+                    .ecw
+                    .query_one_mut::<&mut MovingEnt>(app.game.controlled_en)
+                {
                     if relative {
                         let s2dc = pos.to_s2dc();
-                        plr.mov.mob.en.pos.x += s2dc.x;
-                        plr.mov.mob.en.pos.y += s2dc.y;
+                        mov.mob.en.pos.x += s2dc.x;
+                        mov.mob.en.pos.y += s2dc.y;
                     } else {
-                        plr.mov.mob.en.pos = pos.to_s2dc()
+                        mov.mob.en.pos = pos.to_s2dc()
                     }
                 }
             }
-            Cmd::TeleportPlayerCursor => {
-                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
-                    plr.mov.mob.en.pos = mouse_world_pos.to_s2dc();
+            Cmd::TeleportCursor => {
+                if let Ok(mov) = app
+                    .game
+                    .ecw
+                    .query_one_mut::<&mut MovingEnt>(app.game.controlled_en)
+                {
+                    mov.mob.en.pos = mouse_world_pos.to_s2dc();
                 }
             }
-            Cmd::TeleportPlayerSpawn => {
-                for (_en, plr) in app.game.ecw.query_mut::<PlayerQuery>() {
-                    plr.mov.mob.en.pos = app.game.spawn_point.to_s2dc()
+            Cmd::TeleportSpawn => {
+                if let Ok(mov) = app
+                    .game
+                    .ecw
+                    .query_one_mut::<&mut MovingEnt>(app.game.controlled_en)
+                {
+                    mov.mob.en.pos = app.game.spawn_point.to_s2dc()
                 }
             }
             Cmd::GiveItemByName { name, amount } => {

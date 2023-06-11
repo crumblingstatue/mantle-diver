@@ -95,12 +95,12 @@ impl CmdLine {
             CmdLine::Quit => Dispatch::Cmd(Cmd::QuitApp),
             CmdLine::Freecam => Dispatch::Cmd(Cmd::ToggleFreecam),
             CmdLine::Clear => Dispatch::ClearConsole,
-            CmdLine::Tp(tp) => Dispatch::Cmd(Cmd::TeleportPlayer {
+            CmdLine::Tp(tp) => Dispatch::Cmd(Cmd::Teleport {
                 pos: tp.to_world_pos(),
                 relative: tp.rel,
             }),
-            CmdLine::Tpc => Dispatch::Cmd(Cmd::TeleportPlayerCursor),
-            CmdLine::Spawn => Dispatch::Cmd(Cmd::TeleportPlayerSpawn),
+            CmdLine::Tpc => Dispatch::Cmd(Cmd::TeleportCursor),
+            CmdLine::Spawn => Dispatch::Cmd(Cmd::TeleportSpawn),
             CmdLine::Give(give) => Dispatch::Cmd(Cmd::GiveItemByName {
                 name: give.name,
                 amount: give.amount,
