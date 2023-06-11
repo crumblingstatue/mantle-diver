@@ -289,8 +289,10 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
     }
 }
 
-pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
-    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+/// Control the movements of the controlled entity (usually player character)
+pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
+    let Ok((mov, mov_extra)) = game.ecw.query_one_mut::<(&mut MovingEnt, &mut MoveExtra)>(game.controlled_en) else {
+        log::warn!("No controlled entity");
         return;
     };
     let spd = if input.down_raw(Key::LShift) {
@@ -300,20 +302,20 @@ pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
     } else {
         3.0
     };
-    plr.mov.hspeed = 0.;
+    mov.hspeed = 0.;
     if input.down(InputAction::Left) {
-        plr.mov.hspeed = -spd;
-        plr.mov_extra.facing_dir = FacingDir::Left;
+        mov.hspeed = -spd;
+        mov_extra.facing_dir = FacingDir::Left;
     }
     if input.down(InputAction::Right) {
-        plr.mov.hspeed = spd;
-        plr.mov_extra.facing_dir = FacingDir::Right;
+        mov.hspeed = spd;
+        mov_extra.facing_dir = FacingDir::Right;
     }
-    if input.down(InputAction::Jump) && plr.mov_extra.can_jump() {
-        plr.mov.vspeed = -10.0;
-        plr.mov_extra.jumps_left = 0;
+    if input.down(InputAction::Jump) && mov_extra.can_jump() {
+        mov.vspeed = -10.0;
+        mov_extra.jumps_left = 0;
     }
-    plr.mov_extra.down_intent = input.down(InputAction::Down);
+    mov_extra.down_intent = input.down(InputAction::Down);
 }
 pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
     let spd = if input.down_raw(Key::LShift) {
