@@ -36,6 +36,8 @@ pub enum CmdLine {
     Atlas,
     /// Reload graphics
     Greload,
+    /// Toggle entity list
+    Entlist,
 }
 
 #[derive(Parser)]
@@ -120,6 +122,10 @@ impl CmdLine {
             CmdLine::Greload => Dispatch::Cmd(Cmd::ReloadGraphics),
             CmdLine::Itemdb => {
                 debug.itemdb_edit.open ^= true;
+                Dispatch::Noop
+            }
+            CmdLine::Entlist => {
+                debug.entity_list.open ^= true;
                 Dispatch::Noop
             }
         }

@@ -1,11 +1,12 @@
 use {
-    self::item_db_edit::ItemDbEdit,
+    self::{entity_list::EntityList, item_db_edit::ItemDbEdit},
     crate::{math::WorldRect, player::PlayerQuery},
     gamedebug_core::MsgBuf,
 };
 
 mod char_db_edit;
 mod console;
+mod entity_list;
 mod item_db_edit;
 mod world_manager;
 
@@ -38,6 +39,7 @@ pub struct DebugState {
     pub dbg_overlay: bool,
     pub chardb_edit: CharDbEdit,
     pub itemdb_edit: ItemDbEdit,
+    pub entity_list: EntityList,
     world_mgr: WorldManager,
 }
 
@@ -141,6 +143,7 @@ pub(crate) fn do_debug_ui(
     debug.itemdb_edit.ui(ctx, &mut game.itemdb);
     console_ui(ctx, debug, cmd);
     debug.world_mgr.ui(ctx, game, worlds_path, cmd);
+    debug.entity_list.ui(ctx, game);
 }
 
 pub enum DbgOvr {

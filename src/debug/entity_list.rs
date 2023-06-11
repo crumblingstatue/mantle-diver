@@ -1,0 +1,27 @@
+use crate::{game::GameState, player::MoveExtra};
+
+#[derive(Default)]
+pub struct EntityList {
+    pub open: bool,
+}
+
+impl EntityList {
+    pub fn ui(&mut self, egui_ctx: &egui::Context, game: &mut GameState) {
+        egui::Window::new("Entity list")
+            .open(&mut self.open)
+            .show(egui_ctx, |ui| {
+                for en in game.ecw.iter() {
+                    ui.label(format!("{:?}", en.entity()));
+                    if ui.button("move control").clicked() {
+                        game.controlled_en = en.entity();
+                        if !en.has::<MoveExtra>() {
+                            game.ecw
+                                .insert_one(en.entity(), MoveExtra::default())
+                                .unwrap();
+                            return;
+                        }
+                    }
+                }
+            });
+    }
+}
