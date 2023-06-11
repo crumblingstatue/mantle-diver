@@ -9,7 +9,7 @@ use {
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
         math::{step_towards, world_y_depth, WorldPos, WorldRect, TILE_SIZE},
-        player::{FacingDir, MoveExtra, MovingEnt, PlayerQuery},
+        player::{FacingDir, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
@@ -394,15 +394,18 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
 }
 /// Claim item drops player contacts with
 pub(super) fn item_drop_claim_system(game: &mut GameState, snd: &mut SoundPlayer, aud: &ResAudio) {
-    let mut plr_query = game.ecw.query::<PlayerQuery>();
-    let Some((_en, plr)) = plr_query.iter().next() else {
+    let Ok(mut plr_query) = game.ecw.query_one::<&MovingEnt>(game.player_en) else {
+        log::error!("No player query to run item drop claim system on");
+        return;
+    };
+    let Some(plr_mov) = plr_query.get() else {
         log::error!("No player");
         return;
     };
     for (en, (id, mov)) in game.ecw.query::<(&ItemId, &mut MovingEnt)>().iter() {
         step_towards(&mut mov.hspeed, 0.0, 0.03);
         #[expect(clippy::collapsible_if)]
-        if plr.mov.mob.en.collides(&mov.mob.en) {
+        if plr_mov.mob.en.collides(&mov.mob.en) {
             if game.inventory.add(*id, 1) {
                 snd.play(aud, "etc/pickup");
                 game.ecb.despawn(en);
