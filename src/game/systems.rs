@@ -303,11 +303,11 @@ pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
     plr.mov.hspeed = 0.;
     if input.down(InputAction::Left) {
         plr.mov.hspeed = -spd;
-        plr.dat.facing_dir = FacingDir::Left;
+        plr.mov_extra.facing_dir = FacingDir::Left;
     }
     if input.down(InputAction::Right) {
         plr.mov.hspeed = spd;
-        plr.dat.facing_dir = FacingDir::Right;
+        plr.mov_extra.facing_dir = FacingDir::Right;
     }
     if input.down(InputAction::Jump) && plr.mov_extra.can_jump() {
         plr.mov.vspeed = -10.0;

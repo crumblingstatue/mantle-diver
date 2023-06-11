@@ -11,7 +11,6 @@ pub struct PlayerData {
     pub pants_color: Color,
     pub shirt_color: Color,
     pub shoes_color: Color,
-    pub facing_dir: FacingDir,
 }
 
 pub struct MovingEnt {
@@ -20,11 +19,21 @@ pub struct MovingEnt {
     pub mob: MobileEntity,
 }
 
-#[derive(Default)]
 pub struct MoveExtra {
     pub jumps_left: u8,
     /// true if the player wants to jump down from a platform
     pub down_intent: bool,
+    pub facing_dir: FacingDir,
+}
+
+impl Default for MoveExtra {
+    fn default() -> Self {
+        Self {
+            jumps_left: Default::default(),
+            down_intent: Default::default(),
+            facing_dir: FacingDir::Right,
+        }
+    }
 }
 
 impl MoveExtra {
@@ -93,7 +102,6 @@ impl Default for PlayerData {
             pants_color: Color::rgb(43, 85, 142),
             shirt_color: Color::rgb(170, 37, 7),
             shoes_color: Color::rgb(74, 44, 0),
-            facing_dir: FacingDir::Right,
         }
     }
 }

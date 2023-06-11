@@ -144,7 +144,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         mut shirt_x,
         mut shoes_x,
     ) = (0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    match plr.dat.facing_dir {
+    match plr.mov_extra.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
                 head_x = f32::from(offs.left.x);
