@@ -120,7 +120,7 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, de
 fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState, res: &Res) {
     draw_player_sprites(game, rt, res);
     if debug.dbg_overlay {
-        draw_player_bb(game, rt);
+        draw_controlled_en_bb(game, rt);
     }
 }
 
@@ -251,11 +251,11 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     rt.draw(&s);
 }
 
-fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
-    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+fn draw_controlled_en_bb(game: &mut GameState, rt: &mut RenderTexture) {
+    let Ok(mov) = game.ecw.query_one_mut::<&MovingEnt>(game.controlled_en) else {
         return;
     };
-    let (x, y, w, h) = plr.mov.mob.en.xywh();
+    let (x, y, w, h) = mov.mob.en.xywh();
     let mut rect_sh = RectangleShape::new();
     rect_sh.set_fill_color(Color::rgba(255, 255, 255, 96));
     let (co_x, co_y) = game.camera_offset.to_signed();
@@ -265,8 +265,8 @@ fn draw_player_bb(game: &mut GameState, rt: &mut RenderTexture) {
     rect_sh.set_size((2., 2.));
     rect_sh.set_fill_color(Color::RED);
     rect_sh.set_position((
-        (plr.mov.mob.en.pos.x - co_x) as f32,
-        (plr.mov.mob.en.pos.y - co_y) as f32,
+        (mov.mob.en.pos.x - co_x) as f32,
+        (mov.mob.en.pos.y - co_y) as f32,
     ));
     rt.draw(&rect_sh);
 }
