@@ -1,6 +1,9 @@
 use {
     self::{entity_list::EntityList, item_db_edit::ItemDbEdit},
-    crate::{math::WorldRect, player::PlayerQuery},
+    crate::{
+        math::WorldRect,
+        player::{MovingEnt, PlayerData},
+    },
     gamedebug_core::MsgBuf,
 };
 
@@ -63,38 +66,46 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     LengthDisp(co.x as f32 - WorldPos::CENTER as f32)
                 ));
             }
-
-            for (_en, plr) in game.ecw.query_mut::<PlayerQuery>() {
-                ui.collapsing("Player", |ui| {
-                    ui.label(format!("Depth: {}", plr.mov.depth_disp()));
-                    ui.label(format!(
-                        "Offset from center: {}",
-                        LengthDisp(plr.mov.mob.en.pos.x as f32 - WorldPos::CENTER as f32)
-                    ));
-                    ui.label(format!(
-                        "Hspeed: {} ({} km/h)",
-                        plr.mov.hspeed,
-                        px_per_frame_to_km_h(plr.mov.hspeed)
-                    ));
-                    ui.label(format!(
-                        "Vspeed: {} ({} km/h)",
-                        plr.mov.vspeed,
-                        px_per_frame_to_km_h(plr.mov.vspeed)
-                    ));
+            ui.collapsing("Controlled entity", |ui| {
+                match game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) {
+                    Ok(mov) => {
+                        ui.label(format!("Depth: {}", mov.depth_disp()));
+                        ui.label(format!(
+                            "Offset from center: {}",
+                            LengthDisp(mov.mob.en.pos.x as f32 - WorldPos::CENTER as f32)
+                        ));
+                        ui.label(format!(
+                            "Hspeed: {} ({} km/h)",
+                            mov.hspeed,
+                            px_per_frame_to_km_h(mov.hspeed)
+                        ));
+                        ui.label(format!(
+                            "Vspeed: {} ({} km/h)",
+                            mov.vspeed,
+                            px_per_frame_to_km_h(mov.vspeed)
+                        ));
+                    }
+                    Err(e) => {
+                        ui.label(e.to_string());
+                    }
+                }
+            });
+            for (_en, dat) in game.ecw.query_mut::<&mut PlayerData>() {
+                ui.collapsing("PlayerData", |ui| {
                     ui.heading("Colors");
                     ui.horizontal_wrapped(|ui| {
                         ui.label("Skin");
-                        color_edit_button(ui, &mut plr.dat.skin_color);
+                        color_edit_button(ui, &mut dat.skin_color);
                         ui.label("Eye");
-                        color_edit_button(ui, &mut plr.dat.eye_color);
+                        color_edit_button(ui, &mut dat.eye_color);
                         ui.label("Hair");
-                        color_edit_button(ui, &mut plr.dat.hair_color);
+                        color_edit_button(ui, &mut dat.hair_color);
                         ui.label("Shirt");
-                        color_edit_button(ui, &mut plr.dat.shirt_color);
+                        color_edit_button(ui, &mut dat.shirt_color);
                         ui.label("Pants");
-                        color_edit_button(ui, &mut plr.dat.pants_color);
+                        color_edit_button(ui, &mut dat.pants_color);
                         ui.label("Shoes");
-                        color_edit_button(ui, &mut plr.dat.shoes_color);
+                        color_edit_button(ui, &mut dat.shoes_color);
                     });
                 });
                 if ui
