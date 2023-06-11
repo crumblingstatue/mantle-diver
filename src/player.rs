@@ -5,9 +5,6 @@ use {
 };
 
 pub struct PlayerData {
-    pub jumps_left: u8,
-    /// true if the player wants to jump down from a platform
-    pub down_intent: bool,
     pub skin_color: Color,
     pub eye_color: Color,
     pub hair_color: Color,
@@ -22,6 +19,20 @@ pub struct MovingEnt {
     pub vspeed: f32,
     pub mob: MobileEntity,
 }
+
+#[derive(Default)]
+pub struct MoveExtra {
+    pub jumps_left: u8,
+    /// true if the player wants to jump down from a platform
+    pub down_intent: bool,
+}
+
+impl MoveExtra {
+    pub fn can_jump(&self) -> bool {
+        self.jumps_left > 0
+    }
+}
+
 impl MovingEnt {
     fn new(pos: WorldPos, size: s2dc::Vec2) -> Self {
         Self {
@@ -43,6 +54,7 @@ pub struct IsPlayer;
 #[derive(hecs::Bundle)]
 pub struct PlayerBundle {
     pub mov: MovingEnt,
+    pub mov_extra: MoveExtra,
     pub dat: PlayerData,
     pub _is: IsPlayer,
 }
@@ -50,6 +62,7 @@ pub struct PlayerBundle {
 #[derive(hecs::Query)]
 pub struct PlayerQuery<'a> {
     pub mov: &'a mut MovingEnt,
+    pub mov_extra: &'a mut MoveExtra,
     pub dat: &'a mut PlayerData,
     _is: &'a IsPlayer,
 }
@@ -58,6 +71,7 @@ impl PlayerBundle {
     pub fn new_at(pos: WorldPos) -> Self {
         Self {
             mov: MovingEnt::new(pos, vec2(20, 46)),
+            mov_extra: MoveExtra::default(),
             dat: PlayerData::default(),
             _is: IsPlayer,
         }
@@ -73,8 +87,6 @@ pub enum FacingDir {
 impl Default for PlayerData {
     fn default() -> Self {
         Self {
-            jumps_left: 0,
-            down_intent: false,
             skin_color: Color::rgb(249, 209, 151),
             eye_color: Color::WHITE,
             hair_color: Color::rgb(105, 203, 255),
@@ -105,9 +117,5 @@ impl PlayerData {
             pants_color: Rgb::from_sf(self.pants_color),
             shoes_color: Rgb::from_sf(self.shoes_color),
         }
-    }
-
-    pub fn can_jump(&self) -> bool {
-        self.jumps_left > 0
     }
 }

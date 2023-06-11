@@ -9,7 +9,7 @@ use {
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
         math::{step_towards, world_y_depth, WorldPos, WorldRect, TILE_SIZE},
-        player::{FacingDir, MovingEnt, PlayerData, PlayerQuery},
+        player::{FacingDir, MoveExtra, MovingEnt, PlayerQuery},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
@@ -104,9 +104,9 @@ pub(super) fn item_use_system(
 }
 
 pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &DebugState) {
-    for (en, (mov, mut plr_dat)) in game
+    for (en, (mov, mut mov_xtra)) in game
         .ecw
-        .query_mut::<(&mut MovingEnt, Option<&mut PlayerData>)>()
+        .query_mut::<(&mut MovingEnt, Option<&mut MoveExtra>)>()
     {
         DBG_OVR.push(DbgOvr::WldRect {
             r: WorldRect {
@@ -146,15 +146,15 @@ pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &Debu
                         // collision shouldn't happen
                         let feet = player_en.pos.y + player_en.bb.y;
                         if feet > en.col.pos.y
-                            || plr_dat.as_ref().map_or(false, |dat| dat.down_intent)
+                            || mov_xtra.as_ref().map_or(false, |xtra| xtra.down_intent)
                         {
                             continue;
                         }
                     }
                     col = true;
-                    if let Some(dat) = &mut plr_dat {
+                    if let Some(xtra) = &mut mov_xtra {
                         if mov.vspeed > 0. {
-                            dat.jumps_left = 1;
+                            xtra.jumps_left = 1;
                         }
                     }
                     mov.vspeed = 0.;
@@ -309,11 +309,11 @@ pub(super) fn player_move_system(game: &mut GameState, input: &Input) {
         plr.mov.hspeed = spd;
         plr.dat.facing_dir = FacingDir::Right;
     }
-    if input.down(InputAction::Jump) && plr.dat.can_jump() {
+    if input.down(InputAction::Jump) && plr.mov_extra.can_jump() {
         plr.mov.vspeed = -10.0;
-        plr.dat.jumps_left = 0;
+        plr.mov_extra.jumps_left = 0;
     }
-    plr.dat.down_intent = input.down(InputAction::Down);
+    plr.mov_extra.down_intent = input.down(InputAction::Down);
 }
 pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
     let spd = if input.down_raw(Key::LShift) {
