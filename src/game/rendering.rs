@@ -323,9 +323,12 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
     rs.set_outline_thickness(0.);
     rt.draw(&rs);
     text.set_position((0., 0.));
-    if let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() {
-        text.set_string(&format!("Depth: {}", plr.mov.depth_disp()));
-    };
+    match game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) {
+        Ok(mov) => {
+            text.set_string(&format!("Depth: {}", mov.depth_disp()));
+        }
+        Err(_) => text.set_string("Not controlling anything"),
+    }
     text.set_character_size(18);
     rt.draw(&text);
     if game.menu.open {
