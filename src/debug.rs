@@ -2,7 +2,7 @@ use {
     self::{entity_list::EntityList, item_db_edit::ItemDbEdit},
     crate::{
         math::WorldRect,
-        player::{MovingEnt, PlayerData},
+        player::{MovingEnt, PlayerColors},
     },
     gamedebug_core::MsgBuf,
 };
@@ -90,22 +90,22 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                     }
                 }
             });
-            for (_en, dat) in game.ecw.query_mut::<&mut PlayerData>() {
+            for (_en, dat) in game.ecw.query_mut::<&mut PlayerColors>() {
                 ui.collapsing("PlayerData", |ui| {
                     ui.heading("Colors");
                     ui.horizontal_wrapped(|ui| {
                         ui.label("Skin");
-                        color_edit_button(ui, &mut dat.skin_color);
+                        color_edit_button(ui, &mut dat.skin);
                         ui.label("Eye");
-                        color_edit_button(ui, &mut dat.eye_color);
+                        color_edit_button(ui, &mut dat.eye);
                         ui.label("Hair");
-                        color_edit_button(ui, &mut dat.hair_color);
+                        color_edit_button(ui, &mut dat.hair);
                         ui.label("Shirt");
-                        color_edit_button(ui, &mut dat.shirt_color);
+                        color_edit_button(ui, &mut dat.shirt);
                         ui.label("Pants");
-                        color_edit_button(ui, &mut dat.pants_color);
+                        color_edit_button(ui, &mut dat.pants);
                         ui.label("Shoes");
-                        color_edit_button(ui, &mut dat.shoes_color);
+                        color_edit_button(ui, &mut dat.shoes);
                     });
                 });
                 if ui

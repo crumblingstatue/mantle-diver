@@ -4,13 +4,13 @@ use {
     sfml::graphics::Color,
 };
 
-pub struct PlayerData {
-    pub skin_color: Color,
-    pub eye_color: Color,
-    pub hair_color: Color,
-    pub pants_color: Color,
-    pub shirt_color: Color,
-    pub shoes_color: Color,
+pub struct PlayerColors {
+    pub skin: Color,
+    pub eye: Color,
+    pub hair: Color,
+    pub pants: Color,
+    pub shirt: Color,
+    pub shoes: Color,
 }
 
 pub struct MovingEnt {
@@ -58,22 +58,11 @@ impl MovingEnt {
     }
 }
 
-pub struct IsPlayer;
-
 #[derive(hecs::Bundle)]
 pub struct PlayerBundle {
     pub mov: MovingEnt,
     pub mov_extra: MoveExtra,
-    pub dat: PlayerData,
-    pub _is: IsPlayer,
-}
-
-#[derive(hecs::Query)]
-pub struct PlayerQuery<'a> {
-    pub mov: &'a mut MovingEnt,
-    pub mov_extra: &'a mut MoveExtra,
-    pub dat: &'a mut PlayerData,
-    _is: &'a IsPlayer,
+    pub dat: PlayerColors,
 }
 
 impl PlayerBundle {
@@ -81,8 +70,7 @@ impl PlayerBundle {
         Self {
             mov: MovingEnt::new(pos, vec2(20, 46)),
             mov_extra: MoveExtra::default(),
-            dat: PlayerData::default(),
-            _is: IsPlayer,
+            dat: PlayerColors::default(),
         }
     }
 }
@@ -93,37 +81,37 @@ pub enum FacingDir {
     Right,
 }
 
-impl Default for PlayerData {
+impl Default for PlayerColors {
     fn default() -> Self {
         Self {
-            skin_color: Color::rgb(249, 209, 151),
-            eye_color: Color::WHITE,
-            hair_color: Color::rgb(105, 203, 255),
-            pants_color: Color::rgb(43, 85, 142),
-            shirt_color: Color::rgb(170, 37, 7),
-            shoes_color: Color::rgb(74, 44, 0),
+            skin: Color::rgb(249, 209, 151),
+            eye: Color::WHITE,
+            hair: Color::rgb(105, 203, 255),
+            pants: Color::rgb(43, 85, 142),
+            shirt: Color::rgb(170, 37, 7),
+            shoes: Color::rgb(74, 44, 0),
         }
     }
 }
 
-impl PlayerData {
+impl PlayerColors {
     pub(crate) fn update_from_save(&mut self, sav: &crate::save::PlayerSav) {
-        self.hair_color = sav.hair_color.to_sf();
-        self.eye_color = sav.eye_color.to_sf();
-        self.skin_color = sav.skin_color.to_sf();
-        self.shirt_color = sav.shirt_color.to_sf();
-        self.pants_color = sav.pants_color.to_sf();
-        self.shoes_color = sav.shoes_color.to_sf();
+        self.hair = sav.hair_color.to_sf();
+        self.eye = sav.eye_color.to_sf();
+        self.skin = sav.skin_color.to_sf();
+        self.shirt = sav.shirt_color.to_sf();
+        self.pants = sav.pants_color.to_sf();
+        self.shoes = sav.shoes_color.to_sf();
     }
 
     pub(crate) fn sav(&self) -> crate::save::PlayerSav {
         crate::save::PlayerSav {
-            skin_color: Rgb::from_sf(self.skin_color),
-            eye_color: Rgb::from_sf(self.eye_color),
-            hair_color: Rgb::from_sf(self.hair_color),
-            shirt_color: Rgb::from_sf(self.shirt_color),
-            pants_color: Rgb::from_sf(self.pants_color),
-            shoes_color: Rgb::from_sf(self.shoes_color),
+            skin_color: Rgb::from_sf(self.skin),
+            eye_color: Rgb::from_sf(self.eye),
+            hair_color: Rgb::from_sf(self.hair),
+            shirt_color: Rgb::from_sf(self.shirt),
+            pants_color: Rgb::from_sf(self.pants),
+            shoes_color: Rgb::from_sf(self.shoes),
         }
     }
 }

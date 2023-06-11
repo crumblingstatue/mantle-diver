@@ -8,7 +8,7 @@ use {
         input::Input,
         light::{self, LightState, U16Vec},
         math::{WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
-        player::PlayerData,
+        player::PlayerColors,
         res::{Res, ResAudio},
         save::Save,
         world::TilePos,
@@ -179,7 +179,7 @@ impl App {
         match self
             .game
             .ecw
-            .query_one_mut::<&mut PlayerData>(self.game.player_en)
+            .query_one_mut::<&mut PlayerColors>(self.game.player_en)
         {
             Ok(plr_dat) => {
                 let result = Save {

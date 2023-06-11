@@ -6,7 +6,7 @@ use {
         inventory::ItemId,
         light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, TILE_SIZE},
-        player::{FacingDir, MovingEnt, PlayerQuery},
+        player::{FacingDir, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
     },
     gamedebug_core::imm_dbg,
@@ -125,12 +125,12 @@ fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState,
 }
 
 fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
-    let Some((_en, plr)) = game.ecw.query_mut::<PlayerQuery>().into_iter().next() else {
+    let Ok((mov, mov_extra, colors)) = game.ecw.query_one_mut::<(&MovingEnt, &MoveExtra, &PlayerColors)>(game.player_en) else {
         log::error!("Player query failed");
         return;
     };
     let mut s = Sprite::with_texture(&res.atlas.tex);
-    let (x, y, _w, _h) = plr.mov.mob.en.xywh();
+    let (x, y, _w, _h) = mov.mob.en.xywh();
     let (co_x, co_y) = game.camera_offset.to_signed();
     let (base_x, base_y) = ((x - co_x) as f32, (y - co_y) as f32);
     let (
@@ -144,7 +144,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         mut shirt_x,
         mut shoes_x,
     ) = (0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    match plr.mov_extra.facing_dir {
+    match mov_extra.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
                 head_x = f32::from(offs.left.x);
@@ -205,22 +205,22 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
         }
     }
-    s.set_color(plr.dat.skin_color);
+    s.set_color(colors.skin);
     // Head
     s.set_texture_rect(res.atlas.rects["char/head1"].to_sf());
     s.set_position((base_x + head_x, base_y));
     rt.draw(&s);
     // Eye
-    s.set_color(plr.dat.eye_color);
+    s.set_color(colors.eye);
     s.set_texture_rect(res.atlas.rects["char/eye1"].to_sf());
     s.set_position((base_x + eye_x, base_y + 9.));
     rt.draw(&s);
     // Hair
-    s.set_color(plr.dat.hair_color);
+    s.set_color(colors.hair);
     s.set_texture_rect(res.atlas.rects["char/hair1"].to_sf());
     s.set_position((base_x + hair_x, base_y - 4.));
     rt.draw(&s);
-    s.set_color(plr.dat.skin_color);
+    s.set_color(colors.skin);
     // Torso
     s.set_texture_rect(res.atlas.rects["char/torso1"].to_sf());
     s.set_position((base_x + torso_x, base_y + 32.0));
@@ -232,17 +232,17 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     // Shirt
     s.set_texture_rect(res.atlas.rects["char/shirt1"].to_sf());
     s.set_position((base_x + shirt_x, base_y + 32.0));
-    s.set_color(plr.dat.shirt_color);
+    s.set_color(colors.shirt);
     rt.draw(&s);
     // Pants
     s.set_texture_rect(res.atlas.rects["char/pants1"].to_sf());
     s.set_position((base_x + pants_x, base_y + 64.0));
-    s.set_color(plr.dat.pants_color);
+    s.set_color(colors.pants);
     rt.draw(&s);
     // Shoes
     s.set_texture_rect(res.atlas.rects["char/shoes1"].to_sf());
     s.set_position((base_x + shoes_x, base_y + 87.0));
-    s.set_color(plr.dat.shoes_color);
+    s.set_color(colors.shoes);
     rt.draw(&s);
     // Tool
     s.set_color(Color::WHITE);
