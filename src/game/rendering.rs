@@ -1,5 +1,5 @@
 use {
-    super::{for_each_tile_on_screen, GameState, LightSource, SfVec2fExt},
+    super::{for_each_tile_on_screen, GameState, SfVec2fExt},
     crate::{
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
@@ -44,7 +44,6 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
     let mut s = Sprite::with_texture(&res.forest_bg);
     s.fit_to_size(rt.size().as_other());
     rt.draw(&s);
-    game.light_sources.clear();
     let mut s = Sprite::with_texture(&res.atlas.tex);
     for_each_tile_on_screen(
         game.camera_offset,
@@ -82,13 +81,6 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
                     s.set_scale((state.scale, state.scale));
                 }
                 s.set_texture_rect(rect);
-                if let Some(light) = game.tile_db[tile.mid].light {
-                    let pos = ScreenVec {
-                        x: sp.x + light.x,
-                        y: sp.y + light.y,
-                    };
-                    game.light_sources.push(LightSource { pos });
-                }
                 rt.draw(&s);
             }
             if !tile.fg.empty() {

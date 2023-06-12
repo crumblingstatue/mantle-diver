@@ -33,7 +33,6 @@ pub struct GameState {
     pub current_biome: Biome,
     pub prev_biome: Biome,
     pub ambient_light: u8,
-    pub light_sources: Vec<LightSource>,
     pub tile_db: TileDb,
     pub char_db: CharDb,
     pub inventory: Inventory,
@@ -58,11 +57,6 @@ pub struct TransientBlockState {
     pub health: f32,
     pub rot: f32,
     pub scale: f32,
-}
-
-#[derive(Debug)]
-pub struct LightSource {
-    pub pos: ScreenVec,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -116,7 +110,6 @@ impl GameState {
             current_biome: Biome::Surface,
             prev_biome: Biome::Surface,
             ambient_light: 0,
-            light_sources: Vec::new(),
             tile_db,
             inventory,
             itemdb,
