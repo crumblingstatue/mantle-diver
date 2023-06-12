@@ -13,7 +13,7 @@ use {
     sfml::{
         graphics::{
             Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
-            Shape, Sprite, Text, Transformable, Vertex,
+            Shape, Sprite, Text, Transform, Transformable, Vertex,
         },
         system::Vector2f,
     },
@@ -44,24 +44,35 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
     let mut s = Sprite::with_texture(&res.forest_bg);
     s.fit_to_size(rt.size().as_other());
     rt.draw(&s);
-    let mut s = Sprite::with_texture(&res.atlas.tex);
+    drop(s);
+    let mut verts = Vec::new();
     for_each_tile_on_screen(
         game.camera_offset,
         ScreenVec::from_sf_resolution(rt.size()),
         |tp, sp| {
             let tile = *game.world.tile_at_mut(tp);
-            let spr_pos = sp.to_sf_vec();
-            s.set_rotation(0.);
-            s.set_scale((1.0, 1.0));
+            let color = Color::WHITE;
+            let x = f32::from(sp.x);
+            let y = f32::from(sp.y);
             if !tile.bg.empty() {
                 let def = &game.tile_db[tile.bg];
-                s.set_position(spr_pos.scv_off(def.draw_offs));
-                s.set_texture_rect(def.tex_rect.to_sf());
-                rt.draw(&s);
+                let tx = def.tex_rect.x as f32;
+                let ty = def.tex_rect.y as f32;
+                let tw = def.tex_rect.w as f32;
+                let th = def.tex_rect.h as f32;
+                verts.push(Vertex::new((x, y).into(), color, (tx, ty).into()));
+                verts.push(Vertex::new((x + tw, y).into(), color, (tx + tw, ty).into()));
+                verts.push(Vertex::new(
+                    (x + tw, y + th).into(),
+                    color,
+                    (tx + tw, ty + th).into(),
+                ));
+                verts.push(Vertex::new((x, y + th).into(), color, (tx, ty + th).into()));
             }
             if !tile.mid.empty() {
                 let def = &game.tile_db[tile.mid];
-                s.set_position(spr_pos.scv_off(def.draw_offs));
+                let x = x + f32::from(def.draw_offs.x);
+                let y = y + f32::from(def.draw_offs.y);
                 let mut rect = def.tex_rect.to_sf();
                 // Tile blending prototype code
                 let rect = if !def.neigh_aware {
@@ -76,21 +87,62 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
                     adjust_blend_rect(&mut rect, left, right, above, below);
                     rect
                 };
+                let mut rot = 0.;
+                let mut scale = 1.;
                 if let Some(state) = game.transient_block_state.get(&tp) {
-                    s.set_rotation(state.rot);
-                    s.set_scale((state.scale, state.scale));
+                    rot = state.rot;
+                    scale = state.scale;
                 }
-                s.set_texture_rect(rect);
-                rt.draw(&s);
+                let tx = rect.left as f32;
+                let ty = rect.top as f32;
+                let tw = rect.width as f32;
+                let th = rect.height as f32;
+                let mut tf = Transform::default();
+                tf.scale_with_center(scale, scale, x, y);
+                tf.rotate_with_center(rot, x, y);
+                verts.push(Vertex::new(
+                    tf.transform_point((x, y).into()),
+                    color,
+                    (tx, ty).into(),
+                ));
+                verts.push(Vertex::new(
+                    tf.transform_point((x + tw, y).into()),
+                    color,
+                    (tx + tw, ty).into(),
+                ));
+                verts.push(Vertex::new(
+                    tf.transform_point((x + tw, y + th).into()),
+                    color,
+                    (tx + tw, ty + th).into(),
+                ));
+                verts.push(Vertex::new(
+                    tf.transform_point((x, y + th).into()),
+                    color,
+                    (tx, ty + th).into(),
+                ));
             }
             if !tile.fg.empty() {
                 let def = &game.tile_db[tile.fg];
-                s.set_position(spr_pos.scv_off(def.draw_offs));
-                s.set_texture_rect(def.tex_rect.to_sf());
-                rt.draw(&s);
+                let x = x + f32::from(def.draw_offs.x);
+                let y = y + f32::from(def.draw_offs.y);
+                let tx = def.tex_rect.x as f32;
+                let ty = def.tex_rect.y as f32;
+                let tw = def.tex_rect.w as f32;
+                let th = def.tex_rect.h as f32;
+                verts.push(Vertex::new((x, y).into(), color, (tx, ty).into()));
+                verts.push(Vertex::new((x + tw, y).into(), color, (tx + tw, ty).into()));
+                verts.push(Vertex::new(
+                    (x + tw, y + th).into(),
+                    color,
+                    (tx + tw, ty + th).into(),
+                ));
+                verts.push(Vertex::new((x, y + th).into(), color, (tx, ty + th).into()));
             }
         },
     );
+    let mut rs = RenderStates::DEFAULT;
+    rs.set_texture(Some(&res.atlas.tex));
+    rt.draw_primitives(&verts, PrimitiveType::QUADS, &rs);
 }
 pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);

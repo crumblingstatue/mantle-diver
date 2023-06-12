@@ -3,7 +3,7 @@ use {
     serde::{Deserialize, Serialize},
     sfml::{
         graphics::RenderWindow,
-        system::{Vector2, Vector2f},
+        system::Vector2,
         window::{ContextSettings, Style, VideoMode},
     },
     sfml_xt::graphics::RenderWindowExt,
@@ -36,9 +36,6 @@ pub struct ScreenVec {
 pub type ScreenSc = i16;
 
 impl ScreenVec {
-    pub fn to_sf_vec(self) -> Vector2f {
-        Vector2f::new(self.x.into(), self.y.into())
-    }
     #[expect(
         clippy::cast_possible_truncation,
         reason = "We expect that this function will be called only on resolutions,
