@@ -22,6 +22,7 @@ use {
 pub struct RenderState {
     /// Light map overlay, blended together with the non-lighted version of the scene
     pub light_blend_rt: RenderTexture,
+    pub vert_array: Vec<Vertex>,
     /// RenderTexture for rendering the game at its native resolution
     pub rt: RenderTexture,
 }
@@ -40,12 +41,17 @@ impl SpriteExt for Sprite<'_> {
     }
 }
 
-pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut Res) {
+pub(crate) fn draw_world(
+    game: &mut GameState,
+    verts: &mut Vec<Vertex>,
+    rt: &mut RenderTexture,
+    res: &mut Res,
+) {
+    verts.clear();
     let mut s = Sprite::with_texture(&res.forest_bg);
     s.fit_to_size(rt.size().as_other());
     rt.draw(&s);
     drop(s);
-    let mut verts = Vec::new();
     for_each_tile_on_screen(
         game.camera_offset,
         ScreenVec::from_sf_resolution(rt.size()),
@@ -142,7 +148,7 @@ pub(crate) fn draw_world(game: &mut GameState, rt: &mut RenderTexture, res: &mut
     );
     let mut rs = RenderStates::DEFAULT;
     rs.set_texture(Some(&res.atlas.tex));
-    rt.draw_primitives(&verts, PrimitiveType::QUADS, &rs);
+    rt.draw_primitives(verts, PrimitiveType::QUADS, &rs);
 }
 pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);
@@ -409,12 +415,13 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
 
 pub(crate) fn light_blend_pass(
     camera_offset: WorldPos,
+    verts: &mut Vec<Vertex>,
     lt_tex: &mut RenderTexture,
     lightmap: &[u8],
     tiles_on_screen: U16Vec,
     light_enum_info: LightEnumInfo,
 ) {
-    let mut verts = Vec::new();
+    verts.clear();
     lt_tex.clear(Color::BLACK);
     let xoff = (camera_offset.x % u32::from(TILE_SIZE)) as f32;
     let yoff = (camera_offset.y % u32::from(TILE_SIZE)) as f32;
@@ -436,7 +443,7 @@ pub(crate) fn light_blend_pass(
             verts.push(Vertex::new((x, y + ts).into(), c, (0., 0.).into()));
         }
     }
-    lt_tex.draw_primitives(&verts, PrimitiveType::QUADS, &RenderStates::DEFAULT);
+    lt_tex.draw_primitives(verts, PrimitiveType::QUADS, &RenderStates::DEFAULT);
 }
 
 fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool, below: bool) {

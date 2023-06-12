@@ -148,6 +148,7 @@ impl App {
             tiles_on_screen: U16Vec::default(),
             render: RenderState {
                 light_blend_rt: light_blend_tex,
+                vert_array: Vec::new(),
                 rt,
             },
         };
@@ -302,13 +303,19 @@ impl App {
         light::light_fill(&mut self.light_state, enum_info);
         rendering::light_blend_pass(
             self.game.camera_offset,
+            &mut self.render.vert_array,
             &mut self.render.light_blend_rt,
             &self.light_state.light_map,
             self.tiles_on_screen,
             enum_info,
         );
         self.render.rt.clear(Color::rgb(55, 221, 231));
-        rendering::draw_world(&mut self.game, &mut self.render.rt, res);
+        rendering::draw_world(
+            &mut self.game,
+            &mut self.render.vert_array,
+            &mut self.render.rt,
+            res,
+        );
         rendering::draw_entities(&mut self.game, &mut self.render.rt, res, &self.debug);
         if self.debug.dbg_overlay {
             rendering::draw_debug_overlay(&mut self.render.rt, &mut self.game);
