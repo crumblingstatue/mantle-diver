@@ -12,8 +12,8 @@ use {
     gamedebug_core::imm_dbg,
     sfml::{
         graphics::{
-            Color, Rect, RectangleShape, RenderTarget, RenderTexture, Shape, Sprite, Text,
-            Transformable,
+            Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
+            Shape, Sprite, Text, Transformable, Vertex,
         },
         system::Vector2f,
     },
@@ -370,8 +370,8 @@ pub(crate) fn light_blend_pass(
     tiles_on_screen: U16Vec,
     light_enum_info: LightEnumInfo,
 ) {
+    let mut verts = Vec::new();
     lt_tex.clear(Color::BLACK);
-    let mut rs = RectangleShape::with_size((f32::from(TILE_SIZE), f32::from(TILE_SIZE)).into());
     let xoff = (camera_offset.x % u32::from(TILE_SIZE)) as f32;
     let yoff = (camera_offset.y % u32::from(TILE_SIZE)) as f32;
     for y in 0..tiles_on_screen.y {
@@ -380,13 +380,19 @@ pub(crate) fn light_blend_pass(
             let lmy = usize::from(y) + usize::from(light::MAX_TILE_REACH);
             let i = lmy * usize::from(light_enum_info.width) + lmx;
             let level = lightmap[i];
-            rs.set_fill_color(Color::rgba(255, 255, 255, level));
             let x = f32::from(x) * f32::from(TILE_SIZE);
             let y = f32::from(y) * f32::from(TILE_SIZE);
-            rs.set_position((x - xoff, y - yoff));
-            lt_tex.draw(&rs);
+            let c = Color::rgba(255, 255, 255, level);
+            let x = x - xoff;
+            let y = y - yoff;
+            let ts = f32::from(TILE_SIZE);
+            verts.push(Vertex::new((x, y).into(), c, (0., 0.).into()));
+            verts.push(Vertex::new((x + ts, y).into(), c, (0., 0.).into()));
+            verts.push(Vertex::new((x + ts, y + ts).into(), c, (0., 0.).into()));
+            verts.push(Vertex::new((x, y + ts).into(), c, (0., 0.).into()));
         }
     }
+    lt_tex.draw_primitives(&verts, PrimitiveType::QUADS, &RenderStates::DEFAULT);
 }
 
 fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool, below: bool) {
