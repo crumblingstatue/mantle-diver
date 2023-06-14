@@ -170,6 +170,7 @@ impl GameState {
         systems::inventory_input_system(self, input);
         systems::item_drop_claim_system(self, snd, aud);
         systems::transient_blocks_system(self);
+        systems::health_system(self);
         self.world.ticks += 1;
         let ev_buf = std::mem::take(&mut self.event_buf);
         events::process_events(self, ev_buf);

@@ -15,16 +15,9 @@ pub fn process_events(game: &mut GameState, buf: EventBuf) {
 }
 
 fn on_ground_hit(game: &mut GameState, en: hecs::Entity, vspeed: f32) {
-    let mut dead = false;
     if vspeed > 16. {
         if let Ok(health) = game.ecw.query_one_mut::<&mut Health>(en) {
             health.current -= vspeed - 16.;
-            if health.current <= 0. {
-                dead = true;
-            }
         }
-    }
-    if dead {
-        let _ = game.ecw.despawn(en);
     }
 }

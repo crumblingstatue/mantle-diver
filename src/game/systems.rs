@@ -9,7 +9,7 @@ use {
         inventory::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
         math::{step_towards, world_y_depth, WorldPos, WorldRect, TILE_SIZE},
-        player::{FacingDir, MoveExtra, MovingEnt},
+        player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
         save::world_dirs,
         tiles::{self, TileDb, TileDef, TileId},
@@ -641,4 +641,13 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
         // Reverse gravity
         game.gravity = -game.gravity;
     }
+}
+
+pub(crate) fn health_system(game: &mut GameState) {
+    for (en, health) in game.ecw.query_mut::<&mut Health>() {
+        if health.current < 1. {
+            game.ecb.despawn(en);
+        }
+    }
+    game.ecb.run_on(&mut game.ecw);
 }
