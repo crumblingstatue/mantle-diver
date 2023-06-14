@@ -6,7 +6,7 @@ use {
         inventory::ItemId,
         light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, TILE_SIZE},
-        player::{FacingDir, MoveExtra, MovingEnt, PlayerColors},
+        player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
     },
     gamedebug_core::imm_dbg,
@@ -367,19 +367,23 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
             log::error!("Missing rect for item {}", item_def.name);
         }
     }
-    rs.set_position((0., 0.));
-    rs.set_fill_color(Color::rgba(0, 0, 0, 128));
-    rs.set_size((160., 22.));
-    rs.set_outline_thickness(0.);
-    rt.draw(&rs);
+    text.set_outline_thickness(2.0);
     text.set_position((0., 0.));
-    match game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) {
-        Ok(mov) => {
+    text.set_character_size(18);
+    match game
+        .ecw
+        .query_one_mut::<(&mut MovingEnt, Option<&Health>)>(game.controlled_en)
+    {
+        Ok((mov, health)) => {
             text.set_string(&format!("Depth: {}", mov.depth_disp()));
+            if let Some(health) = health {
+                rt.draw(&text);
+                text.set_string(&format!("Health: {}/{}", health.current, health.max));
+                text.set_position((0., 24.));
+            }
         }
         Err(_) => text.set_string("Not controlling anything"),
     }
-    text.set_character_size(18);
     rt.draw(&text);
     if game.menu.open {
         draw_menu(game, rt, res);

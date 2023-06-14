@@ -19,6 +19,11 @@ pub struct MovingEnt {
     pub mob: MobileEntity,
 }
 
+pub struct Health {
+    pub current: f32,
+    pub max: f32,
+}
+
 pub struct MoveExtra {
     pub jumps_left: u8,
     /// true if the player wants to jump down from a platform
@@ -63,6 +68,7 @@ pub struct PlayerBundle {
     pub mov: MovingEnt,
     pub mov_extra: MoveExtra,
     pub dat: PlayerColors,
+    pub health: Health,
 }
 
 impl PlayerBundle {
@@ -71,6 +77,10 @@ impl PlayerBundle {
             mov: MovingEnt::new(pos, vec2(20, 46)),
             mov_extra: MoveExtra::default(),
             dat: PlayerColors::default(),
+            health: Health {
+                current: 100.,
+                max: 100.,
+            },
         }
     }
 }
