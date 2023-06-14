@@ -1,5 +1,5 @@
 use {
-    super::{Biome, GameState, TransientBlockState},
+    super::{events::Event, Biome, GameState, TransientBlockState},
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
@@ -104,7 +104,7 @@ pub(super) fn item_use_system(
 }
 
 pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &DebugState) {
-    for (en, (mov, mut mov_xtra)) in game
+    for (ecs_en, (mov, mut mov_xtra)) in game
         .ecw
         .query_mut::<(&mut MovingEnt, Option<&mut MoveExtra>)>()
     {
@@ -157,6 +157,10 @@ pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &Debu
                             xtra.jumps_left = 1;
                         }
                     }
+                    game.event_buf.push(Event::GroundHit {
+                        en: ecs_en,
+                        vspeed: mov.vspeed,
+                    });
                     mov.vspeed = 0.;
                 }
             }
@@ -176,7 +180,7 @@ pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &Debu
             col
         });
         mov.vspeed += game.gravity;
-        if !debug.freecam && en == game.controlled_en {
+        if !debug.freecam && ecs_en == game.controlled_en {
             let (x, y, _w, _h) = mov.mob.en.xywh();
             game.camera_offset.x = (x - i32::from(rt_size.x) / 2).try_into().unwrap_or(0);
             game.camera_offset.y = (y - i32::from(rt_size.y) / 2).try_into().unwrap_or(0);

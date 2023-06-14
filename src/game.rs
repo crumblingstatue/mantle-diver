@@ -1,5 +1,5 @@
 use {
-    self::systems::Menu,
+    self::{events::EventBuf, systems::Menu},
     crate::{
         app::SoundPlayer,
         char::CharDb,
@@ -21,6 +21,7 @@ use {
     std::path::{Path, PathBuf},
 };
 
+mod events;
 pub mod rendering;
 mod systems;
 
@@ -49,6 +50,7 @@ pub struct GameState {
     pub controlled_en: hecs::Entity,
     pub paused: bool,
     pub pause_next_frame: bool,
+    pub event_buf: EventBuf,
 }
 
 #[derive(Debug)]
@@ -126,6 +128,7 @@ impl GameState {
             controlled_en: player_en,
             paused: false,
             pause_next_frame: false,
+            event_buf: Default::default(),
         }
     }
 
@@ -168,6 +171,8 @@ impl GameState {
         systems::item_drop_claim_system(self, snd, aud);
         systems::transient_blocks_system(self);
         self.world.ticks += 1;
+        let ev_buf = std::mem::take(&mut self.event_buf);
+        events::process_events(self, ev_buf);
     }
 }
 
