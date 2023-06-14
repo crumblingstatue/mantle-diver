@@ -17,7 +17,7 @@ pub fn process_events(game: &mut GameState, buf: EventBuf) {
 fn on_ground_hit(game: &mut GameState, en: hecs::Entity, vspeed: f32) {
     if vspeed > 16. {
         if let Ok(health) = game.ecw.query_one_mut::<&mut Health>(en) {
-            health.current -= vspeed - 16.;
+            health.current -= (vspeed - 16.) * 1.75;
         }
     }
 }
