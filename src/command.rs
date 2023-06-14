@@ -25,6 +25,7 @@ pub enum Cmd {
     SetMidTileAtCursor(MidTileId),
     SetFgTileAtCursor(FgTileId),
     TeleportCursor,
+    HurtCtrlEn(f32),
 }
 
 pub type CmdVec = Vec<Cmd>;

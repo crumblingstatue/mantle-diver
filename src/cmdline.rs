@@ -26,6 +26,8 @@ pub enum CmdLine {
         #[arg(default_value_t = 1)]
         amount: u16,
     },
+    /// Hurt the controlled entity
+    Hurt { amount: f32 },
     /// Char db editor
     Chardb,
     /// Tile db editor
@@ -91,6 +93,7 @@ impl CmdLine {
             CmdLine::Tpc => Dispatch::Cmd(Cmd::TeleportCursor),
             CmdLine::Spawn => Dispatch::Cmd(Cmd::TeleportSpawn),
             CmdLine::Give { name, amount } => Dispatch::Cmd(Cmd::GiveItemByName { name, amount }),
+            CmdLine::Hurt { amount } => Dispatch::Cmd(Cmd::HurtCtrlEn(amount)),
             CmdLine::Tiledb => Dispatch::Cmd(Cmd::ToggleTileDbEdit),
             CmdLine::Chardb => {
                 debug.chardb_edit.open ^= true;

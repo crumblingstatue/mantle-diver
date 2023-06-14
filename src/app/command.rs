@@ -1,8 +1,13 @@
 use {
     super::App,
     crate::{
-        command::Cmd, game::GameState, graphics::ScreenVec, math::WorldPos, player::MovingEnt,
-        res::Res, texture_atlas::AtlasBundle,
+        command::Cmd,
+        game::GameState,
+        graphics::ScreenVec,
+        math::WorldPos,
+        player::{Health, MovingEnt},
+        res::Res,
+        texture_atlas::AtlasBundle,
     },
     sfml::graphics::RenderTarget,
     std::fmt::Write,
@@ -44,6 +49,15 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
                     .query_one_mut::<&mut MovingEnt>(app.game.controlled_en)
                 {
                     mov.mob.en.pos = app.game.spawn_point.to_s2dc()
+                }
+            }
+            Cmd::HurtCtrlEn(amount) => {
+                if let Ok(health) = app
+                    .game
+                    .ecw
+                    .query_one_mut::<&mut Health>(app.game.controlled_en)
+                {
+                    health.current -= amount;
                 }
             }
             Cmd::GiveItemByName { name, amount } => {
