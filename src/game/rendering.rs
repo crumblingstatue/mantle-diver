@@ -378,7 +378,7 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
             text.set_string(&format!("Depth: {}", mov.depth_disp()));
             if let Some(health) = health {
                 rt.draw(&text);
-                text.set_string(&format!("Health: {}/{}", health.current, health.max));
+                text.set_string(&format!("Health: {:.0}/{:.0}", health.current, health.max));
                 text.set_position((0., 24.));
             }
         }
