@@ -10,7 +10,6 @@ use {
         tiles::{BgTileId, FgTileId, MidTileId, TileId},
         world::reg_chunk_existence::ExistenceBitset,
     },
-    fnv::FnvHashMap,
     std::{
         fmt::Debug,
         fs::File,
@@ -67,7 +66,7 @@ impl ChunkPos {
 #[derive(Debug)]
 pub struct World {
     /// The currently loaded chunks
-    chunks: FnvHashMap<ChunkPos, Chunk>,
+    pub chunks: Vec<(ChunkPos, Chunk)>,
     /// This is the number of ticks since the world has started.
     /// In other words, the age of the world.
     pub ticks: u64,
@@ -91,10 +90,14 @@ impl World {
     /// Loads or generates the containing chunk if necessary.
     pub fn tile_at_mut(&mut self, pos: TilePos) -> &mut Tile {
         let (chk, local) = pos.to_chunk_and_local();
-        let chk = self
-            .chunks
-            .entry(chk)
-            .or_insert_with(|| Chunk::load_or_gen(chk, &self.path, self.seed));
+        let chk = match self.chunks.iter().position(|(p, _)| *p == chk) {
+            Some(idx) => &mut self.chunks[idx].1,
+            None => {
+                self.chunks
+                    .push((chk, Chunk::load_or_gen(chk, &self.path, self.seed)));
+                &mut self.chunks.last_mut().unwrap().1
+            }
+        };
         chk.at_mut(local)
     }
     pub fn save(&self) {
@@ -107,7 +110,15 @@ impl World {
             save_chunk(pos, chk, &self.path);
         }
     }
+    pub fn remove_old_chunks(&mut self) {
+        while self.chunks.len() > MAX_LOADED_CHUNKS {
+            let (pos, chk) = self.chunks.remove(0);
+            save_chunk(&pos, &chk, &self.path);
+        }
+    }
 }
+
+const MAX_LOADED_CHUNKS: usize = 16;
 
 fn loc_byte_idx_xy(x: u8, y: u8) -> usize {
     loc_byte_idx(loc_idx(y, x))

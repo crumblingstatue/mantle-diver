@@ -291,6 +291,7 @@ impl App {
             &mut self.cmdvec,
             &self.worlds_dir,
         );
+        self.game.world.remove_old_chunks();
         self::command::dispatch(self, res, mouse_world_pos);
     }
 
@@ -320,6 +321,7 @@ impl App {
         if self.debug.dbg_overlay {
             rendering::draw_debug_overlay(&mut self.render.rt, &mut self.game);
         }
+        imm_dbg!(self.game.world.chunks.len());
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
