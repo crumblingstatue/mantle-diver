@@ -51,6 +51,8 @@ pub struct GameState {
     pub paused: bool,
     pub pause_next_frame: bool,
     pub event_buf: EventBuf,
+    // Respawn timer for player
+    pub respawn_timer: u32,
 }
 
 #[derive(Debug)]
@@ -129,6 +131,7 @@ impl GameState {
             paused: false,
             pause_next_frame: false,
             event_buf: Default::default(),
+            respawn_timer: 0,
         }
     }
 
@@ -146,6 +149,12 @@ impl GameState {
         cmd: &mut CmdVec,
         worlds_dir: &Path,
     ) {
+        if self.respawn_timer > 0 {
+            self.respawn_timer -= 1;
+        } else if self.player_en == hecs::Entity::DANGLING {
+            self.player_en = self.ecw.spawn(PlayerBundle::new_at(self.spawn_point));
+            self.controlled_en = self.player_en;
+        }
         systems::general_input_system(self, input);
         if self.menu.open {
             systems::pause_menu_system(self, input, cmd, worlds_dir);

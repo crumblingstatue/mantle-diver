@@ -646,6 +646,10 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
 pub(crate) fn health_system(game: &mut GameState) {
     for (en, health) in game.ecw.query_mut::<&mut Health>() {
         if health.current < 1. {
+            if en == game.player_en {
+                game.player_en = hecs::Entity::DANGLING;
+                game.respawn_timer = 500;
+            }
             game.ecb.despawn(en);
         }
     }

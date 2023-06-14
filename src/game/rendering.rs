@@ -385,6 +385,17 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
         Err(_) => text.set_string("Not controlling anything"),
     }
     rt.draw(&text);
+    if game.player_en == hecs::Entity::DANGLING {
+        text.set_character_size(30);
+        text.set_position((200., 200.));
+        text.set_string("YOU ARE DEAD");
+        text.set_fill_color(Color::RED);
+        rt.draw(&text);
+        text.move_((0., 32.));
+        text.set_fill_color(Color::YELLOW);
+        text.set_string(&format!("Respawning in: {}", game.respawn_timer));
+        rt.draw(&text);
+    }
     if game.menu.open {
         draw_menu(game, rt, res);
     }
