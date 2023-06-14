@@ -21,7 +21,11 @@ pub enum CmdLine {
     /// Teleport player back to spawn
     Spawn,
     /// Give the player an item
-    Give(Give),
+    Give {
+        name: String,
+        #[arg(default_value_t = 1)]
+        amount: u16,
+    },
     /// Char db editor
     Chardb,
     /// Tile db editor
@@ -29,9 +33,12 @@ pub enum CmdLine {
     /// Item db editor
     Itemdb,
     /// Set graphics scaling
-    Scale(Scale),
+    Scale { scale: u8 },
     /// Open world management menu
-    World(World),
+    World {
+        #[arg(default_value = "")]
+        name: String,
+    },
     /// Toggle showing the texture atlas
     Atlas,
     /// Reload graphics
@@ -55,24 +62,6 @@ impl Tp {
             y: self.y,
         }
     }
-}
-
-#[derive(Parser)]
-pub struct Give {
-    name: String,
-    #[arg(default_value_t = 1)]
-    amount: u16,
-}
-
-#[derive(Parser)]
-pub struct Scale {
-    scale: u8,
-}
-
-#[derive(Parser)]
-pub struct World {
-    #[arg(default_value = "")]
-    name: String,
 }
 
 pub enum Dispatch {
@@ -101,21 +90,18 @@ impl CmdLine {
             }),
             CmdLine::Tpc => Dispatch::Cmd(Cmd::TeleportCursor),
             CmdLine::Spawn => Dispatch::Cmd(Cmd::TeleportSpawn),
-            CmdLine::Give(give) => Dispatch::Cmd(Cmd::GiveItemByName {
-                name: give.name,
-                amount: give.amount,
-            }),
+            CmdLine::Give { name, amount } => Dispatch::Cmd(Cmd::GiveItemByName { name, amount }),
             CmdLine::Tiledb => Dispatch::Cmd(Cmd::ToggleTileDbEdit),
             CmdLine::Chardb => {
                 debug.chardb_edit.open ^= true;
                 Dispatch::Noop
             }
-            CmdLine::Scale(scale) => Dispatch::Cmd(Cmd::SetScale(scale.scale)),
-            CmdLine::World(world) => {
-                if world.name.is_empty() {
+            CmdLine::Scale { scale } => Dispatch::Cmd(Cmd::SetScale(scale)),
+            CmdLine::World { name } => {
+                if name.is_empty() {
                     Dispatch::ToggleWorldMgr
                 } else {
-                    Dispatch::Cmd(Cmd::LoadWorld(world.name))
+                    Dispatch::Cmd(Cmd::LoadWorld(name))
                 }
             }
             CmdLine::Atlas => Dispatch::ToggleAtlas,
