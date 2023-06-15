@@ -27,7 +27,23 @@ pub(super) fn item_use_system(
     mouse_tpos: TilePos,
     aud: &ResAudio,
     snd: &mut SoundPlayer,
+    mouse_wpos: WorldPos,
 ) {
+    let Ok(mov) = game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) else {
+        log::warn!("No controlled entity");
+        return;
+    };
+    let player_pos = WorldPos::from_en(&mov.mob.en);
+    let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
+    DBG_OVR.push(DbgOvr::WldCircle {
+        pos: WorldPos::from_en(&mov.mob.en),
+        radius: game.tile_interact_radius,
+        c: if ptr_within_circle {
+            Color::GREEN
+        } else {
+            Color::RED
+        },
+    });
     if !input.lmb_down {
         return;
     }
@@ -44,6 +60,9 @@ pub(super) fn item_use_system(
     let ticks = game.world.ticks;
     let t = game.world.tile_at_mut(mouse_tpos);
     let tile_place_cooldown = 8;
+    if !ptr_within_circle {
+        return;
+    }
     match &itemdef.use_action {
         UseAction::PlaceBgTile { id } => {
             if t.bg.empty() && ticks - game.last_tile_place > tile_place_cooldown {
@@ -294,7 +313,7 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
 }
 
 /// Control the movements of the controlled entity (usually player character)
-pub(super) fn move_control_system(game: &mut GameState, input: &Input, mouse_wpos: WorldPos) {
+pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
     let Ok((mov, mov_extra)) = game.ecw.query_one_mut::<(&mut MovingEnt, &mut MoveExtra)>(game.controlled_en) else {
         log::warn!("No controlled entity");
         return;
@@ -306,17 +325,6 @@ pub(super) fn move_control_system(game: &mut GameState, input: &Input, mouse_wpo
     } else {
         3.0
     };
-    let player_pos = WorldPos::from_en(&mov.mob.en);
-    let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.item_use_radius);
-    DBG_OVR.push(DbgOvr::WldCircle {
-        pos: WorldPos::from_en(&mov.mob.en),
-        radius: game.item_use_radius,
-        c: if ptr_within_circle {
-            Color::GREEN
-        } else {
-            Color::RED
-        },
-    });
     mov.hspeed = 0.;
     if input.down(InputAction::Left) {
         mov.hspeed = -spd;

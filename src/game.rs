@@ -53,7 +53,7 @@ pub struct GameState {
     pub event_buf: EventBuf,
     // Respawn timer for player
     pub respawn_timer: u32,
-    pub item_use_radius: u16,
+    pub tile_interact_radius: u16,
 }
 
 #[derive(Debug)]
@@ -133,7 +133,7 @@ impl GameState {
             pause_next_frame: false,
             event_buf: Default::default(),
             respawn_timer: 0,
-            item_use_radius: 100,
+            tile_interact_radius: 100,
         }
     }
 
@@ -174,10 +174,10 @@ impl GameState {
         if debug.freecam {
             systems::freecam_move_system(self, input);
         } else {
-            systems::move_control_system(self, input, mouse_wpos);
+            systems::move_control_system(self, input);
         }
         systems::move_system(self, ScreenVec::from_sf_resolution(rt_size), debug);
-        systems::item_use_system(self, input, mouse_tpos, aud, snd);
+        systems::item_use_system(self, input, mouse_tpos, aud, snd, mouse_wpos);
         systems::biome_watch_system(self, music_sink, res);
         systems::inventory_input_system(self, input);
         systems::item_drop_claim_system(self, snd, aud);
