@@ -9,7 +9,6 @@ use {
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
     },
-    gamedebug_core::imm_dbg,
     sfml::{
         graphics::{
             CircleShape, Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget,
@@ -156,11 +155,8 @@ pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, de
     for (_en, (id, mov)) in game.ecw.query_mut::<(&ItemId, &MovingEnt)>() {
         let pos = mov.mob.en.pos;
         let item_def = &game.itemdb.get(*id).unwrap();
-        imm_dbg!(&item_def.name);
-        imm_dbg!(&item_def.graphic_name);
         let (co_x, co_y) = game.camera_offset.to_signed();
         s.set_position(((pos.x - co_x) as f32, (pos.y - co_y) as f32));
-        imm_dbg!(item_def.tex_rect);
         s.set_texture_rect(item_def.tex_rect.to_sf());
         rt.draw(&s);
     }
