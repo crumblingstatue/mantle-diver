@@ -3,7 +3,7 @@ use {
         graphics::{ScreenSc, ScreenVec},
         world::{ChkPosSc, TPosSc, TilePos, CHUNK_EXTENT, TPOS_SC_MAX},
     },
-    num_traits::{Num, Signed},
+    num_traits::{Num, PrimInt, Signed},
     serde::{Deserialize, Serialize},
     sfml::system::Vector2u,
     std::fmt::Debug,
@@ -57,6 +57,11 @@ impl WorldPos {
     )]
     pub fn to_signed(self) -> (i32, i32) {
         (self.x as i32, self.y as i32)
+    }
+
+    pub(crate) fn within_circle(&self, circle_pos: WorldPos, radius: u16) -> bool {
+        let ((x, y), (cx, cy)) = (self.to_signed(), circle_pos.to_signed());
+        crate::math::point_within_circle(cx, cy, i32::from(radius), x, y)
     }
 }
 
@@ -248,4 +253,14 @@ impl S2DcEntityExt for s2dc::Entity {
         let (x, y, w, h) = self.xywh();
         (x as u32, y as u32, w as u32, h as u32)
     }
+}
+
+/// Checks if `x` and `y` are within the circle defined by `cx, cy, radius`
+///
+/// It requires signed integers due to the nature of the calculation,
+/// which would cause underflow for unsigned numbers
+pub fn point_within_circle<N: PrimInt + Signed>(cx: N, cy: N, radius: N, x: N, y: N) -> bool {
+    let distance_squared = (x - cx).pow(2) + (y - cy).pow(2);
+    let radius_squared = radius.pow(2);
+    distance_squared <= radius_squared
 }

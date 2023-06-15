@@ -282,6 +282,7 @@ impl App {
         self.game.run_systems(
             &self.debug,
             &mut self.input,
+            mouse_world_pos,
             mouse_tpos,
             rt_size,
             &mut self.music_sink,

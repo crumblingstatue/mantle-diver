@@ -142,6 +142,7 @@ impl GameState {
         &mut self,
         debug: &DebugState,
         input: &mut Input,
+        mouse_wpos: WorldPos,
         mouse_tpos: TilePos,
         rt_size: Vector2u,
         music_sink: &mut rodio::Sink,
@@ -173,7 +174,7 @@ impl GameState {
         if debug.freecam {
             systems::freecam_move_system(self, input);
         } else {
-            systems::move_control_system(self, input);
+            systems::move_control_system(self, input, mouse_wpos);
         }
         systems::move_system(self, ScreenVec::from_sf_resolution(rt_size), debug);
         systems::item_use_system(self, input, mouse_tpos, aud, snd);

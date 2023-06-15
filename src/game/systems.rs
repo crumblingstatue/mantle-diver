@@ -294,7 +294,7 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
 }
 
 /// Control the movements of the controlled entity (usually player character)
-pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
+pub(super) fn move_control_system(game: &mut GameState, input: &Input, mouse_wpos: WorldPos) {
     let Ok((mov, mov_extra)) = game.ecw.query_one_mut::<(&mut MovingEnt, &mut MoveExtra)>(game.controlled_en) else {
         log::warn!("No controlled entity");
         return;
@@ -306,10 +306,16 @@ pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
     } else {
         3.0
     };
+    let player_pos = WorldPos::from_en(&mov.mob.en);
+    let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.item_use_radius);
     DBG_OVR.push(DbgOvr::WldCircle {
         pos: WorldPos::from_en(&mov.mob.en),
         radius: game.item_use_radius,
-        c: Color::GREEN,
+        c: if ptr_within_circle {
+            Color::GREEN
+        } else {
+            Color::RED
+        },
     });
     mov.hspeed = 0.;
     if input.down(InputAction::Left) {
