@@ -189,7 +189,7 @@ impl GameState {
         systems::health_system(self);
         self.world.ticks += 1;
         let ev_buf = std::mem::take(&mut self.event_buf);
-        events::process_events(self, ev_buf);
+        events::process_events(self, ev_buf, snd, aud);
     }
 }
 
