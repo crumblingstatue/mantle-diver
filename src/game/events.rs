@@ -24,10 +24,10 @@ fn on_ground_hit(
     snd: &mut SoundPlayer,
     aud: &ResAudio,
 ) {
-    if vspeed > 16. {
+    if vspeed > 18. {
         if let Ok(health) = game.ecw.query_one_mut::<&mut Health>(en) {
             snd.play(aud, "etc/ouch");
-            health.current -= (vspeed - 16.) * 1.75;
+            health.current -= (vspeed - 18.) * 1.75;
         }
     }
 }
