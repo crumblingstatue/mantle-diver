@@ -1,7 +1,7 @@
 use {
     crate::{
         graphics::{ScreenSc, ScreenVec},
-        world::{ChkPosSc, TPosSc, TilePos, CHUNK_EXTENT, TPOS_SC_MAX},
+        world::{TPosSc, TilePos, TPOS_SC_MAX},
     },
     num_traits::{Num, Signed},
     serde::{Deserialize, Serialize},
@@ -115,11 +115,6 @@ const _: () = assert!(
     WORLD_EXTENT < TPOS_SC_MAX,
     "World extent can't be larger than maximum sound TPosSc value"
 );
-#[expect(
-    clippy::cast_possible_truncation,
-    reason = "Sound due to world extent limit"
-)]
-pub const WORLD_EXTENT_CHUNKS: ChkPosSc = (WORLD_EXTENT / CHUNK_EXTENT as WPosSc) as ChkPosSc;
 pub const WORLD_EXTENT_PX: WPosSc = WORLD_EXTENT * TILE_SIZE as WPosSc;
 
 impl WorldPos {

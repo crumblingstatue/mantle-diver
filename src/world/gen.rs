@@ -1,7 +1,7 @@
 use {
     super::{Chunk, ChunkPos},
     crate::{
-        math::{WorldPos, TILE_SIZE, WORLD_EXTENT_CHUNKS},
+        math::{WorldPos, TILE_SIZE},
         tiles::{BgTileId, FgTileId, MidTileId},
         world::{default_chunk_tiles, CHUNK_EXTENT, CHUNK_N_TILES},
     },
@@ -74,12 +74,6 @@ impl Chunk {
             }
             if noise < 40. {
                 t.fg = FgTileId::COAL;
-            }
-        }
-        // Unbreakable buffer zone at the bottom
-        if pos.y > WORLD_EXTENT_CHUNKS {
-            for b in &mut tiles {
-                b.mid = MidTileId::UNBREAKANIUM;
             }
         }
         Self { tiles }

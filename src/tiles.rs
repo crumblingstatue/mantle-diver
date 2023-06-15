@@ -149,7 +149,6 @@ impl MidTileId {
     pub const TREE: Self = Self(6, PhantomData);
     pub const SMALL_ROCK: Self = Self(7, PhantomData);
     pub const STICK: Self = Self(8, PhantomData);
-    pub const UNBREAKANIUM: Self = Self(9, PhantomData);
 }
 
 impl FgTileId {
