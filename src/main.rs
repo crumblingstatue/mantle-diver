@@ -15,6 +15,7 @@ use {
     directories::ProjectDirs,
     gamedebug_core::IMMEDIATE,
     res::{Res, ResAudio},
+    std::backtrace::Backtrace,
 };
 
 mod app;
@@ -75,7 +76,8 @@ fn main() {
             Some(loc) => (loc.file(), loc.line().to_string(), loc.column().to_string()),
             None => ("unknown", "unknown".into(), "unknown".into()),
         };
-        eprintln!("{msg}\n{file}:{line}:{column}");
+        let bt = Backtrace::capture();
+        eprintln!("{msg}\n{file}:{line}:{column}\n{bt}");
         rfd::MessageDialog::new()
             .set_title("Mantle Diver panicked!")
             .set_description(&format!(
@@ -83,6 +85,7 @@ fn main() {
                 {msg}\n\n\
                 Location:\n\
                 {file}:{line}:{column}\n\n\
+                Backtrace: {bt}\n\n\
                 Terminating."
             ))
             .set_level(rfd::MessageLevel::Error)
