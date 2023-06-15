@@ -9,7 +9,7 @@ use {
         graphics::ScreenVec,
         input::Input,
         inventory::{Inventory, ItemDb},
-        math::{wp_to_tp, WorldPos, TILE_SIZE},
+        math::{wp_to_tp, WPosSc, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
         save::Save,
@@ -88,7 +88,6 @@ impl SfVec2fExt for Vector2f {
 impl GameState {
     pub(crate) fn new(world_name: String, path: PathBuf, res: &Res) -> GameState {
         let mut spawn_point = WorldPos::SURFACE_CENTER;
-        spawn_point.y -= 1104;
         let mut tile_db = TileDb::load_or_default("data");
         tile_db.update_rects(&res.atlas.rects);
         let mut itemdb = ItemDb::load_or_default("data");
@@ -96,6 +95,8 @@ impl GameState {
         let mut inventory = Inventory::new_debug();
         let world;
         let mut plr = PlayerBundle::new_at(spawn_point);
+        spawn_point.y -= WPosSc::try_from(plr.mov.mob.en.bb.y).unwrap();
+        plr.mov.mob.en.pos.y = i32::try_from(spawn_point.y).unwrap();
         match Save::load(&path) {
             Ok(save) => {
                 inventory = save.inventory;
