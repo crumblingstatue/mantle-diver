@@ -3,7 +3,7 @@ use {
         graphics::{ScreenSc, ScreenVec},
         world::{ChkPosSc, TPosSc, TilePos, CHUNK_EXTENT, TPOS_SC_MAX},
     },
-    num_traits::{Num, PrimInt, Signed},
+    num_traits::{Num, Signed},
     serde::{Deserialize, Serialize},
     sfml::system::Vector2u,
     std::fmt::Debug,
@@ -61,7 +61,13 @@ impl WorldPos {
 
     pub(crate) fn within_circle(&self, circle_pos: WorldPos, radius: u16) -> bool {
         let ((x, y), (cx, cy)) = (self.to_signed(), circle_pos.to_signed());
-        crate::math::point_within_circle(cx, cy, i32::from(radius), x, y)
+        crate::math::point_within_circle(
+            i64::from(cx),
+            i64::from(cy),
+            i64::from(radius),
+            i64::from(x),
+            i64::from(y),
+        )
     }
 }
 
@@ -257,9 +263,10 @@ impl S2DcEntityExt for s2dc::Entity {
 
 /// Checks if `x` and `y` are within the circle defined by `cx, cy, radius`
 ///
-/// It requires signed integers due to the nature of the calculation,
-/// which would cause underflow for unsigned numbers
-pub fn point_within_circle<N: PrimInt + Signed>(cx: N, cy: N, radius: N, x: N, y: N) -> bool {
+/// It requires i64 due to the nature of the calculation,
+/// which would cause underflow for unsigned numbers, and large distance between two points
+/// (like camera being very far away from player) would cause overflow for squaring.
+pub fn point_within_circle(cx: i64, cy: i64, radius: i64, x: i64, y: i64) -> bool {
     let distance_squared = (x - cx).pow(2) + (y - cy).pow(2);
     let radius_squared = radius.pow(2);
     distance_squared <= radius_squared
