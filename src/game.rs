@@ -4,6 +4,7 @@ use {
         app::SoundPlayer,
         char::CharDb,
         command::CmdVec,
+        crafting::RecipeDb,
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
         input::Input,
@@ -36,6 +37,7 @@ pub struct GameState {
     pub ambient_light: u8,
     pub tile_db: TileDb,
     pub char_db: CharDb,
+    pub recipe_db: RecipeDb,
     pub inventory: Inventory,
     pub itemdb: ItemDb,
     pub selected_inv_slot: usize,
@@ -134,6 +136,7 @@ impl GameState {
             event_buf: Default::default(),
             respawn_timer: 0,
             tile_interact_radius: 100,
+            recipe_db: RecipeDb::load_or_default("data"),
         }
     }
 

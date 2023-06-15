@@ -24,6 +24,7 @@ mod char;
 mod cmdline;
 mod command;
 mod config;
+mod crafting;
 mod debug;
 mod game;
 mod graphics;

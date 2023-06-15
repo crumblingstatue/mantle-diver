@@ -1,0 +1,26 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+RecipeDb(
+    recipes: [
+        /*[0]*/ Recipe(
+            stations: [
+                /*[0]*/ Player,
+            ],
+            input: [],
+            output: ItemStack(
+                id: 2,
+                qty: 1,
+            ),
+        ),
+        /*[1]*/ Recipe(
+            stations: [
+                /*[0]*/ Player,
+            ],
+            input: [],
+            output: ItemStack(
+                id: 2,
+                qty: 1,
+            ),
+        ),
+    ],
+)

@@ -28,59 +28,59 @@ impl ItemId {
 /// We won't have more than 65535 item quantity in a single slot
 pub type ItemQty = u16;
 
-/// Inventory slot
+/// A stack of items (one or more item of a kind)
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Slot {
+pub struct ItemStack {
     pub id: ItemId,
     pub qty: ItemQty,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Inventory {
-    pub slots: Vec<Slot>,
+    pub slots: Vec<ItemStack>,
 }
 impl Inventory {
     /// A new inventory filled with some debug items
     pub(crate) fn new_debug() -> Inventory {
         Self {
             slots: vec![
-                Slot {
+                ItemStack {
                     id: ItemId::WOOD_PICK,
                     qty: 1,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::EMPTY,
                     qty: 0,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::EMPTY,
                     qty: 0,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::EMPTY,
                     qty: 0,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::EMPTY,
                     qty: 0,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::EMPTY,
                     qty: 0,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::TORCH,
                     qty: 100,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::PLATFORM,
                     qty: 9999,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::STONE_WALL,
                     qty: 100,
                 },
-                Slot {
+                ItemStack {
                     id: ItemId::DEV_PICK,
                     qty: 1,
                 },

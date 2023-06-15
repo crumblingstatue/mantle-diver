@@ -34,6 +34,8 @@ pub enum CmdLine {
     Tiledb,
     /// Item db editor
     Itemdb,
+    /// Recipe editor
+    Recdb,
     /// Set graphics scaling
     Scale { scale: u8 },
     /// Open world management menu
@@ -111,6 +113,10 @@ impl CmdLine {
             CmdLine::Greload => Dispatch::Cmd(Cmd::ReloadGraphics),
             CmdLine::Itemdb => {
                 debug.itemdb_edit.open ^= true;
+                Dispatch::Noop
+            }
+            CmdLine::Recdb => {
+                debug.recdb_edit.open ^= true;
                 Dispatch::Noop
             }
             CmdLine::Entlist => {

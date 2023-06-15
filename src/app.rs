@@ -171,6 +171,7 @@ impl App {
         }
         self.game.tile_db.try_save("data");
         self.game.itemdb.try_save("data");
+        self.game.recipe_db.try_save("data");
         self.game.char_db.save().unwrap();
         self.game.world.save();
         std::fs::create_dir_all(self.project_dirs.config_dir()).unwrap();
