@@ -306,6 +306,11 @@ pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
     } else {
         3.0
     };
+    DBG_OVR.push(DbgOvr::WldCircle {
+        pos: WorldPos::from_en(&mov.mob.en),
+        radius: game.item_use_radius,
+        c: Color::GREEN,
+    });
     mov.hspeed = 0.;
     if input.down(InputAction::Left) {
         mov.hspeed = -spd;

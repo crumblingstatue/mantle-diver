@@ -53,6 +53,7 @@ pub struct GameState {
     pub event_buf: EventBuf,
     // Respawn timer for player
     pub respawn_timer: u32,
+    pub item_use_radius: u16,
 }
 
 #[derive(Debug)]
@@ -132,6 +133,7 @@ impl GameState {
             pause_next_frame: false,
             event_buf: Default::default(),
             respawn_timer: 0,
+            item_use_radius: 100,
         }
     }
 

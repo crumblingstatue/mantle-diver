@@ -12,8 +12,8 @@ use {
     gamedebug_core::imm_dbg,
     sfml::{
         graphics::{
-            Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
-            Shape, Sprite, Text, Transform, Transformable, Vertex,
+            CircleShape, Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget,
+            RenderTexture, Shape, Sprite, Text, Transform, Transformable, Vertex,
         },
         system::Vector2f,
     },
@@ -488,6 +488,7 @@ fn adjust_blend_rect(rect: &mut Rect<i32>, left: bool, right: bool, above: bool,
 pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
     let mut rs = RectangleShape::new();
     let (cx, cy) = (game.camera_offset.x, game.camera_offset.y);
+    let mut cs = CircleShape::new(0., 30);
     DBG_OVR.for_each(|msg| match msg {
         crate::debug::DbgOvr::WldRect { r, c } => {
             let (Some(x), Some(y)) = (r.topleft.x.checked_sub(cx), r.topleft.y.checked_sub(cy)) else {
@@ -499,6 +500,19 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
             rs.set_fill_color(Color::TRANSPARENT);
             rs.set_outline_thickness(1.0);
             rt.draw(&rs);
+        },
+        crate::debug::DbgOvr::WldCircle { pos, radius, c } => {
+            let (Some(x), Some(y)) = (pos.x.checked_sub(cx), pos.y.checked_sub(cy)) else {
+                return
+            };
+            let rad = f32::from(*radius);
+            cs.set_origin((rad, rad));
+            cs.set_position((x as f32, y as f32));
+            cs.set_radius(rad);
+            cs.set_outline_color(*c);
+            cs.set_fill_color(Color::TRANSPARENT);
+            cs.set_outline_thickness(1.0);
+            rt.draw(&cs);
         },
     });
 }

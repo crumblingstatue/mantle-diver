@@ -158,7 +158,15 @@ pub(crate) fn do_debug_ui(
 }
 
 pub enum DbgOvr {
-    WldRect { r: WorldRect, c: Color },
+    WldRect {
+        r: WorldRect,
+        c: Color,
+    },
+    WldCircle {
+        pos: WorldPos,
+        radius: u16,
+        c: Color,
+    },
 }
 
 pub static DBG_OVR: MsgBuf<DbgOvr> = MsgBuf::new(false);
