@@ -88,7 +88,7 @@ ItemDb(
             consumable: true,
         ),
         /*[7]*/ ItemDef(
-            name: "Coal (place test)",
+            name: "Coal ",
             graphic_name: "tiles/coal",
             draw_off: ScreenVec(
                 x: 8,
