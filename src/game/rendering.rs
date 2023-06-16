@@ -5,7 +5,7 @@ use {
         graphics::ScreenVec,
         inventory::ItemId,
         light::{self, LightEnumInfo, U16Vec},
-        math::{WorldPos, TILE_SIZE},
+        math::{WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
     },
@@ -389,7 +389,10 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
         rt.draw(&text);
         text.move_((0., 32.));
         text.set_fill_color(Color::YELLOW);
-        text.set_string(&format!("Respawning in: {}", game.respawn_timer));
+        text.set_string(&format!(
+            "Respawning in: {}",
+            game.respawn_timer / u32::from(FPS_TARGET)
+        ));
         rt.draw(&text);
     }
     if game.menu.open {
