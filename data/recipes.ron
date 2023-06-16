@@ -6,7 +6,16 @@ RecipeDb(
             stations: [
                 /*[0]*/ Player,
             ],
-            input: [],
+            input: [
+                /*[0]*/ ItemStack(
+                    id: 8,
+                    qty: 1,
+                ),
+                /*[1]*/ ItemStack(
+                    id: 11,
+                    qty: 2,
+                ),
+            ],
             output: ItemStack(
                 id: 2,
                 qty: 1,
@@ -16,9 +25,14 @@ RecipeDb(
             stations: [
                 /*[0]*/ Player,
             ],
-            input: [],
+            input: [
+                /*[0]*/ ItemStack(
+                    id: 11,
+                    qty: 10,
+                ),
+            ],
             output: ItemStack(
-                id: 2,
+                id: 4,
                 qty: 1,
             ),
         ),

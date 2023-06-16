@@ -1,7 +1,7 @@
 use crate::{
     graphics::ScreenVec,
     inventory::{
-        ItemDb, ItemDef, TileLayer,
+        ItemDb, ItemDef, ItemId, TileLayer,
         UseAction::{self, MineTile},
     },
     math::IntRect,
@@ -12,6 +12,10 @@ use crate::{
 pub struct ItemDbEdit {
     pub open: bool,
     sel_idx: usize,
+    /// Other editors can open this editor to ask for an item selection
+    pub extern_sel_mode: bool,
+    /// Selected item for external item requests
+    pub sel_for_extern: Option<ItemId>,
 }
 
 impl ItemDbEdit {
@@ -34,9 +38,21 @@ impl ItemDbEdit {
                 }
                 ui.separator();
                 for (i, def) in itemdb.db.iter().enumerate() {
-                    if ui.selectable_label(i == self.sel_idx, &def.name).clicked() {
-                        self.sel_idx = i;
-                    }
+                    ui.horizontal(|ui| {
+                        if ui.selectable_label(i == self.sel_idx, &def.name).clicked() {
+                            self.sel_idx = i;
+                        }
+                        if self.extern_sel_mode {
+                            #[expect(
+                                clippy::cast_possible_truncation,
+                                reason = "We won't have more than 65535 items"
+                            )]
+                            if ui.button("Select this").clicked() {
+                                self.sel_for_extern = Some(ItemId((i + 1) as u16));
+                                self.extern_sel_mode = false;
+                            }
+                        }
+                    });
                 }
                 ui.separator();
                 let def = &mut itemdb.db[self.sel_idx];

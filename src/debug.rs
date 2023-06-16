@@ -154,7 +154,12 @@ pub(crate) fn do_debug_ui(
     );
     debug.chardb_edit.ui(ctx, &mut game.char_db);
     debug.itemdb_edit.ui(ctx, &mut game.itemdb);
-    debug.recdb_edit.ui(ctx, &mut game.recipe_db, &game.itemdb);
+    debug.recdb_edit.ui(
+        ctx,
+        &mut game.recipe_db,
+        &game.itemdb,
+        &mut debug.itemdb_edit,
+    );
     console_ui(ctx, debug, cmd);
     debug.world_mgr.ui(ctx, game, worlds_path, cmd);
     debug.entity_list.ui(ctx, game);
