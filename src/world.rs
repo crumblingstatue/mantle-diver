@@ -1,4 +1,7 @@
-use crate::math::{WorldPos, TILE_SIZE};
+use crate::{
+    math::{WorldPos, TILE_SIZE},
+    time::HOUR_IN_TICKS,
+};
 
 mod gen;
 mod reg_chunk_existence;
@@ -79,7 +82,7 @@ impl World {
     pub fn new(name: &str, path: PathBuf, seed: i32) -> Self {
         Self {
             chunks: Default::default(),
-            ticks: Default::default(),
+            ticks: 8 * HOUR_IN_TICKS,
             name: name.to_string(),
             path,
             seed,
