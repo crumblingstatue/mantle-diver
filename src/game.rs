@@ -14,6 +14,7 @@ use {
         res::{Res, ResAudio},
         save::Save,
         tiles::TileDb,
+        time::{daylight, tick_of_day},
         world::{TilePos, World},
     },
     fnv::FnvHashMap,
@@ -166,6 +167,7 @@ impl GameState {
         cmd: &mut CmdVec,
         worlds_dir: &Path,
     ) {
+        self.ambient_light = daylight(tick_of_day(self.world.ticks));
         if self.respawn_timer > 0 {
             self.respawn_timer -= 1;
         } else if self.player_en == hecs::Entity::DANGLING {

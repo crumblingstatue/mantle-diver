@@ -118,6 +118,8 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                 }
                 ui.separator();
             }
+            ui.label("Elapsed ticks");
+            ui.add(egui::DragValue::new(&mut game.world.ticks));
             egui::ScrollArea::vertical().show(ui, |ui| {
                 IMMEDIATE.for_each(|msg| {
                     ui.label(msg);
