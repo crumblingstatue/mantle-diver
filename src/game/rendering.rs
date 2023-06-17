@@ -1,9 +1,9 @@
 use {
-    super::{for_each_tile_on_screen, GameState, SfVec2fExt},
+    super::{for_each_tile_on_screen, GameState, SfVec2fExt, TilestateKey},
     crate::{
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
-        inventory::ItemId,
+        inventory::{ItemId, TileLayer},
         light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
@@ -94,7 +94,10 @@ pub(crate) fn draw_world(
                 };
                 let mut rot = 0.;
                 let mut scale = 1.;
-                if let Some(state) = game.transient_block_state.get(&tp) {
+                if let Some(state) = game.transient_tile_states.get(&TilestateKey {
+                    pos: tp,
+                    layer: TileLayer::Mid,
+                }) {
                     rot = state.rot;
                     scale = state.scale;
                 }

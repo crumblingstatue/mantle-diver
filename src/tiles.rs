@@ -119,18 +119,22 @@ impl Fg {
 pub trait TileLayer {
     /// Definitions specific to this layer
     type SpecificDef;
+    const LAYER: crate::inventory::TileLayer;
 }
 
 impl TileLayer for Bg {
     type SpecificDef = ();
+    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Bg;
 }
 
 impl TileLayer for Mid {
     type SpecificDef = MidDef;
+    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Mid;
 }
 
 impl TileLayer for Fg {
     type SpecificDef = ();
+    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Fg;
 }
 
 pub type BgTileId = TileId<Bg>;

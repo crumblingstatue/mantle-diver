@@ -68,8 +68,14 @@ TileDb(
                 y: 0,
             ),
             health: 0.0,
-            hit_sound: None,
-            item_drop: None,
+            hit_sound: "dig/dirt",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
+                    start: 1,
+                    end: 1,
+                ),
+                id: 1,
+            ),
         ),
         /*[1]*/ TileDef(
             light: None,
@@ -81,8 +87,14 @@ TileDb(
                 y: 0,
             ),
             health: 0.0,
-            hit_sound: None,
-            item_drop: None,
+            hit_sound: "dig/stone",
+            item_drop: TileItemDrop(
+                qty_range: RangeInclusive(
+                    start: 1,
+                    end: 1,
+                ),
+                id: 6,
+            ),
         ),
     ],
     mid: [

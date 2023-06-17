@@ -8,7 +8,7 @@ use {
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
         input::Input,
-        inventory::{Inventory, ItemDb},
+        inventory::{Inventory, ItemDb, TileLayer},
         math::{wp_to_tp, WPosSc, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
@@ -26,6 +26,14 @@ mod events;
 pub mod rendering;
 mod systems;
 
+#[derive(Hash, PartialEq, Eq)]
+pub struct TilestateKey {
+    pos: TilePos,
+    layer: TileLayer,
+}
+
+type TransientTileStates = FnvHashMap<TilestateKey, TransientTileState>;
+
 pub struct GameState {
     /// Camera offset.
     /// It points to top left corner on the screen.
@@ -42,7 +50,7 @@ pub struct GameState {
     pub itemdb: ItemDb,
     pub selected_inv_slot: usize,
     pub spawn_point: WorldPos,
-    pub transient_block_state: FnvHashMap<TilePos, TransientBlockState>,
+    pub transient_tile_states: TransientTileStates,
     pub last_mine_attempt: u64,
     pub last_tile_place: u64,
     pub menu: Menu,
@@ -60,7 +68,7 @@ pub struct GameState {
 }
 
 #[derive(Debug)]
-pub struct TransientBlockState {
+pub struct TransientTileState {
     /// If block health reaches 0, it gets destroyed
     pub health: f32,
     pub rot: f32,
@@ -124,7 +132,7 @@ impl GameState {
             itemdb,
             selected_inv_slot: 0,
             spawn_point,
-            transient_block_state: Default::default(),
+            transient_tile_states: Default::default(),
             last_mine_attempt: 0,
             last_tile_place: 0,
             menu: Menu::default(),

@@ -2,7 +2,7 @@ use crate::{
     graphics::ScreenVec,
     inventory::{
         ItemDb, ItemDef, ItemId, TileLayer,
-        UseAction::{self, MineTile},
+        UseAction::{self},
     },
     math::IntRect,
     tiles::{BgTileId, FgTileId, MidTileId},
@@ -29,10 +29,8 @@ impl ItemDbEdit {
                         graphic_name: "".into(),
                         tex_rect: IntRect::default(),
                         draw_off: ScreenVec::default(),
-                        use_action: MineTile {
-                            power: 0.0,
-                            delay: 0,
-                        },
+                        use1: UseAction::Nothing,
+                        use2: UseAction::Nothing,
                         consumable: false,
                     })
                 }
@@ -55,7 +53,10 @@ impl ItemDbEdit {
                     });
                 }
                 ui.separator();
-                let def = &mut itemdb.db[self.sel_idx];
+                let Some(def) = itemdb.db.get_mut(self.sel_idx) else {
+                    ui.label("No item selected (or out of bounds)");
+                    return
+                };
                 ui.horizontal(|ui| {
                     ui.label("Name");
                     ui.text_edit_singleline(&mut def.name);
@@ -70,61 +71,82 @@ impl ItemDbEdit {
                     ui.add(egui::DragValue::new(&mut def.draw_off.y));
                 });
                 ui.checkbox(&mut def.consumable, "Consumable");
-                egui::ComboBox::new("action_combo", "Action")
-                    .selected_text(def.use_action.text())
-                    .show_ui(ui, |ui| {
-                        let v = UseAction::MineTile {
-                            power: 1.,
-                            delay: 1,
-                        };
-                        let text = v.text();
-                        ui.selectable_value(&mut def.use_action, v, text);
-                        let v = UseAction::PlaceBgTile { id: BgTileId::DIRT };
-                        let text = v.text();
-                        ui.selectable_value(&mut def.use_action, v, text);
-                        let v = UseAction::PlaceMidTile {
-                            id: MidTileId::DIRT,
-                        };
-                        let text = v.text();
-                        ui.selectable_value(&mut def.use_action, v, text);
-                        let v = UseAction::PlaceFgTile {
-                            id: FgTileId::GRASS,
-                        };
-                        let text = v.text();
-                        ui.selectable_value(&mut def.use_action, v, text);
-                        let v = UseAction::RemoveTile {
-                            layer: TileLayer::Bg,
-                        };
-                        let text = v.text();
-                        ui.selectable_value(&mut def.use_action, v, text);
-                    });
-                match &mut def.use_action {
-                    UseAction::PlaceBgTile { id } => {
-                        ui.label("Tile to place");
-                        ui.add(egui::DragValue::new(&mut id.0));
-                    }
-                    UseAction::PlaceMidTile { id } => {
-                        ui.label("Tile to place");
-                        ui.add(egui::DragValue::new(&mut id.0));
-                    }
-                    UseAction::PlaceFgTile { id } => {
-                        ui.label("Tile to place");
-                        ui.add(egui::DragValue::new(&mut id.0));
-                    }
-                    UseAction::RemoveTile { layer } => {
-                        ui.label("Layer to remove");
-                        ui.selectable_value(layer, TileLayer::Bg, "Bg");
-                        ui.selectable_value(layer, TileLayer::Mid, "Mid");
-                        ui.selectable_value(layer, TileLayer::Fg, "Fg");
-                    }
-                    MineTile { power, delay } => {
-                        ui.label("Power");
-                        ui.add(egui::DragValue::new(power));
-                        ui.label("Delay");
-                        ui.add(egui::DragValue::new(delay));
-                    }
-                }
+                use_dropdown_combo(&mut def.use1, ui, "Primary use");
+                use_dropdown_combo(&mut def.use2, ui, "Secondary use");
             });
+    }
+}
+
+fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str) {
+    egui::ComboBox::new(label, label)
+        .selected_text(use_field.text())
+        .show_ui(ui, |ui| {
+            let v = UseAction::Nothing;
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::MineTile {
+                power: 1.,
+                delay: 1,
+            };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::MineBgTile {
+                power: 1.,
+                delay: 1,
+            };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::PlaceBgTile { id: BgTileId::DIRT };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::PlaceMidTile {
+                id: MidTileId::DIRT,
+            };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::PlaceFgTile {
+                id: FgTileId::GRASS,
+            };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+            let v = UseAction::RemoveTile {
+                layer: TileLayer::Bg,
+            };
+            let text = v.text();
+            ui.selectable_value(use_field, v, text);
+        });
+    match use_field {
+        UseAction::PlaceBgTile { id } => {
+            ui.label("Tile to place");
+            ui.add(egui::DragValue::new(&mut id.0));
+        }
+        UseAction::PlaceMidTile { id } => {
+            ui.label("Tile to place");
+            ui.add(egui::DragValue::new(&mut id.0));
+        }
+        UseAction::PlaceFgTile { id } => {
+            ui.label("Tile to place");
+            ui.add(egui::DragValue::new(&mut id.0));
+        }
+        UseAction::RemoveTile { layer } => {
+            ui.label("Layer to remove");
+            ui.selectable_value(layer, TileLayer::Bg, "Bg");
+            ui.selectable_value(layer, TileLayer::Mid, "Mid");
+            ui.selectable_value(layer, TileLayer::Fg, "Fg");
+        }
+        UseAction::MineTile { power, delay } => {
+            ui.label("Power");
+            ui.add(egui::DragValue::new(power));
+            ui.label("Delay");
+            ui.add(egui::DragValue::new(delay));
+        }
+        UseAction::MineBgTile { power, delay } => {
+            ui.label("Power");
+            ui.add(egui::DragValue::new(power));
+            ui.label("Delay");
+            ui.add(egui::DragValue::new(delay));
+        }
+        UseAction::Nothing => {}
     }
 }
 
@@ -135,7 +157,9 @@ impl UseAction {
             UseAction::PlaceMidTile { .. } => "Place mid tile",
             UseAction::PlaceFgTile { .. } => "Place fg tile",
             UseAction::RemoveTile { .. } => "Remove tile",
-            MineTile { .. } => "Mine tile",
+            UseAction::MineTile { .. } => "Mine tile",
+            UseAction::MineBgTile { .. } => "Mine bg tile",
+            UseAction::Nothing => "Nothing",
         }
     }
 }

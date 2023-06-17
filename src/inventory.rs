@@ -115,25 +115,46 @@ pub struct ItemDef {
     #[serde(skip)]
     pub tex_rect: IntRect,
     pub draw_off: ScreenVec,
-    pub use_action: UseAction,
+    /// Primary use
+    pub use1: UseAction,
+    /// Secondary use
+    pub use2: UseAction,
     pub consumable: bool,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum TileLayer {
     Bg,
     Mid,
     Fg,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
-#[expect(clippy::enum_variant_names)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Default)]
 pub enum UseAction {
-    PlaceBgTile { id: BgTileId },
-    PlaceMidTile { id: MidTileId },
-    PlaceFgTile { id: FgTileId },
-    RemoveTile { layer: TileLayer },
-    MineTile { power: f32, delay: u64 },
+    #[default]
+    Nothing,
+    PlaceBgTile {
+        id: BgTileId,
+    },
+    PlaceMidTile {
+        id: MidTileId,
+    },
+    PlaceFgTile {
+        id: FgTileId,
+    },
+    RemoveTile {
+        layer: TileLayer,
+    },
+    /// Mine mid level block
+    MineTile {
+        power: f32,
+        delay: u64,
+    },
+    /// Mine background wall
+    MineBgTile {
+        power: f32,
+        delay: u64,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
@@ -163,7 +184,7 @@ impl ItemDb {
         if id == ItemId::EMPTY {
             None
         } else {
-            Some(&self.db[id.0 as usize - 1])
+            self.db.get(id.0 as usize - 1)
         }
     }
     pub fn try_save(&self, data_path: &str) {

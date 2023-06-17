@@ -1,5 +1,5 @@
 use {
-    super::{events::Event, Biome, GameState, TransientBlockState},
+    super::{events::Event, Biome, GameState, TransientTileState, TransientTileStates},
     crate::{
         app::{SoundPlayer, TileColEn},
         command::{Cmd, CmdVec},
@@ -12,7 +12,7 @@ use {
         player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
         save::world_dirs,
-        tiles::{self, TileDb, TileDef, TileId},
+        tiles::{self, TileDb, TileDef, TileId, TileLayer},
         world::{TilePos, World},
     },
     rand::{seq::SliceRandom, thread_rng, Rng},
@@ -44,7 +44,7 @@ pub(super) fn item_use_system(
             Color::RED
         },
     });
-    if !input.lmb_down {
+    if !(input.lmb_down || input.rmb_down) {
         return;
     }
     let Some(active_slot) = game.inventory.slots.get_mut(game.selected_inv_slot) else {
@@ -63,26 +63,68 @@ pub(super) fn item_use_system(
     if !ptr_within_circle {
         return;
     }
-    match &itemdef.use_action {
+    let action = if input.lmb_down {
+        &itemdef.use1
+    } else if input.rmb_down {
+        &itemdef.use2
+    } else {
+        return;
+    };
+    do_use_action(
+        action,
+        t,
+        ticks,
+        tile_place_cooldown,
+        active_slot,
+        mouse_tpos,
+        snd,
+        aud,
+        &mut game.last_tile_place,
+        &mut game.last_mine_attempt,
+        &mut game.transient_tile_states,
+        &game.tile_db,
+    );
+    // Make sure that fully consumed stacks are cleared
+    if active_slot.qty == 0 {
+        active_slot.id = ItemId::EMPTY;
+    }
+}
+
+#[expect(clippy::too_many_arguments)]
+fn do_use_action(
+    action: &UseAction,
+    t: &mut crate::world::Tile,
+    ticks: u64,
+    tile_place_cooldown: u64,
+    active_slot: &mut inventory::ItemStack,
+    mouse_tpos: TilePos,
+    snd: &mut SoundPlayer,
+    aud: &ResAudio,
+    last_tile_place: &mut u64,
+    last_mine_attempt: &mut u64,
+    transient_block_states: &mut TransientTileStates,
+    tile_db: &TileDb,
+) {
+    match action {
         UseAction::PlaceBgTile { id } => {
-            if t.bg.empty() && ticks - game.last_tile_place > tile_place_cooldown {
+            if t.bg.empty() && ticks - *last_tile_place > tile_place_cooldown {
                 t.bg = *id;
                 active_slot.qty -= 1;
-                game.last_tile_place = ticks;
+                *last_tile_place = ticks;
             }
         }
         UseAction::PlaceMidTile { id } => {
-            if t.mid.empty() && ticks - game.last_tile_place > tile_place_cooldown {
+            if t.mid.empty() && ticks - *last_tile_place > tile_place_cooldown {
                 t.mid = *id;
                 active_slot.qty -= 1;
-                game.last_tile_place = ticks;
+                *last_tile_place = ticks;
             }
         }
         UseAction::PlaceFgTile { id } => {
-            if t.fg.empty() && ticks - game.last_tile_place > tile_place_cooldown {
+            if t.fg.empty() && ticks - *last_tile_place > tile_place_cooldown {
                 t.fg = *id;
                 active_slot.qty -= 1;
-                game.last_tile_place = ticks;
+                *last_tile_place = ticks;
             }
         }
         UseAction::RemoveTile { layer } => match layer {
@@ -90,36 +132,78 @@ pub(super) fn item_use_system(
             inventory::TileLayer::Mid => t.mid = TileId::EMPTY,
             inventory::TileLayer::Fg => t.fg = TileId::EMPTY,
         },
-        UseAction::MineTile { power, delay } => 'block: {
-            if t.mid == TileId::EMPTY || ticks - game.last_mine_attempt < *delay {
-                break 'block;
-            }
-            let tdef = &game.tile_db[t.mid];
-            let state =
-                game.transient_block_state
-                    .entry(mouse_tpos)
-                    .or_insert(TransientBlockState {
-                        health: tdef.health,
-                        rot: 0.0,
-                        scale: 1.0,
-                    });
-            let mut rng = thread_rng();
-            let abs_rot = rng.gen_range(8.0..=16.0);
-            let max_scale = rng.gen_range(1.1..=1.3);
-            let min_scale = rng.gen_range(0.8..=0.9);
-            state.rot = *[-abs_rot, abs_rot].choose(&mut rng).unwrap();
-            state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
-            state.health -= power;
-            if let Some(hit_snd) = &tdef.hit_sound {
-                snd.play(aud, hit_snd);
-            }
-            game.last_mine_attempt = ticks;
+        UseAction::MineTile { power, delay } => {
+            mine_tile(
+                &mut t.mid,
+                ticks,
+                delay,
+                mouse_tpos,
+                power,
+                snd,
+                aud,
+                last_mine_attempt,
+                transient_block_states,
+                tile_db,
+            );
         }
+        UseAction::MineBgTile { power, delay } => {
+            mine_tile(
+                &mut t.bg,
+                ticks,
+                delay,
+                mouse_tpos,
+                power,
+                snd,
+                aud,
+                last_mine_attempt,
+                transient_block_states,
+                tile_db,
+            );
+        }
+        UseAction::Nothing => {}
     }
-    // Make sure that fully consumed stacks are cleared
-    if active_slot.qty == 0 {
-        active_slot.id = ItemId::EMPTY;
+}
+
+#[expect(clippy::too_many_arguments)]
+fn mine_tile<L: TileLayer>(
+    tid: &mut TileId<L>,
+    ticks: u64,
+    delay: &u64,
+    mouse_tpos: TilePos,
+    power: &f32,
+    snd: &mut SoundPlayer,
+    aud: &ResAudio,
+    last_mine_attempt: &mut u64,
+    transient_block_states: &mut TransientTileStates,
+    tile_db: &TileDb,
+) where
+    TileDb: Index<TileId<L>, Output = TileDef<L>>,
+{
+    if *tid == TileId::EMPTY || ticks - *last_mine_attempt < *delay {
+        return;
     }
+    let tdef = &tile_db[*tid];
+    let state = transient_block_states
+        .entry(super::TilestateKey {
+            pos: mouse_tpos,
+            layer: L::LAYER,
+        })
+        .or_insert(TransientTileState {
+            health: tdef.health,
+            rot: 0.0,
+            scale: 1.0,
+        });
+    let mut rng = thread_rng();
+    let abs_rot = rng.gen_range(8.0..=16.0);
+    let max_scale = rng.gen_range(1.1..=1.3);
+    let min_scale = rng.gen_range(0.8..=0.9);
+    state.rot = *[-abs_rot, abs_rot].choose(&mut rng).unwrap();
+    state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
+    state.health -= power;
+    if let Some(hit_snd) = &tdef.hit_sound {
+        snd.play(aud, hit_snd);
+    }
+    *last_mine_attempt = ticks;
 }
 
 pub(super) fn move_system(game: &mut GameState, rt_size: ScreenVec, debug: &DebugState) {
@@ -396,20 +480,28 @@ pub(super) fn inventory_input_system(game: &mut GameState, input: &Input) {
 }
 /// Update transient blocks
 pub(super) fn transient_blocks_system(game: &mut GameState) {
-    game.transient_block_state.retain(|pos, state| {
+    game.transient_tile_states.retain(|key, state| {
         step_towards(&mut state.rot, 0.0, 0.9);
         step_towards(&mut state.scale, 1.0, 0.04);
         // Kill tiles with 0 health
         let mut retain = true;
         if state.health <= 0.0 {
-            let tile = &mut game.world.tile_at_mut(*pos);
-            process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, pos);
-            tile.mid = TileId::EMPTY;
-            // If the mid is destroyed, the front content pops off as well
-            if !tile.fg.empty() {
-                process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, pos);
+            let tile = &mut game.world.tile_at_mut(key.pos);
+            match key.layer {
+                inventory::TileLayer::Bg => {
+                    tile.bg = TileId::EMPTY;
+                }
+                inventory::TileLayer::Mid => {
+                    process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, &key.pos);
+                    tile.mid = TileId::EMPTY;
+                    // If the mid is destroyed, the front content pops off as well
+                    if !tile.fg.empty() {
+                        process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, &key.pos);
+                    }
+                    tile.fg = TileId::EMPTY;
+                }
+                inventory::TileLayer::Fg => todo!(),
             }
-            tile.fg = TileId::EMPTY;
             retain = false;
         }
         retain

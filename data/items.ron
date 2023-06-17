@@ -9,9 +9,10 @@ ItemDb(
                 x: 4,
                 y: 4,
             ),
-            use_action: PlaceMidTile(
+            use1: PlaceMidTile(
                 id: TileId(1),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[1]*/ ItemDef(
@@ -21,9 +22,10 @@ ItemDb(
                 x: 10,
                 y: 5,
             ),
-            use_action: PlaceMidTile(
+            use1: PlaceMidTile(
                 id: TileId(3),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[2]*/ ItemDef(
@@ -33,9 +35,10 @@ ItemDb(
                 x: 4,
                 y: 17,
             ),
-            use_action: PlaceMidTile(
+            use1: PlaceMidTile(
                 id: TileId(4),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[3]*/ ItemDef(
@@ -45,9 +48,13 @@ ItemDb(
                 x: 5,
                 y: 4,
             ),
-            use_action: MineTile(
+            use1: MineTile(
                 power: 1.0,
                 delay: 35,
+            ),
+            use2: MineBgTile(
+                power: 1.0,
+                delay: 1,
             ),
             consumable: false,
         ),
@@ -58,9 +65,10 @@ ItemDb(
                 x: 4,
                 y: 4,
             ),
-            use_action: PlaceMidTile(
+            use1: PlaceMidTile(
                 id: TileId(5),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[5]*/ ItemDef(
@@ -70,9 +78,10 @@ ItemDb(
                 x: 4,
                 y: 4,
             ),
-            use_action: PlaceBgTile(
+            use1: PlaceBgTile(
                 id: TileId(2),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[6]*/ ItemDef(
@@ -82,9 +91,10 @@ ItemDb(
                 x: 4,
                 y: 4,
             ),
-            use_action: PlaceMidTile(
+            use1: PlaceMidTile(
                 id: TileId(2),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[7]*/ ItemDef(
@@ -94,9 +104,10 @@ ItemDb(
                 x: 8,
                 y: 7,
             ),
-            use_action: PlaceFgTile(
+            use1: PlaceFgTile(
                 id: TileId(1),
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[8]*/ ItemDef(
@@ -106,8 +117,12 @@ ItemDb(
                 x: 9,
                 y: 6,
             ),
-            use_action: MineTile(
+            use1: MineTile(
                 power: 1000.0,
+                delay: 1,
+            ),
+            use2: MineBgTile(
+                power: 1.0,
                 delay: 1,
             ),
             consumable: false,
@@ -119,10 +134,11 @@ ItemDb(
                 x: 5,
                 y: 12,
             ),
-            use_action: MineTile(
+            use1: MineTile(
                 power: 0.0,
                 delay: 0,
             ),
+            use2: Nothing,
             consumable: true,
         ),
         /*[10]*/ ItemDef(
@@ -132,10 +148,11 @@ ItemDb(
                 x: 4,
                 y: 12,
             ),
-            use_action: MineTile(
+            use1: MineTile(
                 power: 0.0,
                 delay: 0,
             ),
+            use2: Nothing,
             consumable: true,
         ),
     ],
