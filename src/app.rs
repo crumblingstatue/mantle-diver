@@ -223,6 +223,11 @@ impl App {
                     Key::F12 => self.debug.panel ^= true,
                     _ => {}
                 },
+                Event::GainedFocus => {
+                    // Keys can get "stuck" on focus change events like alt tab or maximize.
+                    // We solve this issue by clearing all keyboard state on focus gain
+                    self.input.clear_all_kbd();
+                }
                 _ => {}
             }
         }

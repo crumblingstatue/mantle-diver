@@ -109,6 +109,11 @@ impl Input {
     pub fn pressed(&self, action: InputAction) -> bool {
         self.pressed_raw(self.key_bindings[&action])
     }
+    /// Clear all keyboard state
+    pub(crate) fn clear_all_kbd(&mut self) {
+        self.down.clear();
+        self.pressed.clear();
+    }
 }
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
