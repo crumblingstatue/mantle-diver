@@ -12,13 +12,13 @@ fnv = "1.0.7"
 hecs = { version = "0.10.3", features = ["macros"] }
 num-traits = "0.2.15"
 rand = "0.8.5"
-rfd = "0.11.3"
+rfd = "0.11.4"
 rmp-serde = "1.1.1"
-serde = { version = "1.0.163", features = ["derive"] }
-log = "0.4.17"
+serde = { version = "1.0.164", features = ["derive"] }
+log = "0.4.19"
 env_logger = "0.10.0"
 zstd = "0.12.3"
-clap = { version = "4.2.7", default-features = false, features = [
+clap = { version = "4.3.4", default-features = false, features = [
     "std",
     "help",
     "derive",
