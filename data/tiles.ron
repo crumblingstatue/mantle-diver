@@ -312,18 +312,5 @@ TileDb(
                 id: 8,
             ),
         ),
-        /*[1]*/ TileDef(
-            light: None,
-            graphic_name: "tiles/grass",
-            layer: (),
-            neigh_aware: false,
-            draw_offs: ScreenVec(
-                x: 0,
-                y: 0,
-            ),
-            health: 10.0,
-            hit_sound: None,
-            item_drop: None,
-        ),
     ],
 )

@@ -157,7 +157,6 @@ impl MidTileId {
 
 impl FgTileId {
     pub const COAL: Self = Self(1, PhantomData);
-    pub const GRASS: Self = Self(2, PhantomData);
 }
 
 #[derive(Serialize, Deserialize)]

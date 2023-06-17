@@ -5,7 +5,7 @@ use crate::{
         UseAction::{self},
     },
     math::IntRect,
-    tiles::{BgTileId, FgTileId, MidTileId},
+    tiles::{BgTileId, MidTileId},
 };
 
 #[derive(Default)]
@@ -101,11 +101,6 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
             ui.selectable_value(use_field, v, text);
             let v = UseAction::PlaceMidTile {
                 id: MidTileId::DIRT,
-            };
-            let text = v.text();
-            ui.selectable_value(use_field, v, text);
-            let v = UseAction::PlaceFgTile {
-                id: FgTileId::GRASS,
             };
             let text = v.text();
             ui.selectable_value(use_field, v, text);
