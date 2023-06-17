@@ -65,8 +65,8 @@ impl SoundPlayer {
         let mut rng = thread_rng();
         sink.set_speed(rng.gen_range(0.94..=1.1));
         match aud.sounds.get(name) {
-            Some(name) => {
-                sink.append(Decoder::new(name.clone()).unwrap());
+            Some(data) => {
+                sink.append(Decoder::new(data.clone()).unwrap());
                 self.sounds.push_back(sink);
                 // Limit max number of sounds
                 if self.sounds.len() > 16 {
