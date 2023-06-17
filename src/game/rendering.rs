@@ -8,6 +8,7 @@ use {
         math::{WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
+        time::ticks_hm,
     },
     sfml::{
         graphics::{
@@ -374,6 +375,10 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
         }
         Err(_) => text.set_string("Not controlling anything"),
     }
+    rt.draw(&text);
+    text.set_position((0., 48.));
+    let (hh, mm) = ticks_hm(game.world.ticks);
+    text.set_string(&format!("Time: {hh:02}:{mm:02}"));
     rt.draw(&text);
     if game.player_en == hecs::Entity::DANGLING {
         text.set_character_size(30);

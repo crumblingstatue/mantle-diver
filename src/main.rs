@@ -39,6 +39,7 @@ mod save;
 mod stringfmt;
 mod texture_atlas;
 mod tiles;
+mod time;
 mod world;
 
 #[derive(Parser)]
