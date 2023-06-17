@@ -80,6 +80,8 @@ pub struct World {
 
 impl World {
     pub fn new(name: &str, path: PathBuf, seed: i32) -> Self {
+        // Ensure world dir exists, as chunks could be saved at any time during gameplay
+        std::fs::create_dir_all(&path).unwrap();
         Self {
             chunks: Default::default(),
             ticks: 8 * HOUR_IN_TICKS,
@@ -104,8 +106,6 @@ impl World {
         chk.at_mut(local)
     }
     pub fn save(&self) {
-        let result = std::fs::create_dir_all(&self.path);
-        log::info!("{result:?}");
         self.save_chunks();
     }
     pub fn save_chunks(&self) {

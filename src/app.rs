@@ -113,7 +113,7 @@ impl App {
                 .as_deref()
                 .unwrap_or(cfg.last_world.as_deref().unwrap_or("TestWorld"))
         };
-        let path = worlds_dir.join(wld_name);
+        let wld_path = worlds_dir.join(wld_name);
         let (stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
         let music_sink = rodio::Sink::try_new(&stream_handle).unwrap();
         music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
@@ -126,7 +126,7 @@ impl App {
         let mut this = Self {
             rw,
             should_quit: false,
-            game: GameState::new(wld_name.to_owned(), path, res),
+            game: GameState::new(wld_name.to_owned(), wld_path, res),
             sf_egui,
             input: Input::default(),
             debug,
