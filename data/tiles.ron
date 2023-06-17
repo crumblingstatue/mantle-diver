@@ -43,23 +43,6 @@ TileDb(
         hit_sound: None,
         item_drop: None,
     ),
-    unknown_fg: TileDef(
-        light: ScreenVec(
-            x: 0,
-            y: 0,
-        ),
-        graphic_name: "tiles/unknown_fg",
-        layer: (),
-        neigh_aware: false,
-        blend_list: [],
-        draw_offs: ScreenVec(
-            x: 0,
-            y: 0,
-        ),
-        health: 0.0,
-        hit_sound: None,
-        item_drop: None,
-    ),
     bg: [
         /*[0]*/ TileDef(
             light: None,
@@ -376,5 +359,4 @@ TileDb(
             ),
         ),
     ],
-    fg: [],
 )

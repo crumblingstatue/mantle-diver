@@ -1,5 +1,5 @@
 use {
-    super::{BgTileId, FgTileId, MidTileId},
+    super::{BgTileId, MidTileId},
     crate::{
         command::{Cmd, CmdVec},
         graphics::{ScreenSc, ScreenVec},
@@ -33,20 +33,11 @@ impl TileDbEdit {
                 ui.horizontal(|ui| {
                     ui.selectable_value(&mut self.layer, Layer::Bg, "Bg");
                     ui.selectable_value(&mut self.layer, Layer::Mid, "Mid");
-                    ui.selectable_value(&mut self.layer, Layer::Fg, "Fg");
                 });
                 ui.separator();
                 match self.layer {
                     Layer::Bg => db_ui(
                         &mut tile_db.bg,
-                        ui,
-                        &mut self.selected,
-                        item_db,
-                        atlas_size,
-                        cmd,
-                    ),
-                    Layer::Fg => db_ui(
-                        &mut tile_db.fg,
                         ui,
                         &mut self.selected,
                         item_db,
@@ -69,7 +60,6 @@ impl TileDbEdit {
 #[derive(Debug, PartialEq, Eq)]
 enum Layer {
     Bg,
-    Fg,
     Mid,
 }
 
@@ -80,7 +70,7 @@ impl Default for Layer {
 }
 
 use {
-    super::{Bg, Fg, Mid, TileDb, TileDef, TileLayer, DEFAULT_TILE_BB},
+    super::{Bg, Mid, TileDb, TileDef, TileLayer, DEFAULT_TILE_BB},
     crate::inventory::{ItemDb, ItemId},
 };
 
@@ -129,16 +119,6 @@ impl TileLayerExt for Mid {
             reason = "We don't expect to have more than 65535 tiles"
         )]
         cmd.push(Cmd::SetMidTileAtCursor(MidTileId::from_idx(idx as u16)));
-    }
-}
-
-impl TileLayerExt for Fg {
-    fn paint(idx: usize, cmd: &mut CmdVec) {
-        #[expect(
-            clippy::cast_possible_truncation,
-            reason = "We don't expect to have more than 65535 tiles"
-        )]
-        cmd.push(Cmd::SetFgTileAtCursor(FgTileId::from_idx(idx as u16)));
     }
 }
 

@@ -93,9 +93,6 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             Cmd::SetMidTileAtCursor(id) => {
                 app.game.world.tile_at_mut(app.last_mouse_tpos).mid = id;
             }
-            Cmd::SetFgTileAtCursor(id) => {
-                app.game.world.tile_at_mut(app.last_mouse_tpos).fg = id;
-            }
         }
     }
 }

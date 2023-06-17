@@ -3,7 +3,7 @@ use {
         config::ron_pretty_cfg,
         graphics::ScreenVec,
         math::{IntRect, TILE_SIZE},
-        tiles::{BgTileId, FgTileId, MidTileId},
+        tiles::{BgTileId, MidTileId},
     },
     serde::{Deserialize, Serialize},
 };
@@ -126,7 +126,6 @@ pub struct ItemDef {
 pub enum TileLayer {
     Bg,
     Mid,
-    Fg,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Default)]
@@ -138,9 +137,6 @@ pub enum UseAction {
     },
     PlaceMidTile {
         id: MidTileId,
-    },
-    PlaceFgTile {
-        id: FgTileId,
     },
     RemoveTile {
         layer: TileLayer,

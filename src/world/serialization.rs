@@ -44,7 +44,6 @@ pub(super) fn save_chunk(pos: &ChunkPos, chk: &Chunk, world_dir: &Path) {
         let off = byte_idx + (i * TILE_BYTES);
         region_tile_data[off..off + 2].copy_from_slice(&tile.bg.0.to_le_bytes());
         region_tile_data[off + 2..off + 4].copy_from_slice(&tile.mid.0.to_le_bytes());
-        region_tile_data[off + 4..off + 6].copy_from_slice(&tile.fg.0.to_le_bytes());
     }
     f.rewind().unwrap();
     f.write_all(&u64::to_le_bytes(existence_bitset.0)[..])
@@ -67,7 +66,6 @@ impl Chunk {
             let off = byte_idx + (i * TILE_BYTES);
             t.bg.0 = u16::from_le_bytes(data[off..off + 2].try_into().unwrap());
             t.mid.0 = u16::from_le_bytes(data[off + 2..off + 4].try_into().unwrap());
-            t.fg.0 = u16::from_le_bytes(data[off + 4..off + 6].try_into().unwrap());
         }
         Self { tiles }
     }

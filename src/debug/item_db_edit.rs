@@ -119,15 +119,10 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
             ui.label("Tile to place");
             ui.add(egui::DragValue::new(&mut id.0));
         }
-        UseAction::PlaceFgTile { id } => {
-            ui.label("Tile to place");
-            ui.add(egui::DragValue::new(&mut id.0));
-        }
         UseAction::RemoveTile { layer } => {
             ui.label("Layer to remove");
             ui.selectable_value(layer, TileLayer::Bg, "Bg");
             ui.selectable_value(layer, TileLayer::Mid, "Mid");
-            ui.selectable_value(layer, TileLayer::Fg, "Fg");
         }
         UseAction::MineTile { power, delay } => {
             ui.label("Power");
@@ -150,7 +145,6 @@ impl UseAction {
         match self {
             UseAction::PlaceBgTile { .. } => "Place bg tile",
             UseAction::PlaceMidTile { .. } => "Place mid tile",
-            UseAction::PlaceFgTile { .. } => "Place fg tile",
             UseAction::RemoveTile { .. } => "Remove tile",
             UseAction::MineTile { .. } => "Mine tile",
             UseAction::MineBgTile { .. } => "Mine bg tile",

@@ -137,23 +137,6 @@ pub(crate) fn draw_world(
                     (tx, ty + th).into(),
                 ));
             }
-            if !tile.fg.empty() {
-                let def = &game.tile_db[tile.fg];
-                let x = x + f32::from(def.draw_offs.x);
-                let y = y + f32::from(def.draw_offs.y);
-                let tx = def.tex_rect.x as f32;
-                let ty = def.tex_rect.y as f32;
-                let tw = def.tex_rect.w as f32;
-                let th = def.tex_rect.h as f32;
-                verts.push(Vertex::new((x, y).into(), color, (tx, ty).into()));
-                verts.push(Vertex::new((x + tw, y).into(), color, (tx + tw, ty).into()));
-                verts.push(Vertex::new(
-                    (x + tw, y + th).into(),
-                    color,
-                    (tx + tw, ty + th).into(),
-                ));
-                verts.push(Vertex::new((x, y + th).into(), color, (tx, ty + th).into()));
-            }
         },
     );
     let mut rs = RenderStates::DEFAULT;

@@ -51,8 +51,6 @@ impl<Layer> TileId<Layer> {
 pub enum Bg {}
 #[derive(Debug)]
 pub enum Mid {}
-#[derive(Debug)]
-pub enum Fg {}
 
 impl Bg {
     pub fn unknown_def() -> TileDef<Self> {
@@ -101,24 +99,6 @@ pub struct TileItemDrop {
     pub qty_range: RangeInclusive<u8>,
     pub id: ItemId,
 }
-
-impl Fg {
-    pub fn unknown_def() -> TileDef<Self> {
-        TileDef {
-            light: Some(ScreenVec { x: 0, y: 0 }),
-            graphic_name: String::from("tiles/unknown_fg"),
-            tex_rect: IntRect::default(),
-            draw_offs: ScreenVec::default(),
-            layer: (),
-            neigh_aware: false,
-            health: 10.0,
-            hit_sound: None,
-            item_drop: None,
-            blend_list: vec![],
-        }
-    }
-}
-
 pub trait TileLayer {
     /// Definitions specific to this layer
     type SpecificDef;
@@ -135,14 +115,8 @@ impl TileLayer for Mid {
     const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Mid;
 }
 
-impl TileLayer for Fg {
-    type SpecificDef = ();
-    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Fg;
-}
-
 pub type BgTileId = TileId<Bg>;
 pub type MidTileId = TileId<Mid>;
-pub type FgTileId = TileId<Fg>;
 
 impl BgTileId {
     pub const DIRT: Self = Self(1, PhantomData);
@@ -245,10 +219,8 @@ pub struct TileBb {
 pub struct TileDb {
     unknown_bg: TileDef<Bg>,
     unknown_mid: TileDef<Mid>,
-    unknown_fg: TileDef<Fg>,
     bg: Vec<TileDef<Bg>>,
     mid: Vec<TileDef<Mid>>,
-    fg: Vec<TileDef<Fg>>,
 }
 
 impl Default for TileDb {
@@ -256,10 +228,8 @@ impl Default for TileDb {
         Self {
             unknown_bg: Bg::unknown_def(),
             unknown_mid: Mid::unknown_def(),
-            unknown_fg: Fg::unknown_def(),
             bg: vec![],
             mid: vec![],
-            fg: vec![],
         }
     }
 }
@@ -283,17 +253,6 @@ impl Index<MidTileId> for TileDb {
         self.mid
             .get(index.0 as usize - 1)
             .unwrap_or(&self.unknown_mid)
-    }
-}
-
-impl Index<FgTileId> for TileDb {
-    type Output = TileDef<Fg>;
-
-    fn index(&self, index: FgTileId) -> &Self::Output {
-        assert!(index.0 != 0);
-        self.fg
-            .get(index.0 as usize - 1)
-            .unwrap_or(&self.unknown_fg)
     }
 }
 
@@ -328,10 +287,8 @@ impl TileDb {
     pub(crate) fn update_rects(&mut self, rects: &RectMap) {
         update_rect_def(&mut self.unknown_bg, rects);
         update_rect_def(&mut self.unknown_mid, rects);
-        update_rect_def(&mut self.unknown_fg, rects);
         update_rect_db(&mut self.bg, rects);
         update_rect_db(&mut self.mid, rects);
-        update_rect_db(&mut self.fg, rects);
     }
 }
 

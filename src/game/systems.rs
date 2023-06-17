@@ -120,17 +120,9 @@ fn do_use_action(
                 *last_tile_place = ticks;
             }
         }
-        UseAction::PlaceFgTile { id } => {
-            if t.fg.empty() && ticks - *last_tile_place > tile_place_cooldown {
-                t.fg = *id;
-                active_slot.qty -= 1;
-                *last_tile_place = ticks;
-            }
-        }
         UseAction::RemoveTile { layer } => match layer {
             inventory::TileLayer::Bg => t.bg = TileId::EMPTY,
             inventory::TileLayer::Mid => t.mid = TileId::EMPTY,
-            inventory::TileLayer::Fg => t.fg = TileId::EMPTY,
         },
         UseAction::MineTile { power, delay } => {
             mine_tile(
@@ -494,13 +486,7 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
                 inventory::TileLayer::Mid => {
                     process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, &key.pos);
                     tile.mid = TileId::EMPTY;
-                    // If the mid is destroyed, the front content pops off as well
-                    if !tile.fg.empty() {
-                        process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.fg, &key.pos);
-                    }
-                    tile.fg = TileId::EMPTY;
                 }
-                inventory::TileLayer::Fg => todo!(),
             }
             retain = false;
         }

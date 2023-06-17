@@ -1,6 +1,6 @@
 use crate::{
     math::WorldPos,
-    tiles::{BgTileId, FgTileId, MidTileId},
+    tiles::{BgTileId, MidTileId},
 };
 
 /// A command that can change application or game state
@@ -23,7 +23,6 @@ pub enum Cmd {
     ReloadGraphics,
     SetBgTileAtCursor(BgTileId),
     SetMidTileAtCursor(MidTileId),
-    SetFgTileAtCursor(FgTileId),
     TeleportCursor,
     HurtCtrlEn(f32),
 }

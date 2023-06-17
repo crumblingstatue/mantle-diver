@@ -7,7 +7,7 @@ mod serialization;
 use {
     self::serialization::save_chunk,
     crate::{
-        tiles::{BgTileId, FgTileId, MidTileId, TileId},
+        tiles::{BgTileId, MidTileId, TileId},
         world::reg_chunk_existence::ExistenceBitset,
     },
     std::{
@@ -261,7 +261,6 @@ fn default_chunk_tiles() -> ChunkTiles {
     [Tile {
         bg: TileId::EMPTY,
         mid: TileId::EMPTY,
-        fg: TileId::EMPTY,
     }; CHUNK_N_TILES]
 }
 
@@ -311,8 +310,6 @@ pub struct Tile {
     pub bg: BgTileId,
     /// The solid wall on the same level as entities
     pub mid: MidTileId,
-    /// A layer on top of the mid wall. Usually ores or decorative pieces.
-    pub fg: FgTileId,
 }
 
 pub const REGION_CHUNK_EXTENT: u8 = 8;
