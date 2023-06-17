@@ -205,6 +205,12 @@ impl TilePos {
             self.y as i32 * i32::from(TILE_SIZE),
         )
     }
+    /// Vertical surface level.
+    /// You can build roughly 21 km high.
+    /// This configuration allows for:
+    /// - The player being able to reach 20 kms high comfortably
+    /// - Reaching 100 kms deep with a comfortable buffer zone until bottom boundary
+    pub const SURFACE: TPosSc = 42_000;
 }
 
 #[expect(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]

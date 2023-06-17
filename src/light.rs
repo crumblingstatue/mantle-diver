@@ -3,7 +3,7 @@ use {
         game::GameState,
         math::{WPosSc, TILE_SIZE},
         tiles::MidTileId,
-        world::TPosSc,
+        world::{TPosSc, TilePos},
     },
     fnv::FnvHashSet,
     sfml::system::Vector2u,
@@ -137,8 +137,17 @@ pub(crate) fn enumerate_light_sources(
     let mut y = 0;
     loop {
         let t = game.world.tile_at_mut(tp);
+        let underground = tp.y > TilePos::SURFACE + 100;
         let empty = t.bg.empty() && t.mid.empty();
-        let intensity = if empty { game.ambient_light } else { 255 };
+        let intensity = if empty {
+            if underground {
+                0
+            } else {
+                game.ambient_light
+            }
+        } else {
+            255
+        };
         let ls = t.mid == MidTileId::TORCH || empty;
         if ls {
             light_state.light_sources.push_back(LightSrc {
