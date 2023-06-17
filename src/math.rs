@@ -266,3 +266,22 @@ pub fn point_within_circle(cx: i64, cy: i64, radius: i64, x: i64, y: i64) -> boo
     let radius_squared = radius.pow(2);
     distance_squared <= radius_squared
 }
+
+/// Returns (hspeed, vspeed) necessary to move from (src_x, src_y) towards (dst_x, dst_y)
+/// at `speed`.
+pub fn move_towards_hspeed_vspeed(
+    src_x: i32,
+    src_y: i32,
+    dst_x: i32,
+    dst_y: i32,
+    speed: f32,
+) -> (f32, f32) {
+    let dx = dst_x - src_x;
+    let dy = dst_y - src_y;
+
+    let distance = ((dx * dx + dy * dy) as f32).sqrt();
+    let hspeed = speed * dx as f32 / distance;
+    let vspeed = speed * dy as f32 / distance;
+
+    (hspeed, vspeed)
+}

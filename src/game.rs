@@ -56,6 +56,7 @@ pub struct GameState {
     // Respawn timer for player
     pub respawn_timer: u32,
     pub tile_interact_radius: u16,
+    pub item_pickup_radius: u16,
 }
 
 #[derive(Debug)]
@@ -137,6 +138,7 @@ impl GameState {
             event_buf: Default::default(),
             respawn_timer: 0,
             tile_interact_radius: 100,
+            item_pickup_radius: 80,
             recipe_db: RecipeDb::load_or_default("data"),
         }
     }

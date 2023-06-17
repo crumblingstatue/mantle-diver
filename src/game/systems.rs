@@ -425,8 +425,18 @@ pub(super) fn item_drop_claim_system(game: &mut GameState, snd: &mut SoundPlayer
         log::error!("No player");
         return;
     };
+    DBG_OVR.push(DbgOvr::WldCircle {
+        pos: plr_mov.world_pos(),
+        radius: game.item_pickup_radius,
+        c: Color::YELLOW,
+    });
     for (en, (id, mov)) in game.ecw.query::<(&ItemId, &mut MovingEnt)>().iter() {
+        // Horizontal friction
         step_towards(&mut mov.hspeed, 0.0, 0.03);
+        // "Magnetism" behavior when player is close to an item drop
+        if mov.within_radius_of_other(plr_mov, game.item_pickup_radius) {
+            mov.move_towards_other(plr_mov, 4.0);
+        }
         #[expect(clippy::collapsible_if)]
         if plr_mov.mob.en.collides(&mov.mob.en) {
             if game.inventory.add(*id, 1) {

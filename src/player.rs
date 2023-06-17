@@ -1,5 +1,9 @@
 use {
-    crate::{math::WorldPos, save::Rgb, stringfmt::LengthDisp},
+    crate::{
+        math::{move_towards_hspeed_vspeed, point_within_circle, WPosSc, WorldPos},
+        save::Rgb,
+        stringfmt::LengthDisp,
+    },
     s2dc::{vec2, MobileEntity},
     sfml::graphics::Color,
 };
@@ -60,6 +64,36 @@ impl MovingEnt {
     }
     pub fn depth_disp(&self) -> LengthDisp {
         LengthDisp(self.feet_y() as f32 - WorldPos::SURFACE as f32)
+    }
+    /// Returns whether this moving entity is within the provided radius of another.
+    pub(crate) fn within_radius_of_other(&self, other: &MovingEnt, radius: u16) -> bool {
+        point_within_circle(
+            i64::from(other.mob.en.pos.x),
+            i64::from(other.mob.en.pos.y),
+            i64::from(radius),
+            i64::from(self.mob.en.pos.x),
+            i64::from(self.mob.en.pos.y),
+        )
+    }
+
+    pub(crate) fn move_towards_other(&mut self, other: &MovingEnt, speed: f32) {
+        (self.hspeed, self.vspeed) = move_towards_hspeed_vspeed(
+            self.mob.en.pos.x,
+            self.mob.en.pos.y,
+            other.mob.en.pos.x,
+            other.mob.en.pos.y,
+            speed,
+        );
+    }
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "Entity coordinates are kept positive"
+    )]
+    pub(crate) fn world_pos(&self) -> WorldPos {
+        WorldPos {
+            x: self.mob.en.pos.x as WPosSc,
+            y: self.mob.en.pos.y as WPosSc,
+        }
     }
 }
 
