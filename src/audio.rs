@@ -1,5 +1,6 @@
 use {
     crate::res::ResAudio,
+    rand::{thread_rng, Rng},
     rodio::{Decoder, OutputStreamHandle},
     std::collections::VecDeque,
 };
@@ -47,6 +48,8 @@ impl SoundPlayer {
     }
     pub fn play(&mut self, aud: &ResAudio, name: &str) {
         let sink = rodio::Sink::try_new(&self.stream_handle).unwrap();
+        let mut rng = thread_rng();
+        sink.set_speed(rng.gen_range(0.94..=1.1));
         match aud.sounds.get(name) {
             Some(name) => {
                 sink.append(Decoder::new(name.clone()).unwrap());
