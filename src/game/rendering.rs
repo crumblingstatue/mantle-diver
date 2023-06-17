@@ -1,5 +1,5 @@
 use {
-    super::{for_each_tile_on_screen, GameState, SfVec2fExt, TilestateKey},
+    super::{for_each_tile_on_screen, Biome, GameState, SfVec2fExt, TilestateKey},
     crate::{
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
@@ -48,10 +48,14 @@ pub(crate) fn draw_world(
     res: &mut Res,
 ) {
     verts.clear();
-    let mut s = Sprite::with_texture(&res.forest_bg);
-    s.fit_to_size(rt.size().as_other());
-    rt.draw(&s);
-    drop(s);
+    match game.current_biome {
+        Biome::Surface => {
+            let mut s = Sprite::with_texture(&res.forest_bg);
+            s.fit_to_size(rt.size().as_other());
+            rt.draw(&s);
+        }
+        Biome::Underground => rt.clear(Color::rgb(0, 10, 30)),
+    }
     for_each_tile_on_screen(
         game.camera_offset,
         ScreenVec::from_sf_resolution(rt.size()),
