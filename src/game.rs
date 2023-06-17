@@ -1,5 +1,5 @@
 use {
-    self::{events::EventBuf, systems::Menu},
+    self::{events::EventBuf, systems::pause_menu::Menu},
     crate::{
         audio::AudioCtx,
         char::CharDb,
@@ -175,7 +175,7 @@ impl GameState {
         }
         systems::general_input_system(self, input);
         if self.menu.open {
-            systems::pause_menu_system(self, input, cmd, worlds_dir);
+            systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir);
             return;
         }
         if self.paused {
