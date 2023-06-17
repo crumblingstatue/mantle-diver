@@ -126,7 +126,7 @@ impl GameState {
             gravity: 0.55,
             current_biome: Biome::Surface,
             prev_biome: Biome::Surface,
-            ambient_light: 0,
+            ambient_light: 128,
             tile_db,
             inventory,
             itemdb,

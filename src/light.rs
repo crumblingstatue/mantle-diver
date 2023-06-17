@@ -137,11 +137,13 @@ pub(crate) fn enumerate_light_sources(
     let mut y = 0;
     loop {
         let t = game.world.tile_at_mut(tp);
-        let ls = t.mid == MidTileId::TORCH || (t.bg.empty() && t.mid.empty());
+        let empty = t.bg.empty() && t.mid.empty();
+        let intensity = if empty { game.ambient_light } else { 255 };
+        let ls = t.mid == MidTileId::TORCH || empty;
         if ls {
             light_state.light_sources.push_back(LightSrc {
                 map_idx: i,
-                intensity: 255,
+                intensity,
             });
         }
         let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
