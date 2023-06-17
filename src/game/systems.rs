@@ -1,7 +1,8 @@
 use {
     super::{events::Event, Biome, GameState, TransientTileState, TransientTileStates},
     crate::{
-        app::{SoundPlayer, TileColEn},
+        app::TileColEn,
+        audio::AudioCtx,
         command::{Cmd, CmdVec},
         debug::{DbgOvr, DebugState, DBG_OVR},
         graphics::ScreenVec,
@@ -16,7 +17,6 @@ use {
         world::{TilePos, World},
     },
     rand::{seq::SliceRandom, thread_rng, Rng},
-    rodio::Decoder,
     sfml::{graphics::Color, window::Key},
     std::{ops::Index, path::Path},
 };
@@ -25,8 +25,8 @@ pub(super) fn item_use_system(
     game: &mut GameState,
     input: &Input,
     mouse_tpos: TilePos,
-    aud: &ResAudio,
-    snd: &mut SoundPlayer,
+    au_res: &ResAudio,
+    au_ctx: &mut AudioCtx,
     mouse_wpos: WorldPos,
 ) {
     let Ok(mov) = game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) else {
@@ -77,8 +77,8 @@ pub(super) fn item_use_system(
         tile_place_cooldown,
         active_slot,
         mouse_tpos,
-        snd,
-        aud,
+        au_ctx,
+        au_res,
         &mut game.last_tile_place,
         &mut game.last_mine_attempt,
         &mut game.transient_tile_states,
@@ -98,8 +98,8 @@ fn do_use_action(
     tile_place_cooldown: u64,
     active_slot: &mut inventory::ItemStack,
     mouse_tpos: TilePos,
-    snd: &mut SoundPlayer,
-    aud: &ResAudio,
+    au_ctx: &mut AudioCtx,
+    au_res: &ResAudio,
     last_tile_place: &mut u64,
     last_mine_attempt: &mut u64,
     transient_block_states: &mut TransientTileStates,
@@ -131,8 +131,8 @@ fn do_use_action(
                 delay,
                 mouse_tpos,
                 power,
-                snd,
-                aud,
+                au_ctx,
+                au_res,
                 last_mine_attempt,
                 transient_block_states,
                 tile_db,
@@ -145,8 +145,8 @@ fn do_use_action(
                 delay,
                 mouse_tpos,
                 power,
-                snd,
-                aud,
+                au_ctx,
+                au_res,
                 last_mine_attempt,
                 transient_block_states,
                 tile_db,
@@ -163,8 +163,8 @@ fn mine_tile<L: TileLayer>(
     delay: &u64,
     mouse_tpos: TilePos,
     power: &f32,
-    snd: &mut SoundPlayer,
-    aud: &ResAudio,
+    au_ctx: &mut AudioCtx,
+    au_res: &ResAudio,
     last_mine_attempt: &mut u64,
     transient_block_states: &mut TransientTileStates,
     tile_db: &TileDb,
@@ -193,7 +193,7 @@ fn mine_tile<L: TileLayer>(
     state.scale = *[min_scale, max_scale].choose(&mut rng).unwrap();
     state.health -= power;
     if let Some(hit_snd) = &tdef.hit_sound {
-        snd.play(aud, hit_snd);
+        au_ctx.plr.play(au_res, hit_snd);
     }
     *last_mine_attempt = ticks;
 }
@@ -359,7 +359,7 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
     ents
 }
 
-pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::Sink, res: &Res) {
+pub(super) fn biome_watch_system(game: &mut GameState, au_ctx: &mut AudioCtx, res: &Res) {
     let depth = world_y_depth(game.camera_offset.y);
     let depth_tiles = depth / i32::from(TILE_SIZE);
     if depth_tiles > 70 {
@@ -371,18 +371,10 @@ pub(super) fn biome_watch_system(game: &mut GameState, music_sink: &mut rodio::S
         game.prev_biome = game.current_biome;
         match game.current_biome {
             Biome::Surface => {
-                if !music_sink.empty() {
-                    music_sink.clear();
-                }
-                music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
-                music_sink.play();
+                au_ctx.play_music(&res.surf_music);
             }
             Biome::Underground => {
-                if !music_sink.empty() {
-                    music_sink.clear();
-                }
-                music_sink.append(Decoder::new_looped(res.und_music.clone()).unwrap());
-                music_sink.play();
+                au_ctx.play_music(&res.und_music);
             }
         }
     }
@@ -494,7 +486,11 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
     });
 }
 /// Claim item drops player contacts with
-pub(super) fn item_drop_claim_system(game: &mut GameState, snd: &mut SoundPlayer, aud: &ResAudio) {
+pub(super) fn item_drop_claim_system(
+    game: &mut GameState,
+    au_ctx: &mut AudioCtx,
+    au_res: &ResAudio,
+) {
     let Ok(mut plr_query) = game.ecw.query_one::<&MovingEnt>(game.player_en) else {
         log::error!("No player query to run item drop claim system on");
         return;
@@ -518,7 +514,7 @@ pub(super) fn item_drop_claim_system(game: &mut GameState, snd: &mut SoundPlayer
         #[expect(clippy::collapsible_if)]
         if plr_mov.mob.en.collides(&mov.mob.en) {
             if game.inventory.add(*id, 1) {
-                snd.play(aud, "etc/pickup");
+                au_ctx.plr.play(au_res, "etc/pickup");
                 game.ecb.despawn(en);
             }
         }

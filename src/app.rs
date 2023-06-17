@@ -1,5 +1,6 @@
 use {
     crate::{
+        audio::AudioCtx,
         command::CmdVec,
         config::Config,
         debug::{self, DebugState, DBG_OVR},
@@ -19,7 +20,6 @@ use {
     egui_sfml::{SfEgui, UserTexSource},
     gamedebug_core::{imm, imm_dbg},
     rand::{thread_rng, Rng},
-    rodio::{Decoder, OutputStreamHandle},
     sfml::{
         graphics::{
             BlendMode, Color, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
@@ -46,46 +46,13 @@ pub struct App {
     pub project_dirs: ProjectDirs,
     pub cmdvec: CmdVec,
     worlds_dir: std::path::PathBuf,
-    pub snd: SoundPlayer,
     pub cfg: Config,
     /// Last computed mouse tile position
     pub last_mouse_tpos: TilePos,
-    pub music_sink: rodio::Sink,
-    pub stream: rodio::OutputStream,
-    pub stream_handle: rodio::OutputStreamHandle,
     pub light_state: LightState,
     pub tiles_on_screen: U16Vec,
     pub render: RenderState,
-}
-
-pub struct SoundPlayer {
-    sounds: VecDeque<rodio::Sink>,
-    stream_handle: OutputStreamHandle,
-}
-
-impl SoundPlayer {
-    pub fn new(stream: OutputStreamHandle) -> Self {
-        Self {
-            sounds: Default::default(),
-            stream_handle: stream,
-        }
-    }
-    pub fn play(&mut self, aud: &ResAudio, name: &str) {
-        let sink = rodio::Sink::try_new(&self.stream_handle).unwrap();
-        match aud.sounds.get(name) {
-            Some(name) => {
-                sink.append(Decoder::new(name.clone()).unwrap());
-                self.sounds.push_back(sink);
-                // Limit max number of sounds
-                if self.sounds.len() > 16 {
-                    self.sounds.pop_front();
-                }
-            }
-            None => {
-                log::error!("No such sound: {name}");
-            }
-        }
-    }
+    pub aud: AudioCtx,
 }
 
 impl App {
@@ -114,10 +81,8 @@ impl App {
                 .unwrap_or(cfg.last_world.as_deref().unwrap_or("TestWorld"))
         };
         let wld_path = worlds_dir.join(wld_name);
-        let (stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
-        let music_sink = rodio::Sink::try_new(&stream_handle).unwrap();
-        music_sink.append(Decoder::new_looped(res.surf_music.clone()).unwrap());
-        music_sink.play();
+        let aud = AudioCtx::new();
+        aud.play_music(&res.surf_music);
         let mut debug = DebugState::default();
         if args.debug {
             debug.dbg_overlay = true;
@@ -139,18 +104,15 @@ impl App {
             project_dirs,
             cmdvec: CmdVec::default(),
             worlds_dir,
-            snd: SoundPlayer::new(stream_handle.clone()),
             cfg,
             last_mouse_tpos: TilePos { x: 0, y: 0 },
-            music_sink,
-            stream,
-            stream_handle,
             tiles_on_screen: U16Vec::default(),
             render: RenderState {
                 light_blend_rt: light_blend_tex,
                 vert_array: Vec::new(),
                 rt,
             },
+            aud,
         };
         this.adapt_to_window_size_and_scale(ScreenVec::from_sf_resolution(rw_size));
         Ok(this)
@@ -291,9 +253,8 @@ impl App {
             mouse_world_pos,
             mouse_tpos,
             rt_size,
-            &mut self.music_sink,
             res,
-            &mut self.snd,
+            &mut self.aud,
             aud,
             &mut self.cmdvec,
             &self.worlds_dir,

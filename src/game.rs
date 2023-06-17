@@ -1,7 +1,7 @@
 use {
     self::{events::EventBuf, systems::Menu},
     crate::{
-        app::SoundPlayer,
+        audio::AudioCtx,
         char::CharDb,
         command::CmdVec,
         crafting::RecipeDb,
@@ -160,10 +160,9 @@ impl GameState {
         mouse_wpos: WorldPos,
         mouse_tpos: TilePos,
         rt_size: Vector2u,
-        music_sink: &mut rodio::Sink,
         res: &Res,
-        snd: &mut SoundPlayer,
-        aud: &ResAudio,
+        au_ctx: &mut AudioCtx,
+        au_res: &ResAudio,
         cmd: &mut CmdVec,
         worlds_dir: &Path,
     ) {
@@ -193,15 +192,15 @@ impl GameState {
             systems::move_control_system(self, input);
         }
         systems::move_system(self, ScreenVec::from_sf_resolution(rt_size), debug);
-        systems::item_use_system(self, input, mouse_tpos, aud, snd, mouse_wpos);
-        systems::biome_watch_system(self, music_sink, res);
+        systems::item_use_system(self, input, mouse_tpos, au_res, au_ctx, mouse_wpos);
+        systems::biome_watch_system(self, au_ctx, res);
         systems::inventory_input_system(self, input);
-        systems::item_drop_claim_system(self, snd, aud);
+        systems::item_drop_claim_system(self, au_ctx, au_res);
         systems::transient_blocks_system(self);
         systems::health_system(self);
         self.world.ticks += 1;
         let ev_buf = std::mem::take(&mut self.event_buf);
-        events::process_events(self, ev_buf, snd, aud);
+        events::process_events(self, ev_buf, au_ctx, au_res);
     }
 }
 
