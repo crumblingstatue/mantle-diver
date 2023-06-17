@@ -99,14 +99,12 @@ ItemDb(
         ),
         /*[7]*/ ItemDef(
             name: "Coal ",
-            graphic_name: "tiles/coal",
+            graphic_name: "items/coal",
             draw_off: ScreenVec(
                 x: 8,
                 y: 7,
             ),
-            use1: PlaceFgTile(
-                id: TileId(1),
-            ),
+            use1: Nothing,
             use2: Nothing,
             consumable: true,
         ),

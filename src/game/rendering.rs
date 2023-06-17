@@ -85,10 +85,18 @@ pub(crate) fn draw_world(
                 } else {
                     rect.width = i32::from(TILE_SIZE);
                     rect.height = i32::from(TILE_SIZE);
-                    let left = game.world.tile_at_mut(tp.x_off(-1)).mid == tile.mid;
-                    let right = game.world.tile_at_mut(tp.x_off(1)).mid == tile.mid;
-                    let above = game.world.tile_at_mut(tp.y_off(-1)).mid == tile.mid;
-                    let below = game.world.tile_at_mut(tp.y_off(1)).mid == tile.mid;
+                    let left = def
+                        .blend_list
+                        .contains(&game.world.tile_at_mut(tp.x_off(-1)).mid.0);
+                    let right = def
+                        .blend_list
+                        .contains(&game.world.tile_at_mut(tp.x_off(1)).mid.0);
+                    let above = def
+                        .blend_list
+                        .contains(&game.world.tile_at_mut(tp.y_off(-1)).mid.0);
+                    let below = def
+                        .blend_list
+                        .contains(&game.world.tile_at_mut(tp.y_off(1)).mid.0);
                     adjust_blend_rect(&mut rect, left, right, above, below);
                     rect
                 };

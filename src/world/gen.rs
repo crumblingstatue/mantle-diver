@@ -2,7 +2,7 @@ use {
     super::{Chunk, ChunkPos},
     crate::{
         math::{WorldPos, TILE_SIZE},
-        tiles::{BgTileId, FgTileId, MidTileId},
+        tiles::{BgTileId, MidTileId},
         world::{default_chunk_tiles, CHUNK_EXTENT, CHUNK_N_TILES},
     },
     simdnoise::NoiseBuilder,
@@ -59,7 +59,7 @@ impl Chunk {
                 if y == ceil {
                     //t.fg = FgTileId::GRASS; // Removed for now
                 } else if y > ceil + 2 && noise as i32 % 37 == 0 {
-                    t.fg = FgTileId::COAL;
+                    t.mid = MidTileId::DIRT_COAL;
                 }
                 continue;
             }
@@ -73,7 +73,7 @@ impl Chunk {
                 t.bg = BgTileId::DIRT;
             }
             if noise < 40. {
-                t.fg = FgTileId::COAL;
+                t.mid = MidTileId::STONE_COAL;
             }
         }
         Self { tiles }

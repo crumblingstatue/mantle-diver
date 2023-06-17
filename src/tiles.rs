@@ -66,6 +66,7 @@ impl Bg {
             health: 10.0,
             hit_sound: None,
             item_drop: None,
+            blend_list: vec![],
         }
     }
 }
@@ -90,6 +91,7 @@ impl Mid {
             health: 10.0,
             hit_sound: None,
             item_drop: None,
+            blend_list: vec![],
         }
     }
 }
@@ -112,6 +114,7 @@ impl Fg {
             health: 10.0,
             hit_sound: None,
             item_drop: None,
+            blend_list: vec![],
         }
     }
 }
@@ -153,10 +156,8 @@ impl MidTileId {
     pub const TREE: Self = Self(6, PhantomData);
     pub const SMALL_ROCK: Self = Self(7, PhantomData);
     pub const STICK: Self = Self(8, PhantomData);
-}
-
-impl FgTileId {
-    pub const COAL: Self = Self(1, PhantomData);
+    pub const DIRT_COAL: Self = Self(9, PhantomData);
+    pub const STONE_COAL: Self = Self(10, PhantomData);
 }
 
 #[derive(Serialize, Deserialize)]
@@ -170,6 +171,9 @@ pub struct TileDef<Layer: TileLayer> {
     /// Neighbour aware tile, 4x4 tileset, select based on
     /// neighbouring tiles
     pub neigh_aware: bool,
+    /// What tiles this tile can blend with
+    #[serde(default)]
+    pub blend_list: Vec<u16>,
     pub draw_offs: ScreenVec,
     /// Starting (and maximum) health of a tile.
     /// If it reaches zero, the tile gets destroyed.
@@ -217,6 +221,7 @@ where
             health: 10.0,
             hit_sound: None,
             item_drop: None,
+            blend_list: vec![],
         }
     }
 }

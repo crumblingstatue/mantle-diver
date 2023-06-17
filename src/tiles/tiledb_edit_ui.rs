@@ -186,6 +186,22 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
             ui.label("y");
             ui.add(egui::DragValue::new(&mut def.draw_offs.y));
         });
+        ui.horizontal(|ui| {
+            ui.label("Blend list");
+            if ui.button("✚").clicked() {
+                def.blend_list.push(0);
+            }
+        });
+        def.blend_list.retain_mut(|id| {
+            let mut retain = true;
+            ui.horizontal(|ui| {
+                ui.add(egui::DragValue::new(id));
+                if ui.button("➖").clicked() {
+                    retain = false;
+                }
+            });
+            retain
+        });
         match &mut def.light {
             Some(light) => {
                 ui.horizontal(|ui| {
