@@ -35,7 +35,10 @@ pub(super) fn save_chunk(pos: &ChunkPos, chk: &Chunk, world_dir: &Path) {
         vec![0; REGION_BYTES]
     };
     // Even the zstd decompressed data should be exactly REGION_BYTES size
-    assert_eq!(region_tile_data.len(), REGION_BYTES);
+    if region_tile_data.len() != REGION_BYTES {
+        log::error!("Failed to save chunk: Region tile data length is not REGION_BYTES");
+        return;
+    }
     let (loc_x, loc_y) = pos.local();
     let loc_idx = loc_idx(loc_y, loc_x);
     crate::bitmanip::set_nth_bit(&mut existence_bitset.0, loc_idx as usize, true);

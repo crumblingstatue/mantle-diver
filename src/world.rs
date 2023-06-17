@@ -137,7 +137,7 @@ fn format_reg_file_name((x, y): (u8, u8)) -> String {
 }
 
 const CHUNK_BYTES: usize = CHUNK_N_TILES * TILE_BYTES;
-const TILE_BYTES: usize = 3 * 2;
+const TILE_BYTES: usize = 2 * 2;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct TilePos {
@@ -280,7 +280,12 @@ impl Chunk {
             log::info!("Existence bitset: {bitset:?}");
             assert_eq!(f.stream_position().unwrap(), 8);
             let decomp_data = zstd::decode_all(f).unwrap();
-            assert_eq!(decomp_data.len(), REGION_BYTES);
+            if decomp_data.len() != REGION_BYTES {
+                log::error!("Decompressed data length different than REGION_BYTES");
+                return Self {
+                    tiles: default_chunk_tiles(),
+                };
+            }
             let local_pos = chk.local();
             Chunk::load_from_region(&decomp_data, local_pos.0, local_pos.1)
         } else {
