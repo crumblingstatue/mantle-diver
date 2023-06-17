@@ -26,6 +26,7 @@ enum MenuAction {
     Back,
     Input,
     Rebind(InputAction),
+    MusicVolume,
 }
 
 pub fn pause_menu_system(
@@ -46,47 +47,69 @@ pub fn pause_menu_system(
         return;
     }
     game.menu.sel_color = Color::YELLOW;
-    if input.pressed_raw(Key::Enter) {
-        if let Some(list) = game.menu.stack.last() {
-            match &list[game.menu.cursor].action {
-                MenuAction::NewRandom => {
+    let enter = input.pressed_raw(Key::Enter);
+    let left = input.pressed_raw(Key::Left);
+    let right = input.pressed_raw(Key::Right);
+    if let Some(list) = game.menu.stack.last() {
+        match &list[game.menu.cursor].action {
+            MenuAction::NewRandom => {
+                if enter {
                     let n: u32 = thread_rng().gen();
                     cmd.push(Cmd::LoadWorld(n.to_string()));
                 }
-                MenuAction::Load => {
-                    let mut list = Vec::new();
-                    for dir in world_dirs(worlds_dir) {
-                        let Some(last) = dir.file_name() else {
-                            log::error!("World doesn't have file name component");
-                            continue;
-                        };
-                        let last = last.to_string_lossy().to_string();
-                        list.push(MenuItem {
-                            text: last.clone(),
-                            action: MenuAction::LoadWorld(last),
-                        })
-                    }
-                    list.push(MenuItem {
-                        text: "Back".into(),
-                        action: MenuAction::Back,
-                    });
-                    game.menu.stack.push(list);
-                    game.menu.cursor = 0;
+            }
+            MenuAction::Load => 'block: {
+                if !enter {
+                    break 'block;
                 }
-                MenuAction::Quit => cmd.push(Cmd::QuitApp),
-                MenuAction::LoadWorld(name) => cmd.push(Cmd::LoadWorld(name.clone())),
-                MenuAction::Back => {
+                let mut list = Vec::new();
+                for dir in world_dirs(worlds_dir) {
+                    let Some(last) = dir.file_name() else {
+                        log::error!("World doesn't have file name component");
+                        continue;
+                    };
+                    let last = last.to_string_lossy().to_string();
+                    list.push(MenuItem {
+                        text: last.clone(),
+                        action: MenuAction::LoadWorld(last),
+                    })
+                }
+                list.push(MenuItem {
+                    text: "Back".into(),
+                    action: MenuAction::Back,
+                });
+                game.menu.stack.push(list);
+                game.menu.cursor = 0;
+            }
+            MenuAction::Quit => {
+                if enter {
+                    cmd.push(Cmd::QuitApp);
+                }
+            }
+            MenuAction::LoadWorld(name) => {
+                if enter {
+                    cmd.push(Cmd::LoadWorld(name.clone()))
+                }
+            }
+            MenuAction::Back => {
+                if enter {
                     game.menu.cursor = 0;
                     game.menu.stack.pop();
                     if game.menu.stack.is_empty() {
                         game.menu.open = false;
                     }
                 }
-                MenuAction::Settings => {
+            }
+            MenuAction::Settings => {
+                if enter {
                     let items = vec![
                         MenuItem {
                             text: "Input".into(),
                             action: MenuAction::Input,
+                        },
+                        MenuItem {
+                            text: "Music volume".into(),
+                            action: MenuAction::MusicVolume,
                         },
                         MenuItem {
                             text: "Back".into(),
@@ -96,12 +119,23 @@ pub fn pause_menu_system(
                     game.menu.stack.push(items);
                     game.menu.cursor = 0;
                 }
-                MenuAction::Input => {
+            }
+            MenuAction::Input => {
+                if enter {
                     game.menu.stack.push(build_keyconfig_menu(input));
                     game.menu.cursor = 0;
                 }
-                MenuAction::Rebind(act) => {
+            }
+            MenuAction::Rebind(act) => {
+                if enter {
                     game.menu.action_to_rebind = Some(*act);
+                }
+            }
+            MenuAction::MusicVolume => {
+                if left {
+                    cmd.push(Cmd::MusVolDec);
+                } else if right {
+                    cmd.push(Cmd::MusVolInc)
                 }
             }
         }

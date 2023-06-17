@@ -25,6 +25,8 @@ pub enum Cmd {
     SetMidTileAtCursor(MidTileId),
     TeleportCursor,
     HurtCtrlEn(f32),
+    MusVolInc,
+    MusVolDec,
 }
 
 pub type CmdVec = Vec<Cmd>;

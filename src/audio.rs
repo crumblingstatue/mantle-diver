@@ -10,6 +10,7 @@ pub struct AudioCtx {
     pub stream: rodio::OutputStream,
     pub stream_handle: rodio::OutputStreamHandle,
     pub plr: SoundPlayer,
+    pub mus_vol: f32,
 }
 
 impl AudioCtx {
@@ -21,6 +22,7 @@ impl AudioCtx {
             stream,
             stream_handle,
             plr,
+            mus_vol: 1.0,
         }
     }
 
@@ -31,6 +33,18 @@ impl AudioCtx {
         self.music_sink
             .append(Decoder::new_looped(data.clone()).unwrap());
         self.music_sink.play();
+    }
+
+    pub(crate) fn inc_mus_vol(&mut self) {
+        self.mus_vol += 0.1;
+        self.mus_vol = self.mus_vol.clamp(0.0, 1.0);
+        self.music_sink.set_volume(self.mus_vol);
+    }
+
+    pub(crate) fn dec_mus_vol(&mut self) {
+        self.mus_vol -= 0.1;
+        self.mus_vol = self.mus_vol.clamp(0.0, 1.0);
+        self.music_sink.set_volume(self.mus_vol);
     }
 }
 
