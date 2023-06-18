@@ -1,4 +1,4 @@
-use self::pause_menu::open_menu;
+use {self::pause_menu::open_menu, crate::tiles::LayerAccess};
 
 pub mod pause_menu;
 
@@ -123,8 +123,8 @@ fn do_use_action(
             }
         }
         UseAction::RemoveTile { layer } => match layer {
-            inventory::TileLayer::Bg => t.bg = TileId::EMPTY,
-            inventory::TileLayer::Mid => t.mid = TileId::EMPTY,
+            LayerAccess::Bg => t.bg = TileId::EMPTY,
+            LayerAccess::Mid => t.mid = TileId::EMPTY,
         },
         UseAction::MineTile { power, delay } => {
             mine_tile(
@@ -474,10 +474,10 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
         if state.health <= 0.0 {
             let tile = &mut game.world.tile_at_mut(key.pos);
             match key.layer {
-                inventory::TileLayer::Bg => {
+                LayerAccess::Bg => {
                     tile.bg = TileId::EMPTY;
                 }
-                inventory::TileLayer::Mid => {
+                LayerAccess::Mid => {
                     process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, &key.pos);
                     tile.mid = TileId::EMPTY;
                 }

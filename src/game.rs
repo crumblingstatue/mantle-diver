@@ -8,12 +8,12 @@ use {
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
         input::Input,
-        inventory::{Inventory, ItemDb, TileLayer},
+        inventory::{Inventory, ItemDb},
         math::{wp_to_tp, WPosSc, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
         save::Save,
-        tiles::TileDb,
+        tiles::{LayerAccess, TileDb},
         time::{daylight, tick_of_day},
         world::{TilePos, World},
     },
@@ -30,7 +30,7 @@ mod systems;
 #[derive(Hash, PartialEq, Eq)]
 pub struct TilestateKey {
     pos: TilePos,
-    layer: TileLayer,
+    layer: LayerAccess,
 }
 
 type TransientTileStates = FnvHashMap<TilestateKey, TransientTileState>;

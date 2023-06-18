@@ -16,6 +16,12 @@ use {
     },
 };
 
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+pub enum LayerAccess {
+    Bg,
+    Mid,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct TileId<Layer>(pub u16, #[serde(skip)] PhantomData<Layer>);
 
@@ -102,17 +108,17 @@ pub struct TileItemDrop {
 pub trait TileLayer {
     /// Definitions specific to this layer
     type SpecificDef;
-    const LAYER: crate::inventory::TileLayer;
+    const LAYER: LayerAccess;
 }
 
 impl TileLayer for Bg {
     type SpecificDef = ();
-    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Bg;
+    const LAYER: LayerAccess = LayerAccess::Bg;
 }
 
 impl TileLayer for Mid {
     type SpecificDef = MidDef;
-    const LAYER: crate::inventory::TileLayer = crate::inventory::TileLayer::Mid;
+    const LAYER: LayerAccess = LayerAccess::Mid;
 }
 
 pub type BgTileId = TileId<Bg>;

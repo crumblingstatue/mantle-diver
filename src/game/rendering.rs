@@ -3,11 +3,12 @@ use {
     crate::{
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
-        inventory::{ItemId, TileLayer},
+        inventory::ItemId,
         light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
+        tiles::LayerAccess,
         time::ticks_hm,
     },
     sfml::{
@@ -109,7 +110,7 @@ pub(crate) fn draw_world(
                 let mut scale = 1.;
                 if let Some(state) = game.transient_tile_states.get(&TilestateKey {
                     pos: tp,
-                    layer: TileLayer::Mid,
+                    layer: LayerAccess::Mid,
                 }) {
                     rot = state.rot;
                     scale = state.scale;

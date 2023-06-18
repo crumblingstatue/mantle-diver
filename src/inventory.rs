@@ -3,7 +3,7 @@ use {
         config::ron_pretty_cfg,
         graphics::ScreenVec,
         math::{IntRect, TILE_SIZE},
-        tiles::{BgTileId, MidTileId},
+        tiles::{BgTileId, LayerAccess, MidTileId},
     },
     serde::{Deserialize, Serialize},
 };
@@ -122,12 +122,6 @@ pub struct ItemDef {
     pub consumable: bool,
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
-pub enum TileLayer {
-    Bg,
-    Mid,
-}
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Default)]
 pub enum UseAction {
     #[default]
@@ -139,7 +133,7 @@ pub enum UseAction {
         id: MidTileId,
     },
     RemoveTile {
-        layer: TileLayer,
+        layer: LayerAccess,
     },
     /// Mine mid level block
     MineTile {

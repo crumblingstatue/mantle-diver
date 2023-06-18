@@ -1,11 +1,11 @@
 use crate::{
     graphics::ScreenVec,
     inventory::{
-        ItemDb, ItemDef, ItemId, TileLayer,
+        ItemDb, ItemDef, ItemId,
         UseAction::{self},
     },
     math::IntRect,
-    tiles::{BgTileId, MidTileId},
+    tiles::{BgTileId, LayerAccess, MidTileId},
 };
 
 #[derive(Default)]
@@ -105,7 +105,7 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
             let text = v.text();
             ui.selectable_value(use_field, v, text);
             let v = UseAction::RemoveTile {
-                layer: TileLayer::Bg,
+                layer: LayerAccess::Bg,
             };
             let text = v.text();
             ui.selectable_value(use_field, v, text);
@@ -121,8 +121,8 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
         }
         UseAction::RemoveTile { layer } => {
             ui.label("Layer to remove");
-            ui.selectable_value(layer, TileLayer::Bg, "Bg");
-            ui.selectable_value(layer, TileLayer::Mid, "Mid");
+            ui.selectable_value(layer, LayerAccess::Bg, "Bg");
+            ui.selectable_value(layer, LayerAccess::Mid, "Mid");
         }
         UseAction::MineTile { power, delay } => {
             ui.label("Power");
