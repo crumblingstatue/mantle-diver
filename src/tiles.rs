@@ -1,5 +1,3 @@
-use {mdv_data::item::ItemId, mdv_math::types::ScreenVec};
-
 pub mod tiledb_edit_ui;
 
 use {
@@ -7,7 +5,8 @@ use {
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },
-    mdv_data::ron_pretty_cfg,
+    mdv_data::{item::ItemId, ron_pretty_cfg},
+    mdv_math::types::ScreenVec,
     serde::{Deserialize, Serialize},
     std::{
         fmt::Debug,
