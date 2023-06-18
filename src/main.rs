@@ -31,6 +31,7 @@ mod game;
 mod graphics;
 mod input;
 mod inventory;
+mod item;
 mod itemdrop;
 mod light;
 mod math;

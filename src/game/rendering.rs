@@ -3,7 +3,7 @@ use {
     crate::{
         debug::{DebugState, DBG_OVR},
         graphics::ScreenVec,
-        inventory::ItemId,
+        item::ItemId,
         light::{self, LightEnumInfo, U16Vec},
         math::{WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},

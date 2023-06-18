@@ -4,7 +4,7 @@ pub mod tiledb_edit_ui;
 use {
     crate::{
         graphics::ScreenVec,
-        inventory::ItemId,
+        item::ItemId,
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },

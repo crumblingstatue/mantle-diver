@@ -1,6 +1,6 @@
 use crate::{
     graphics::ScreenVec,
-    inventory::{
+    item::{
         ItemDb, ItemDef, ItemId,
         UseAction::{self},
     },

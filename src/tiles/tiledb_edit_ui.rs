@@ -71,7 +71,7 @@ impl Default for Layer {
 
 use {
     super::{Bg, Mid, TileDb, TileDef, TileLayer, DEFAULT_TILE_BB},
-    crate::inventory::{ItemDb, ItemId},
+    crate::item::{ItemDb, ItemId},
 };
 
 trait TileLayerExt: TileLayer {

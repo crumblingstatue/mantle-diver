@@ -1,5 +1,5 @@
 use {
-    crate::{config::ron_pretty_cfg, inventory::ItemStack},
+    crate::{config::ron_pretty_cfg, item::ItemStack},
     serde::{Deserialize, Serialize},
 };
 

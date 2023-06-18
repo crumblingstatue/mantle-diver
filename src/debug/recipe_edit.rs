@@ -2,7 +2,7 @@ use {
     super::item_db_edit::ItemDbEdit,
     crate::{
         crafting::{Recipe, RecipeDb, Station},
-        inventory::{ItemDb, ItemId, ItemStack},
+        item::{ItemDb, ItemId, ItemStack},
     },
 };
 
