@@ -1,27 +1,20 @@
 use {
     crate::world::{TPosSc, TilePos, TPOS_SC_MAX},
+    extension_traits::extension,
+    mdv_math::types::{ScreenSc, ScreenVec},
     serde::{Deserialize, Serialize},
     sfml::system::{Vector2, Vector2u},
-    std::{fmt::Debug, ops::Div},
+    std::fmt::Debug,
 };
 
-#[derive(Default, Clone, Copy, Debug, Serialize, Deserialize)]
-pub struct ScreenVec {
-    pub x: ScreenSc,
-    pub y: ScreenSc,
-}
-
-/// Screen position/offset scalar
-/// We assume this game won't be played above 32767*32767 resolution
-pub type ScreenSc = i16;
-
+#[extension(pub trait ScreenVecExt)]
 impl ScreenVec {
     #[expect(
         clippy::cast_possible_truncation,
         reason = "We expect that this function will be called only on resolutions,
                   which are small enough"
     )]
-    pub(crate) fn from_sf_resolution(size: Vector2<u32>) -> Self {
+    fn from_sf_resolution(size: Vector2<u32>) -> Self {
         Self {
             x: size.x as ScreenSc,
             y: size.y as ScreenSc,
@@ -32,7 +25,7 @@ impl ScreenVec {
         reason = "We expect that this function will be called only on resolutions,
                   which are small enough"
     )]
-    pub(crate) fn from_reso_i32(x: i32, y: i32) -> Self {
+    fn from_reso_i32(x: i32, y: i32) -> Self {
         Self {
             x: x as ScreenSc,
             y: y as ScreenSc,
@@ -42,28 +35,17 @@ impl ScreenVec {
         clippy::cast_sign_loss,
         reason = "Assumed to be called on sizes, which are positive"
     )]
-    pub fn size_to_sf_resolution(self) -> Vector2<u32> {
+    fn size_to_sf_resolution(self) -> Vector2<u32> {
         Vector2 {
             x: self.x as u32,
             y: self.y as u32,
         }
     }
 
-    pub(crate) fn div_by_scale(&self, scale: u8) -> Self {
+    fn div_by_scale(&self, scale: u8) -> Self {
         Self {
             x: self.x / ScreenSc::from(scale),
             y: self.y / ScreenSc::from(scale),
-        }
-    }
-}
-
-impl Div<ScreenSc> for ScreenVec {
-    type Output = Self;
-
-    fn div(self, rhs: ScreenSc) -> Self::Output {
-        Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
         }
     }
 }

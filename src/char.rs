@@ -1,6 +1,6 @@
 use {
-    crate::math::ScreenVec,
     mdv_data::ron_pretty_cfg,
+    mdv_math::types::ScreenVec,
     serde::{Deserialize, Serialize},
     std::collections::HashMap,
 };

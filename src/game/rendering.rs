@@ -4,12 +4,13 @@ use {
         debug::{DebugState, DBG_OVR},
         item::ItemId,
         light::{self, LightEnumInfo, U16Vec},
-        math::{ScreenVec, WorldPos, FPS_TARGET, TILE_SIZE},
+        math::{ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
         tiles::LayerAccess,
         time::ticks_hm,
     },
+    mdv_math::types::ScreenVec,
     sfml::{
         graphics::{
             CircleShape, Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget,

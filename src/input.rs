@@ -1,6 +1,7 @@
 use {
-    crate::math::ScreenVec,
+    crate::math::ScreenVecExt,
     fnv::{FnvHashMap, FnvHashSet},
+    mdv_math::types::ScreenVec,
     sfml::window::{mouse, Event, Key},
 };
 

@@ -1,10 +1,13 @@
-use crate::{
-    item::{
-        ItemDb, ItemDef, ItemId,
-        UseAction::{self},
+use {
+    crate::{
+        item::{
+            ItemDb, ItemDef, ItemId,
+            UseAction::{self},
+        },
+        math::IntRect,
+        tiles::{BgTileId, LayerAccess, MidTileId},
     },
-    math::{IntRect, ScreenVec},
-    tiles::{BgTileId, LayerAccess, MidTileId},
+    mdv_math::types::ScreenVec,
 };
 
 #[derive(Default)]

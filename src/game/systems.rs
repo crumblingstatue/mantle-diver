@@ -1,7 +1,7 @@
 use {
     self::pause_menu::open_menu,
-    crate::{math::ScreenVec, tiles::LayerAccess},
-    mdv_math::util::step_towards,
+    crate::tiles::LayerAccess,
+    mdv_math::{types::ScreenVec, util::step_towards},
 };
 
 pub mod pause_menu;

@@ -8,7 +8,7 @@ use {
         graphics::{self},
         input::Input,
         light::{self, LightState, U16Vec},
-        math::{ScreenSc, ScreenVec, WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
+        math::{ScreenVecExt, WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
         player::PlayerColors,
         res::{Res, ResAudio},
         save::Save,
@@ -19,6 +19,7 @@ use {
     directories::ProjectDirs,
     egui_sfml::{SfEgui, UserTexSource},
     gamedebug_core::{imm, imm_dbg},
+    mdv_math::types::{ScreenSc, ScreenVec},
     rand::{thread_rng, Rng},
     sfml::{
         graphics::{

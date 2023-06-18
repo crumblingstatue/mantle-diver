@@ -3,11 +3,12 @@ use {
     crate::{
         command::Cmd,
         game::GameState,
-        math::{ScreenVec, WorldPos},
+        math::{ScreenVecExt, WorldPos},
         player::{Health, MovingEnt},
         res::Res,
         texture_atlas::AtlasBundle,
     },
+    mdv_math::types::ScreenVec,
     sfml::graphics::RenderTarget,
     std::fmt::Write,
 };

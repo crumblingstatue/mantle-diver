@@ -1,9 +1,11 @@
+use mdv_math::types::ScreenVec;
+
 pub mod tiledb_edit_ui;
 
 use {
     crate::{
         item::ItemId,
-        math::{IntRect, ScreenVec, TILE_SIZE},
+        math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },
     mdv_data::ron_pretty_cfg,
