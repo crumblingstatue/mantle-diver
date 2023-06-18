@@ -1,10 +1,10 @@
 use {
     super::item_db_edit::ItemDbEdit,
-    crate::{
-        crafting::{Recipe, RecipeDb, Station},
-        item::{ItemDb, ItemIdExt},
+    crate::item::{ItemDb, ItemIdExt},
+    mdv_data::{
+        item::{ItemId, ItemStack},
+        recipe::{Recipe, RecipeDb, Station},
     },
-    mdv_data::item::{ItemId, ItemStack},
 };
 
 #[derive(Default)]

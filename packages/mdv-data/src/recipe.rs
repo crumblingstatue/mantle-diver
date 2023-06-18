@@ -1,11 +1,11 @@
 use {
-    mdv_data::{item::ItemStack, ron_pretty_cfg},
+    crate::{item::ItemStack, ron_pretty_cfg},
     serde::{Deserialize, Serialize},
 };
 
 /// Crafting station
 #[derive(Serialize, Deserialize, Debug)]
-pub(crate) enum Station {
+pub enum Station {
     Player,
 }
 
@@ -13,11 +13,11 @@ pub(crate) enum Station {
 #[derive(Serialize, Deserialize)]
 pub struct Recipe {
     /// Stations that this recipe can be crafted at
-    pub(crate) stations: Vec<Station>,
+    pub stations: Vec<Station>,
     /// What items this recipe requires
-    pub(crate) input: Vec<ItemStack>,
+    pub input: Vec<ItemStack>,
     /// Result of crafting the recipe
-    pub(crate) output: ItemStack,
+    pub output: ItemStack,
 }
 
 #[derive(Serialize, Deserialize, Default)]

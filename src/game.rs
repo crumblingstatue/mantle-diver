@@ -3,7 +3,6 @@ use {
     crate::{
         audio::AudioCtx,
         command::CmdVec,
-        crafting::RecipeDb,
         debug::{DebugState, DBG_OVR},
         input::Input,
         inventory::Inventory,
@@ -17,7 +16,7 @@ use {
         world::{TilePos, World},
     },
     fnv::FnvHashMap,
-    mdv_data::char::CharDb,
+    mdv_data::{char::CharDb, recipe::RecipeDb},
     mdv_math::types::ScreenVec,
     rand::{thread_rng, Rng},
     sfml::system::{Vector2f, Vector2u},

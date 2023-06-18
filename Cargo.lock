@@ -1066,6 +1066,7 @@ dependencies = [
 name = "mdv-data"
 version = "0.1.0"
 dependencies = [
+ "log",
  "mdv-math",
  "ron",
  "serde",

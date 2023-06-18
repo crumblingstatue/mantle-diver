@@ -2,6 +2,7 @@ use thiserror::Error;
 
 pub mod char;
 pub mod item;
+pub mod recipe;
 
 use {
     ron::{extensions::Extensions, ser::PrettyConfig},
