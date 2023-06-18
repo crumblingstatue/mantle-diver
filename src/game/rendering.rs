@@ -3,7 +3,7 @@ use {
     crate::{
         debug::{DebugState, DBG_OVR},
         light::{self, LightEnumInfo, U16Vec},
-        math::{ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
+        math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
         tiles::LayerAccess,

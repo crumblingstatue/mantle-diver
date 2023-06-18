@@ -4,11 +4,10 @@ use {
             ItemDb, ItemDef,
             UseAction::{self},
         },
-        math::IntRect,
         tiles::{BgTileId, LayerAccess, MidTileId},
     },
     mdv_data::item::ItemId,
-    mdv_math::types::ScreenVec,
+    mdv_math::types::{IntRect, ScreenVec},
 };
 
 #[derive(Default)]

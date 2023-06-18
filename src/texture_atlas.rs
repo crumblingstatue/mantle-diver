@@ -1,8 +1,6 @@
 use {
-    crate::{
-        math::IntRect,
-        res::{path_key, walk_res_dir},
-    },
+    crate::res::{path_key, walk_res_dir},
+    mdv_math::types::IntRect,
     sfml::{graphics::Texture, SfBox},
     std::collections::HashMap,
     texture_packer::{texture::Texture as _, TexturePacker, TexturePackerConfig},

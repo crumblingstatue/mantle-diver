@@ -1,8 +1,7 @@
 use {
     crate::world::{TPosSc, TilePos, TPOS_SC_MAX},
     extension_traits::extension,
-    mdv_math::types::{ScreenSc, ScreenVec},
-    serde::{Deserialize, Serialize},
+    mdv_math::types::{IntRect, ScreenSc, ScreenVec},
     sfml::system::{Vector2, Vector2u},
     std::fmt::Debug,
 };
@@ -188,15 +187,9 @@ pub fn wp_to_tp(wp: WPosSc) -> TPosSc {
     wp / WPosSc::from(TILE_SIZE)
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Clone, Copy)]
-pub struct IntRect {
-    pub x: i32,
-    pub y: i32,
-    pub w: i32,
-    pub h: i32,
-}
+#[extension(pub trait IntRectExt)]
 impl IntRect {
-    pub(crate) fn to_sf(self) -> sfml::graphics::Rect<i32> {
+    fn to_sf(self) -> sfml::graphics::Rect<i32> {
         sfml::graphics::Rect::<i32> {
             left: self.x,
             top: self.y,
@@ -205,7 +198,7 @@ impl IntRect {
         }
     }
 
-    pub(crate) fn to_egui_uv(self, tex_size: Vector2u) -> egui::Rect {
+    fn to_egui_uv(self, tex_size: Vector2u) -> egui::Rect {
         let (sx, sy) = (tex_size.x as f32, tex_size.y as f32);
         egui::Rect::from_min_size(
             egui::pos2(self.x as f32 / sx, self.y as f32 / sy),

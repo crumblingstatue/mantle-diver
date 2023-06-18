@@ -2,7 +2,7 @@ use {
     super::{BgTileId, MidTileId},
     crate::{
         command::{Cmd, CmdVec},
-        math::TILE_SIZE,
+        math::{IntRectExt, TILE_SIZE},
     },
     mdv_data::item::ItemId,
     mdv_math::types::{ScreenSc, ScreenVec},

@@ -1,11 +1,11 @@
 use {
     crate::{
-        math::{IntRect, TILE_SIZE},
+        math::TILE_SIZE,
         tiles::{BgTileId, LayerAccess, MidTileId},
     },
     extension_traits::extension,
     mdv_data::{item::ItemId, ron_pretty_cfg},
-    mdv_math::types::ScreenVec,
+    mdv_math::types::{IntRect, ScreenVec},
     serde::{Deserialize, Serialize},
 };
 

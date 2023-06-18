@@ -1,10 +1,9 @@
+use mdv_math::types::IntRect;
+
 pub mod tiledb_edit_ui;
 
 use {
-    crate::{
-        math::{IntRect, TILE_SIZE},
-        texture_atlas::RectMap,
-    },
+    crate::{math::TILE_SIZE, texture_atlas::RectMap},
     mdv_data::{item::ItemId, ron_pretty_cfg},
     mdv_math::types::ScreenVec,
     serde::{Deserialize, Serialize},
