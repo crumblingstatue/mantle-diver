@@ -1,4 +1,4 @@
-use crate::{config::ron_pretty_cfg, math::ScreenVec};
+use {crate::math::ScreenVec, mdv_data::ron_pretty_cfg};
 
 pub mod tiledb_edit_ui;
 use {

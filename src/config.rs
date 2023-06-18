@@ -1,5 +1,5 @@
 use {
-    ron::{extensions::Extensions, ser::PrettyConfig},
+    mdv_data::ron_pretty_cfg,
     serde::{Deserialize, Serialize, Serializer},
     std::{
         collections::{BTreeMap, HashMap},
@@ -43,13 +43,6 @@ impl Config {
         let data = ron::ser::to_string_pretty(self, ron_pretty_cfg())?;
         Ok(std::fs::write(path, data)?)
     }
-}
-
-pub fn ron_pretty_cfg() -> PrettyConfig {
-    PrettyConfig::default()
-        .enumerate_arrays(true)
-        .struct_names(true)
-        .extensions(Extensions::IMPLICIT_SOME | Extensions::UNWRAP_NEWTYPES)
 }
 
 /// Based on https://stackoverflow.com/a/42723390

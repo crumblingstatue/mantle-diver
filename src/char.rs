@@ -1,5 +1,6 @@
 use {
-    crate::{config::ron_pretty_cfg, math::ScreenVec},
+    crate::math::ScreenVec,
+    mdv_data::ron_pretty_cfg,
     serde::{Deserialize, Serialize},
     std::collections::HashMap,
 };

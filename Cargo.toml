@@ -50,6 +50,9 @@ features = ["graphics"]
 [dependencies.egui-sfml]
 git = "https://github.com/crumblingstatue/egui-sfml.git"
 
+[dependencies.mdv-data]
+path = "packages/mdv-data"
+
 [profile.dev.package."*"]
 opt-level = 2
 
@@ -58,3 +61,6 @@ panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+[workspace]
+members = ["packages/mdv-data", "packages/mdv-math"]
