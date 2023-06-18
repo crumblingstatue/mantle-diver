@@ -1,8 +1,7 @@
 use {
     crate::{
         config::ron_pretty_cfg,
-        graphics::ScreenVec,
-        math::{IntRect, TILE_SIZE},
+        math::{IntRect, ScreenVec, TILE_SIZE},
         tiles::{BgTileId, LayerAccess, MidTileId},
     },
     serde::{Deserialize, Serialize},

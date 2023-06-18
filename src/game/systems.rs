@@ -1,4 +1,7 @@
-use {self::pause_menu::open_menu, crate::tiles::LayerAccess};
+use {
+    self::pause_menu::open_menu,
+    crate::{math::ScreenVec, tiles::LayerAccess},
+};
 
 pub mod pause_menu;
 
@@ -8,7 +11,6 @@ use {
         app::TileColEn,
         audio::AudioCtx,
         debug::{DbgOvr, DebugState, DBG_OVR},
-        graphics::ScreenVec,
         input::{Input, InputAction},
         item::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,

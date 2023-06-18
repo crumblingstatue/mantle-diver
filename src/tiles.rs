@@ -1,9 +1,8 @@
-use crate::config::ron_pretty_cfg;
+use crate::{config::ron_pretty_cfg, math::ScreenVec};
 
 pub mod tiledb_edit_ui;
 use {
     crate::{
-        graphics::ScreenVec,
         item::ItemId,
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,

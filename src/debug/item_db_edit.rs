@@ -1,10 +1,9 @@
 use crate::{
-    graphics::ScreenVec,
     item::{
         ItemDb, ItemDef, ItemId,
         UseAction::{self},
     },
-    math::IntRect,
+    math::{IntRect, ScreenVec},
     tiles::{BgTileId, LayerAccess, MidTileId},
 };
 

@@ -2,8 +2,7 @@ use {
     super::{BgTileId, MidTileId},
     crate::{
         command::{Cmd, CmdVec},
-        graphics::{ScreenSc, ScreenVec},
-        math::TILE_SIZE,
+        math::{ScreenSc, ScreenVec, TILE_SIZE},
     },
     sfml::system::Vector2u,
     std::fmt::Debug,

@@ -1,5 +1,5 @@
 use {
-    crate::graphics::ScreenVec,
+    crate::math::ScreenVec,
     fnv::{FnvHashMap, FnvHashSet},
     sfml::window::{mouse, Event, Key},
 };

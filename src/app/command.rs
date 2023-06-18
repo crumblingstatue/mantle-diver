@@ -3,8 +3,7 @@ use {
     crate::{
         command::Cmd,
         game::GameState,
-        graphics::ScreenVec,
-        math::WorldPos,
+        math::{ScreenVec, WorldPos},
         player::{Health, MovingEnt},
         res::Res,
         texture_atlas::AtlasBundle,

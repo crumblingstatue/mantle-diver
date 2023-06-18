@@ -1,4 +1,4 @@
-use crate::{char::Offset, graphics::ScreenVec};
+use crate::{char::Offset, math::ScreenVec};
 
 #[derive(Default)]
 pub struct CharDbEdit {
