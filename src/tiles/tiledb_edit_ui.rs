@@ -1,10 +1,12 @@
 use {
-    super::{BgTileId, MidTileId},
     crate::{
         command::{Cmd, CmdVec},
         math::{IntRectExt, TILE_SIZE},
     },
-    mdv_data::item::ItemId,
+    mdv_data::{
+        item::ItemId,
+        tile::{Bg, BgTileId, Mid, MidTileId, TileDb, TileDef, TileItemDrop, TileLayer},
+    },
     mdv_math::types::{ScreenSc, ScreenVec},
     sfml::system::Vector2u,
     std::fmt::Debug,
@@ -70,10 +72,7 @@ impl Default for Layer {
     }
 }
 
-use {
-    super::{Bg, Mid, TileDb, TileDef, TileLayer, DEFAULT_TILE_BB},
-    crate::item::ItemDb,
-};
+use {super::DEFAULT_TILE_BB, crate::item::ItemDb};
 
 trait TileLayerExt: TileLayer {
     fn special_ui(_def: &mut Self::SpecificDef, _ui: &mut egui::Ui) {}
@@ -229,7 +228,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
             }
             None => {
                 if ui.button("Add drop").clicked() {
-                    def.item_drop = Some(super::TileItemDrop {
+                    def.item_drop = Some(TileItemDrop {
                         qty_range: 0..=0,
                         id: ItemId::EMPTY,
                     })

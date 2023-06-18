@@ -2,9 +2,9 @@ use {
     super::{Chunk, ChunkPos},
     crate::{
         math::{WorldPos, TILE_SIZE},
-        tiles::{BgTileId, MidTileId},
         world::{default_chunk_tiles, CHUNK_EXTENT, CHUNK_N_TILES},
     },
+    mdv_data::tile::{BgTileId, MidTileId},
     simdnoise::NoiseBuilder,
 };
 

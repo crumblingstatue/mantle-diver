@@ -1,3 +1,5 @@
+use mdv_data::tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer};
+
 pub mod pause_menu;
 
 use {
@@ -13,7 +15,6 @@ use {
         math::{world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
-        tiles::{self, LayerAccess, TileDb, TileDef, TileId, TileLayer},
         world::{TilePos, World},
     },
     mdv_data::item::{ItemId, ItemStack},
@@ -525,7 +526,7 @@ pub(super) fn item_drop_claim_system(
     game.ecb.run_on(&mut game.ecw);
 }
 
-fn process_tile_item_drop<L: tiles::TileLayer>(
+fn process_tile_item_drop<L: mdv_data::tile::TileLayer>(
     tile_db: &TileDb,
     wld: &mut hecs::World,
     id: TileId<L>,

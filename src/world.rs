@@ -1,6 +1,9 @@
-use crate::{
-    math::{WorldPos, TILE_SIZE},
-    time::HOUR_IN_TICKS,
+use {
+    crate::{
+        math::{WorldPos, TILE_SIZE},
+        time::HOUR_IN_TICKS,
+    },
+    mdv_data::tile::{BgTileId, MidTileId, TileId},
 };
 
 mod gen;
@@ -9,10 +12,7 @@ mod serialization;
 
 use {
     self::serialization::save_chunk,
-    crate::{
-        tiles::{BgTileId, MidTileId, TileId},
-        world::reg_chunk_existence::ExistenceBitset,
-    },
+    crate::world::reg_chunk_existence::ExistenceBitset,
     std::{
         fmt::Debug,
         fs::File,

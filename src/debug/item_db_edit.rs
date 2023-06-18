@@ -1,12 +1,12 @@
 use {
-    crate::{
-        item::{
-            ItemDb, ItemDef,
-            UseAction::{self},
-        },
-        tiles::{BgTileId, LayerAccess, MidTileId},
+    crate::item::{
+        ItemDb, ItemDef,
+        UseAction::{self},
     },
-    mdv_data::item::ItemId,
+    mdv_data::{
+        item::ItemId,
+        tile::{BgTileId, LayerAccess, MidTileId},
+    },
     mdv_math::types::{IntRect, ScreenVec},
 };
 

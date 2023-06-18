@@ -3,6 +3,7 @@ use thiserror::Error;
 pub mod char;
 pub mod item;
 pub mod recipe;
+pub mod tile;
 
 use {
     ron::{extensions::Extensions, ser::PrettyConfig},

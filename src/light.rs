@@ -2,10 +2,10 @@ use {
     crate::{
         game::GameState,
         math::{WPosSc, TILE_SIZE},
-        tiles::MidTileId,
         world::{TPosSc, TilePos},
     },
     fnv::FnvHashSet,
+    mdv_data::tile::MidTileId,
     sfml::system::Vector2u,
     std::collections::VecDeque,
 };

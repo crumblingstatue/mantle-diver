@@ -7,6 +7,7 @@ use {
         player::{Health, MovingEnt},
         res::Res,
         texture_atlas::AtlasBundle,
+        tiles::TileDbExt,
     },
     mdv_math::types::ScreenVec,
     sfml::graphics::RenderTarget,

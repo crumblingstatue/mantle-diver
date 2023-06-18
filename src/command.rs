@@ -1,6 +1,6 @@
-use crate::{
-    math::WorldPos,
-    tiles::{BgTileId, MidTileId},
+use {
+    crate::math::WorldPos,
+    mdv_data::tile::{BgTileId, MidTileId},
 };
 
 /// A command that can change application or game state

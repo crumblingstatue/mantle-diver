@@ -6,10 +6,9 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
-        tiles::LayerAccess,
         time::ticks_hm,
     },
-    mdv_data::item::ItemId,
+    mdv_data::{item::ItemId, tile::LayerAccess},
     mdv_math::types::ScreenVec,
     sfml::{
         graphics::{
