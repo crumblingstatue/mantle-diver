@@ -52,3 +52,9 @@ git = "https://github.com/crumblingstatue/egui-sfml.git"
 
 [profile.dev.package."*"]
 opt-level = 2
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
