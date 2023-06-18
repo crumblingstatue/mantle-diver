@@ -84,7 +84,7 @@ fn test_chunk_seri() {
         tiles: super::default_chunk_tiles(),
     };
     for t in &mut chk.tiles {
-        t.bg = crate::tiles::BgTileId::DIRT;
+        t.bg = mdv_data::tile::BgTileId::DIRT;
     }
     save_chunk(&ChunkPos { x: 2, y: 0 }, &chk, "testworld".as_ref());
     save_chunk(&ChunkPos { x: 3, y: 0 }, &chk, "testworld".as_ref());

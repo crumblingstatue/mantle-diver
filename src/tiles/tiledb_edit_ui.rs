@@ -72,7 +72,7 @@ impl Default for Layer {
     }
 }
 
-use {super::DEFAULT_TILE_BB, crate::item::ItemDb};
+use {super::DEFAULT_TILE_BB, mdv_data::item::ItemDb};
 
 trait TileLayerExt: TileLayer {
     fn special_ui(_def: &mut Self::SpecificDef, _ui: &mut egui::Ui) {}

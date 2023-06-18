@@ -1,8 +1,7 @@
 use {
     super::item_db_edit::ItemDbEdit,
-    crate::item::{ItemDb, ItemIdExt},
     mdv_data::{
-        item::{ItemId, ItemStack},
+        item::{ItemDb, ItemId, ItemStack},
         recipe::{Recipe, RecipeDb, Station},
     },
 };

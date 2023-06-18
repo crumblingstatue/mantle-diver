@@ -1,4 +1,7 @@
-use mdv_data::tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer};
+use mdv_data::{
+    item::UseAction,
+    tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
+};
 
 pub mod pause_menu;
 
@@ -10,7 +13,6 @@ use {
         audio::AudioCtx,
         debug::{DbgOvr, DebugState, DBG_OVR},
         input::{Input, InputAction},
-        item::UseAction,
         itemdrop::ItemdropBundle,
         math::{world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt},

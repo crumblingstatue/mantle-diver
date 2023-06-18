@@ -1,10 +1,7 @@
 use {
-    crate::item::{
-        ItemDb, ItemDef,
-        UseAction::{self},
-    },
+    extension_traits::extension,
     mdv_data::{
-        item::ItemId,
+        item::{ItemDb, ItemDef, ItemId, UseAction},
         tile::{BgTileId, LayerAccess, MidTileId},
     },
     mdv_math::types::{IntRect, ScreenVec},
@@ -142,6 +139,7 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
     }
 }
 
+#[extension(trait UseActionExt)]
 impl UseAction {
     fn text(&self) -> &'static str {
         match self {

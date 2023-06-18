@@ -1,4 +1,4 @@
-use thiserror::Error;
+#![feature(lint_reasons)]
 
 pub mod char;
 pub mod item;
@@ -9,6 +9,7 @@ use {
     ron::{extensions::Extensions, ser::PrettyConfig},
     serde::{Serialize, Serializer},
     std::collections::{BTreeMap, HashMap},
+    thiserror::Error,
 };
 
 /// Ron pretty configuration all data files use

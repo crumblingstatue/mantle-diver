@@ -6,7 +6,7 @@ use {
         debug::{DebugState, DBG_OVR},
         input::Input,
         inventory::Inventory,
-        item::ItemDb,
+        item::ItemDbExt,
         math::{wp_to_tp, ScreenVecExt, WPosSc, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
@@ -18,6 +18,7 @@ use {
     fnv::FnvHashMap,
     mdv_data::{
         char::CharDb,
+        item::ItemDb,
         recipe::RecipeDb,
         tile::{LayerAccess, TileDb},
     },
