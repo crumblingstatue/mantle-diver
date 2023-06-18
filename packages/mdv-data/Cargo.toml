@@ -7,3 +7,8 @@ edition = "2021"
 
 [dependencies]
 ron = "0.8.0"
+serde = { version = "1.0.164", features = ["derive"] }
+thiserror = "1.0.40"
+
+[dependencies.mdv-math]
+path = "../mdv-math"

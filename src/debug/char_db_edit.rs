@@ -1,4 +1,7 @@
-use {crate::char::Offset, mdv_math::types::ScreenVec};
+use {
+    mdv_data::char::{CharDb, Offset},
+    mdv_math::types::ScreenVec,
+};
 
 #[derive(Default)]
 pub struct CharDbEdit {
@@ -6,7 +9,7 @@ pub struct CharDbEdit {
     pub name_buf: String,
 }
 impl CharDbEdit {
-    pub fn ui(&mut self, ctx: &egui::Context, char_db: &mut crate::char::CharDb) {
+    pub fn ui(&mut self, ctx: &egui::Context, char_db: &mut CharDb) {
         egui::Window::new("Chardb")
             .open(&mut self.open)
             .show(ctx, |ui| {

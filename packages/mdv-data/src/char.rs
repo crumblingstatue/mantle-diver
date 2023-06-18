@@ -1,5 +1,5 @@
 use {
-    mdv_data::ron_pretty_cfg,
+    crate::{ron_pretty_cfg, LoadError},
     mdv_math::types::ScreenVec,
     serde::{Deserialize, Serialize},
     std::collections::HashMap,
@@ -8,23 +8,20 @@ use {
 /// Character (graphics) database
 #[derive(Serialize, Deserialize, Default)]
 pub struct CharDb {
-    #[serde(serialize_with = "crate::config::ordered_map")]
+    #[serde(serialize_with = "crate::ordered_map")]
     pub graphic_offsets: HashMap<String, Offset>,
 }
 
 impl CharDb {
-    pub fn save(&self) -> anyhow::Result<()> {
+    pub fn save(&self) -> Result<(), LoadError> {
         let s = ron::ser::to_string_pretty(self, ron_pretty_cfg())?;
         std::fs::write("data/char.ron", s.as_bytes())?;
         Ok(())
     }
-    pub fn load() -> anyhow::Result<Self> {
+    pub fn load() -> Result<Self, LoadError> {
         match std::fs::read_to_string("data/char.ron") {
             Ok(data) => Ok(ron::from_str(&data)?),
-            Err(e) => {
-                log::error!("Failed to load char db: {e}. Creating default");
-                Ok(CharDb::default())
-            }
+            Err(_) => Ok(CharDb::default()),
         }
     }
 }

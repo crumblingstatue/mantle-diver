@@ -1066,7 +1066,10 @@ dependencies = [
 name = "mdv-data"
 version = "0.1.0"
 dependencies = [
+ "mdv-math",
  "ron",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]

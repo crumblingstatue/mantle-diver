@@ -1,10 +1,7 @@
 use {
     mdv_data::ron_pretty_cfg,
-    serde::{Deserialize, Serialize, Serializer},
-    std::{
-        collections::{BTreeMap, HashMap},
-        path::Path,
-    },
+    serde::{Deserialize, Serialize},
+    std::path::Path,
 };
 
 #[derive(Serialize, Deserialize)]
@@ -43,16 +40,4 @@ impl Config {
         let data = ron::ser::to_string_pretty(self, ron_pretty_cfg())?;
         Ok(std::fs::write(path, data)?)
     }
-}
-
-/// Based on https://stackoverflow.com/a/42723390
-pub fn ordered_map<S, K: Ord + Serialize, V: Serialize>(
-    hm: &HashMap<K, V>,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    let ordered: BTreeMap<_, _> = hm.iter().collect();
-    ordered.serialize(serializer)
 }
