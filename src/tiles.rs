@@ -1,10 +1,9 @@
-use mdv_math::types::ScreenVec;
+use {mdv_data::item::ItemId, mdv_math::types::ScreenVec};
 
 pub mod tiledb_edit_ui;
 
 use {
     crate::{
-        item::ItemId,
         math::{IntRect, TILE_SIZE},
         texture_atlas::RectMap,
     },

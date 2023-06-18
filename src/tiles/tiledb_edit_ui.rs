@@ -4,6 +4,7 @@ use {
         command::{Cmd, CmdVec},
         math::TILE_SIZE,
     },
+    mdv_data::item::ItemId,
     mdv_math::types::{ScreenSc, ScreenVec},
     sfml::system::Vector2u,
     std::fmt::Debug,
@@ -71,7 +72,7 @@ impl Default for Layer {
 
 use {
     super::{Bg, Mid, TileDb, TileDef, TileLayer, DEFAULT_TILE_BB},
-    crate::item::{ItemDb, ItemId},
+    crate::item::ItemDb,
 };
 
 trait TileLayerExt: TileLayer {

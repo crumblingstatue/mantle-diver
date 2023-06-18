@@ -2,8 +2,9 @@ use {
     super::item_db_edit::ItemDbEdit,
     crate::{
         crafting::{Recipe, RecipeDb, Station},
-        item::{ItemDb, ItemId, ItemStack},
+        item::{ItemDb, ItemIdExt},
     },
+    mdv_data::item::{ItemId, ItemStack},
 };
 
 #[derive(Default)]

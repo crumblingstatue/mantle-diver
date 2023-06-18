@@ -1,6 +1,7 @@
 use thiserror::Error;
 
 pub mod char;
+pub mod item;
 
 use {
     ron::{extensions::Extensions, ser::PrettyConfig},

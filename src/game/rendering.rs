@@ -2,7 +2,6 @@ use {
     super::{for_each_tile_on_screen, Biome, GameState, SfVec2fExt, TilestateKey},
     crate::{
         debug::{DebugState, DBG_OVR},
-        item::ItemId,
         light::{self, LightEnumInfo, U16Vec},
         math::{ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
@@ -10,6 +9,7 @@ use {
         tiles::LayerAccess,
         time::ticks_hm,
     },
+    mdv_data::item::ItemId,
     mdv_math::types::ScreenVec,
     sfml::{
         graphics::{

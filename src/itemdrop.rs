@@ -1,5 +1,6 @@
 use {
-    crate::{item::ItemId, math::WorldPos, player::MovingEnt},
+    crate::{math::WorldPos, player::MovingEnt},
+    mdv_data::item::ItemId,
     rand::{seq::SliceRandom, thread_rng, Rng},
     s2dc::Vec2,
 };

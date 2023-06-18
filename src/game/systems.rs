@@ -1,26 +1,23 @@
-use {
-    self::pause_menu::open_menu,
-    crate::tiles::LayerAccess,
-    mdv_math::{types::ScreenVec, util::step_towards},
-};
-
 pub mod pause_menu;
 
 use {
+    self::pause_menu::open_menu,
     super::{events::Event, Biome, GameState, TransientTileState, TransientTileStates},
     crate::{
         app::TileColEn,
         audio::AudioCtx,
         debug::{DbgOvr, DebugState, DBG_OVR},
         input::{Input, InputAction},
-        item::{self, ItemId, UseAction},
+        item::UseAction,
         itemdrop::ItemdropBundle,
         math::{world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
-        tiles::{self, TileDb, TileDef, TileId, TileLayer},
+        tiles::{self, LayerAccess, TileDb, TileDef, TileId, TileLayer},
         world::{TilePos, World},
     },
+    mdv_data::item::{ItemId, ItemStack},
+    mdv_math::{types::ScreenVec, util::step_towards},
     rand::{seq::SliceRandom, thread_rng, Rng},
     sfml::{graphics::Color, window::Key},
     std::ops::Index,
@@ -101,7 +98,7 @@ fn do_use_action(
     t: &mut crate::world::Tile,
     ticks: u64,
     tile_place_cooldown: u64,
-    active_slot: &mut item::ItemStack,
+    active_slot: &mut ItemStack,
     mouse_tpos: TilePos,
     au_ctx: &mut AudioCtx,
     au_res: &ResAudio,

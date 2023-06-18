@@ -1,5 +1,6 @@
 use {
-    crate::item::{ItemId, ItemStack},
+    crate::item::ItemIdExt,
+    mdv_data::item::{ItemId, ItemStack},
     serde::{Deserialize, Serialize},
 };
 

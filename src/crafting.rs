@@ -1,6 +1,5 @@
 use {
-    crate::item::ItemStack,
-    mdv_data::ron_pretty_cfg,
+    mdv_data::{item::ItemStack, ron_pretty_cfg},
     serde::{Deserialize, Serialize},
 };
 

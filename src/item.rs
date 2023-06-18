@@ -3,36 +3,23 @@ use {
         math::{IntRect, TILE_SIZE},
         tiles::{BgTileId, LayerAccess, MidTileId},
     },
-    mdv_data::ron_pretty_cfg,
+    extension_traits::extension,
+    mdv_data::{item::ItemId, ron_pretty_cfg},
     mdv_math::types::ScreenVec,
     serde::{Deserialize, Serialize},
 };
 
-/// We won't have more than 65535 different items
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ItemId(pub u16);
-
+#[extension(pub trait ItemIdExt)]
 impl ItemId {
-    pub const EMPTY: Self = Self(0);
     //pub const DIRT_BLOCK: ItemId = Self(1);
-    pub const TORCH: ItemId = Self(2);
-    pub const PLATFORM: ItemId = Self(3);
-    pub const WOOD_PICK: ItemId = Self(4);
+    const TORCH: ItemId = Self(2);
+    const PLATFORM: ItemId = Self(3);
+    const WOOD_PICK: ItemId = Self(4);
     //pub const PANZERIUM: ItemId = Self(5);
-    pub const STONE_WALL: ItemId = Self(6);
+    const STONE_WALL: ItemId = Self(6);
     //pub const STONE_BLOCK: ItemId = Self(7);
     //pub const COAL: ItemId = Self(8);
-    pub const DEV_PICK: ItemId = Self(9);
-}
-
-/// We won't have more than 65535 item quantity in a single slot
-pub type ItemQty = u16;
-
-/// A stack of items (one or more item of a kind)
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ItemStack {
-    pub id: ItemId,
-    pub qty: ItemQty,
+    const DEV_PICK: ItemId = Self(9);
 }
 
 #[derive(Debug, Serialize, Deserialize)]
