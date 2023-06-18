@@ -1,9 +1,10 @@
 use {
     crate::{
-        math::{move_towards_hspeed_vspeed, point_within_circle, WPosSc, WorldPos},
+        math::{WPosSc, WorldPos},
         save::Rgb,
         stringfmt::LengthDisp,
     },
+    mdv_math::util::{move_towards_hspeed_vspeed, point_within_circle},
     s2dc::{vec2, MobileEntity},
     sfml::graphics::Color,
 };

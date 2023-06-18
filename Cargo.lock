@@ -1014,6 +1014,7 @@ dependencies = [
  "image",
  "log",
  "mdv-data",
+ "mdv-math",
  "num-traits",
  "rand",
  "rfd",
@@ -1041,6 +1042,9 @@ dependencies = [
 [[package]]
 name = "mdv-math"
 version = "0.1.0"
+dependencies = [
+ "num-traits",
+]
 
 [[package]]
 name = "memchr"

@@ -1,6 +1,7 @@
 use {
     self::pause_menu::open_menu,
     crate::{math::ScreenVec, tiles::LayerAccess},
+    mdv_math::util::step_towards,
 };
 
 pub mod pause_menu;
@@ -14,7 +15,7 @@ use {
         input::{Input, InputAction},
         item::{self, ItemId, UseAction},
         itemdrop::ItemdropBundle,
-        math::{step_towards, world_y_depth, WorldPos, WorldRect, TILE_SIZE},
+        math::{world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
         tiles::{self, TileDb, TileDef, TileId, TileLayer},

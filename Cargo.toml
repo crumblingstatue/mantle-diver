@@ -53,6 +53,9 @@ git = "https://github.com/crumblingstatue/egui-sfml.git"
 [dependencies.mdv-data]
 path = "packages/mdv-data"
 
+[dependencies.mdv-math]
+path = "packages/mdv-math"
+
 [profile.dev.package."*"]
 opt-level = 2
 
