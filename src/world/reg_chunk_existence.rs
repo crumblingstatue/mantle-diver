@@ -22,7 +22,7 @@ impl std::fmt::Debug for ExistenceBitset {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f)?;
         for i in 0..64 {
-            let chr = if crate::bitmanip::nth_bit_set(self.0, i) {
+            let chr = if mdv_math::bitmanip::nth_bit_set(self.0, i) {
                 'X'
             } else {
                 '_'

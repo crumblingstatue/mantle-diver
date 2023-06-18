@@ -41,7 +41,7 @@ pub(super) fn save_chunk(pos: &ChunkPos, chk: &Chunk, world_dir: &Path) {
     }
     let (loc_x, loc_y) = pos.local();
     let loc_idx = loc_idx(loc_y, loc_x);
-    crate::bitmanip::set_nth_bit(&mut existence_bitset.0, loc_idx as usize, true);
+    mdv_math::bitmanip::set_nth_bit(&mut existence_bitset.0, loc_idx as usize, true);
     let byte_idx = loc_byte_idx(loc_idx);
     for (i, tile) in chk.tiles.iter().enumerate() {
         let off = byte_idx + (i * TILE_BYTES);

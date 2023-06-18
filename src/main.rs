@@ -20,7 +20,6 @@ use {
 
 mod app;
 mod audio;
-mod bitmanip;
 mod char;
 mod cmdline;
 mod command;

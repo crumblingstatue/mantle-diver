@@ -315,7 +315,7 @@ fn chunk_exists(reg_path: &Path, pos: ChunkPos) -> bool {
     let bitset = ExistenceBitset::read_from_fs(reg_path);
     let local = pos.local();
     let idx = loc_idx(local.1, local.0);
-    crate::bitmanip::nth_bit_set(bitset.0, idx as usize)
+    mdv_math::bitmanip::nth_bit_set(bitset.0, idx as usize)
 }
 
 #[derive(Clone, Copy, Debug)]
