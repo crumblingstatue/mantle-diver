@@ -503,6 +503,7 @@ pub(super) fn transient_blocks_system(game: &mut GameState) {
             let tile = &mut game.world.tile_at_mut(key.pos);
             match key.layer {
                 LayerAccess::Bg => {
+                    process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.bg, &key.pos);
                     tile.bg = TileId::EMPTY;
                 }
                 LayerAccess::Mid => {
