@@ -151,6 +151,7 @@ impl App {
                     inventory: self.game.inventory,
                     world_seed: self.game.world.seed,
                     player: plr_dat.sav(),
+                    world_ticks: self.game.world.ticks,
                 }
                 .save(&self.game.world.path);
                 log::info!("Save result: {result:?}");

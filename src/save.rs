@@ -10,6 +10,7 @@ pub struct Save {
     pub inventory: Inventory,
     pub world_seed: i32,
     pub player: PlayerSav,
+    pub world_ticks: u64,
 }
 
 #[derive(Serialize, Deserialize)]

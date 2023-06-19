@@ -108,7 +108,7 @@ impl GameState {
         let mut itemdb = ItemDb::load_or_default("data");
         itemdb.update_rects(&res.atlas.rects);
         let mut inventory = Inventory::new_debug();
-        let world;
+        let mut world;
         let mut plr = PlayerBundle::new_at(spawn_point);
         spawn_point.y -= WPosSc::try_from(plr.mov.mob.en.bb.y).unwrap();
         plr.mov.mob.en.pos.y = i32::try_from(spawn_point.y).unwrap();
@@ -116,6 +116,7 @@ impl GameState {
             Ok(save) => {
                 inventory = save.inventory;
                 world = World::new(&world_name, path, save.world_seed);
+                world.ticks = save.world_ticks;
                 plr.dat.update_from_save(&save.player);
             }
             Err(e) => {
