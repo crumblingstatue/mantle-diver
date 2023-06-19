@@ -165,7 +165,7 @@ TileDb(
                 y: 1,
             ),
             health: 2.0,
-            hit_sound: None,
+            hit_sound: "dig/tree",
             item_drop: TileItemDrop(
                 qty_range: RangeInclusive(
                     start: 1,
@@ -193,7 +193,7 @@ TileDb(
                 y: 0,
             ),
             health: 5.0,
-            hit_sound: None,
+            hit_sound: "dig/tree",
             item_drop: TileItemDrop(
                 qty_range: RangeInclusive(
                     start: 1,
