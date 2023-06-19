@@ -153,5 +153,18 @@ ItemDb(
             use2: Nothing,
             consumable: true,
         ),
+        /*[11]*/ ItemDef(
+            name: "Dirt wall",
+            graphic_name: "tiles/dirtback",
+            draw_off: ScreenVec(
+                x: 4,
+                y: 4,
+            ),
+            use1: PlaceBgTile(
+                id: TileId(1),
+            ),
+            use2: Nothing,
+            consumable: true,
+        ),
     ],
 )
