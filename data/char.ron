@@ -82,14 +82,44 @@ CharDb(
                 y: 0,
             ),
         ),
-        "items/woodpick": Offset(
+        "items/devpick": Offset(
             left: ScreenVec(
-                x: -14,
-                y: 0,
+                x: -11,
+                y: 28,
             ),
             right: ScreenVec(
-                x: 56,
-                y: 0,
+                x: 51,
+                y: 28,
+            ),
+        ),
+        "items/woodpick": Offset(
+            left: ScreenVec(
+                x: -21,
+                y: 27,
+            ),
+            right: ScreenVec(
+                x: 62,
+                y: 27,
+            ),
+        ),
+        "tiles/platform": Offset(
+            left: ScreenVec(
+                x: -14,
+                y: 50,
+            ),
+            right: ScreenVec(
+                x: 54,
+                y: 51,
+            ),
+        ),
+        "tiles/torch": Offset(
+            left: ScreenVec(
+                x: -3,
+                y: 25,
+            ),
+            right: ScreenVec(
+                x: 44,
+                y: 25,
             ),
         ),
     },

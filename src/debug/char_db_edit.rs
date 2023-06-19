@@ -30,8 +30,10 @@ impl CharDbEdit {
                         ui.label(k);
                         ui.label("l");
                         ui.add(egui::DragValue::new(&mut v.left.x));
+                        ui.add(egui::DragValue::new(&mut v.left.y));
                         ui.label("r");
                         ui.add(egui::DragValue::new(&mut v.right.x));
+                        ui.add(egui::DragValue::new(&mut v.right.y));
                         if ui.button("x").clicked() {
                             retain = false;
                         }
