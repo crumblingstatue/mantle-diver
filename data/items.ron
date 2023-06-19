@@ -54,7 +54,7 @@ ItemDb(
             ),
             use2: MineBgTile(
                 power: 1.0,
-                delay: 1,
+                delay: 35,
             ),
             consumable: false,
         ),

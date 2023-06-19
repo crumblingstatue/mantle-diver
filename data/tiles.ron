@@ -54,7 +54,7 @@ TileDb(
                 x: 0,
                 y: 0,
             ),
-            health: 0.0,
+            health: 6.0,
             hit_sound: "dig/dirt",
             item_drop: TileItemDrop(
                 qty_range: RangeInclusive(
