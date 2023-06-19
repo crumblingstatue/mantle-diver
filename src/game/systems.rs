@@ -166,7 +166,9 @@ fn do_use_action(
             let empty_right = world.tile_at_mut(mouse_tpos.x_off(1)).bg.empty();
             let has_empty_neighbour = empty_above || empty_below || empty_left || empty_right;
             let t = world.tile_at_mut(mouse_tpos);
-            if !has_empty_neighbour {
+            // Also only allow digging the backwall if the mid tile is empty.
+            let empty_mid = t.mid.empty();
+            if !has_empty_neighbour || !empty_mid {
                 return;
             }
             mine_tile(
