@@ -116,6 +116,9 @@ fn do_use_action(
         UseAction::PlaceBgTile { id } => {
             let t = world.tile_at_mut(mouse_tpos);
             if t.bg.empty() && ticks - *last_tile_place > tile_place_cooldown {
+                if let Some(snd) = &tile_db[*id].hit_sound {
+                    au_ctx.plr.play(au_res, snd);
+                }
                 t.bg = *id;
                 active_slot.qty -= 1;
                 *last_tile_place = ticks;
@@ -124,6 +127,9 @@ fn do_use_action(
         UseAction::PlaceMidTile { id } => {
             let t = world.tile_at_mut(mouse_tpos);
             if t.mid.empty() && ticks - *last_tile_place > tile_place_cooldown {
+                if let Some(snd) = &tile_db[*id].hit_sound {
+                    au_ctx.plr.play(au_res, snd);
+                }
                 t.mid = *id;
                 active_slot.qty -= 1;
                 *last_tile_place = ticks;
