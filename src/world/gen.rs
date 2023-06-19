@@ -1,10 +1,10 @@
 use {
     super::{Chunk, ChunkPos},
     crate::{
+        data,
         math::{WorldPos, TILE_SIZE},
         world::{default_chunk_tiles, CHUNK_EXTENT, CHUNK_N_TILES},
     },
-    mdv_data::tile::{BgTileId, MidTileId},
     simdnoise::NoiseBuilder,
 };
 
@@ -40,11 +40,11 @@ impl Chunk {
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
             if y == ceil - 1 {
                 if noise as i32 % 19 == 0 {
-                    t.mid = MidTileId::TREE;
+                    t.mid = data::tile::mid::TILES_TREE;
                 } else if noise as i32 % 17 == 0 {
-                    t.mid = MidTileId::SMALL_ROCK;
+                    t.mid = data::tile::mid::TILES_SMALLROCK;
                 } else if noise as i32 % 15 == 0 {
-                    t.mid = MidTileId::STICK;
+                    t.mid = data::tile::mid::TILES_STICK;
                 }
             }
             if y < ceil {
@@ -54,26 +54,26 @@ impl Chunk {
             let dirt_bottom = surf + 80;
             #[expect(clippy::cast_possible_truncation, reason = "Scaled noise")]
             if y < dirt_bottom.saturating_add_signed(hnoise[local_x as usize] as i32) {
-                t.mid = MidTileId::DIRT;
-                t.bg = BgTileId::DIRT;
+                t.mid = data::tile::mid::TILES_DIRT;
+                t.bg = data::tile::bg::TILES_DIRTBACK;
                 if y == ceil {
                     //t.fg = FgTileId::GRASS; // Removed for now
                 } else if y > ceil + 2 && noise as i32 % 37 == 0 {
-                    t.mid = MidTileId::DIRT_COAL;
+                    t.mid = data::tile::mid::TILES_DIRT_COAL;
                 }
                 continue;
             }
             // Default "cave level" generation
-            t.bg = BgTileId::STONE;
+            t.bg = data::tile::bg::TILES_STONEBACK;
             if noise < 550. {
-                t.mid = MidTileId::STONE;
+                t.mid = data::tile::mid::TILES_STONE;
             }
             if noise < 120. {
-                t.mid = MidTileId::DIRT;
-                t.bg = BgTileId::DIRT;
+                t.mid = data::tile::mid::TILES_DIRT;
+                t.bg = data::tile::bg::TILES_DIRTBACK;
             }
             if noise < 40. {
-                t.mid = MidTileId::STONE_COAL;
+                t.mid = data::tile::mid::TILES_STONE_COAL;
             }
         }
         Self { tiles }

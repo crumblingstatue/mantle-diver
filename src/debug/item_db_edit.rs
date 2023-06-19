@@ -1,8 +1,9 @@
 use {
+    crate::data,
     extension_traits::extension,
     mdv_data::{
         item::{ItemDb, ItemDef, ItemId, UseAction},
-        tile::{BgTileId, LayerAccess, MidTileId},
+        tile::LayerAccess,
     },
     mdv_math::types::{IntRect, ScreenVec},
 };
@@ -95,11 +96,13 @@ fn use_dropdown_combo(use_field: &mut UseAction, ui: &mut egui::Ui, label: &str)
             };
             let text = v.text();
             ui.selectable_value(use_field, v, text);
-            let v = UseAction::PlaceBgTile { id: BgTileId::DIRT };
+            let v = UseAction::PlaceBgTile {
+                id: data::tile::bg::TILES_DIRTBACK,
+            };
             let text = v.text();
             ui.selectable_value(use_field, v, text);
             let v = UseAction::PlaceMidTile {
-                id: MidTileId::DIRT,
+                id: data::tile::mid::TILES_DIRT,
             };
             let text = v.text();
             ui.selectable_value(use_field, v, text);

@@ -118,7 +118,7 @@ pub struct MidDef {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct TileId<Layer>(pub u16, #[serde(skip)] PhantomData<Layer>);
+pub struct TileId<Layer>(pub u16, #[serde(skip)] pub PhantomData<Layer>);
 
 impl Bg {
     pub fn unknown_def() -> TileDef<Self> {
@@ -191,22 +191,6 @@ impl<Layer> TileId<Layer> {
         self.0 == 0
     }
     pub const EMPTY: Self = Self(0, PhantomData);
-}
-
-impl BgTileId {
-    pub const DIRT: Self = Self(1, PhantomData);
-    pub const STONE: Self = Self(2, PhantomData);
-}
-
-impl MidTileId {
-    pub const DIRT: Self = Self(1, PhantomData);
-    pub const STONE: Self = Self(2, PhantomData);
-    pub const TORCH: Self = Self(3, PhantomData);
-    pub const TREE: Self = Self(6, PhantomData);
-    pub const SMALL_ROCK: Self = Self(7, PhantomData);
-    pub const STICK: Self = Self(8, PhantomData);
-    pub const DIRT_COAL: Self = Self(9, PhantomData);
-    pub const STONE_COAL: Self = Self(10, PhantomData);
 }
 
 impl<Layer: TileLayer> Default for TileDef<Layer>

@@ -1,11 +1,11 @@
 use {
     crate::{
+        data,
         game::GameState,
         math::{WPosSc, TILE_SIZE},
         world::{TPosSc, TilePos},
     },
     fnv::FnvHashSet,
-    mdv_data::tile::MidTileId,
     sfml::system::Vector2u,
     std::collections::VecDeque,
 };
@@ -148,14 +148,14 @@ pub(crate) fn enumerate_light_sources(
         } else {
             255
         };
-        let ls = t.mid == MidTileId::TORCH || empty;
+        let ls = t.mid == data::tile::mid::TILES_TORCH || empty;
         if ls {
             light_state.light_sources.push_back(LightSrc {
                 map_idx: i,
                 intensity,
             });
         }
-        let lb = t.mid == MidTileId::DIRT || t.mid == MidTileId::STONE;
+        let lb = t.mid == data::tile::mid::TILES_DIRT || t.mid == data::tile::mid::TILES_STONE;
         if lb {
             light_state.light_blockers.insert(i);
         }
