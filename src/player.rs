@@ -1,11 +1,11 @@
 use {
     crate::{
         math::{WPosSc, WorldPos},
-        save::Rgb,
         stringfmt::LengthDisp,
     },
     mdv_math::util::{move_towards_hspeed_vspeed, point_within_circle},
     s2dc::{vec2, MobileEntity},
+    serde::{Deserialize, Serialize},
     sfml::graphics::Color,
 };
 
@@ -24,6 +24,7 @@ pub struct MovingEnt {
     pub mob: MobileEntity,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Health {
     pub current: f32,
     pub max: f32,
@@ -147,16 +148,5 @@ impl PlayerColors {
         self.shirt = sav.shirt_color.to_sf();
         self.pants = sav.pants_color.to_sf();
         self.shoes = sav.shoes_color.to_sf();
-    }
-
-    pub(crate) fn sav(&self) -> crate::save::PlayerSav {
-        crate::save::PlayerSav {
-            skin_color: Rgb::from_sf(self.skin),
-            eye_color: Rgb::from_sf(self.eye),
-            hair_color: Rgb::from_sf(self.hair),
-            shirt_color: Rgb::from_sf(self.shirt),
-            pants_color: Rgb::from_sf(self.pants),
-            shoes_color: Rgb::from_sf(self.shoes),
-        }
     }
 }

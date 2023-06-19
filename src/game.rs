@@ -118,6 +118,7 @@ impl GameState {
                 world = World::new(&world_name, path, save.world_seed);
                 world.ticks = save.world_ticks;
                 plr.dat.update_from_save(&save.player);
+                plr.health = save.player.health;
             }
             Err(e) => {
                 log::error!("Failed to load save: {e}");

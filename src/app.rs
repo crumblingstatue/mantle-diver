@@ -9,9 +9,9 @@ use {
         input::Input,
         light::{self, LightState, U16Vec},
         math::{ScreenVecExt, WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
-        player::PlayerColors,
+        player::{Health, PlayerColors},
         res::{Res, ResAudio},
-        save::Save,
+        save::{PlayerSav, Rgb, Save},
         world::TilePos,
         CliArgs,
     },
@@ -144,13 +144,28 @@ impl App {
         match self
             .game
             .ecw
-            .query_one_mut::<&mut PlayerColors>(self.game.player_en)
+            .query_one_mut::<(&mut PlayerColors, &mut Health)>(self.game.player_en)
         {
-            Ok(plr_dat) => {
+            Ok((colors, health)) => {
+                let player_sav = PlayerSav {
+                    skin_color: Rgb::from_sf(colors.skin),
+                    eye_color: Rgb::from_sf(colors.eye),
+                    hair_color: Rgb::from_sf(colors.hair),
+                    shirt_color: Rgb::from_sf(colors.shirt),
+                    pants_color: Rgb::from_sf(colors.pants),
+                    shoes_color: Rgb::from_sf(colors.shoes),
+                    health: std::mem::replace(
+                        health,
+                        Health {
+                            current: 0.,
+                            max: 0.,
+                        },
+                    ),
+                };
                 let result = Save {
                     inventory: self.game.inventory,
                     world_seed: self.game.world.seed,
-                    player: plr_dat.sav(),
+                    player: player_sav,
                     world_ticks: self.game.world.ticks,
                 }
                 .save(&self.game.world.path);

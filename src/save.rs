@@ -1,5 +1,5 @@
 use {
-    crate::inventory::Inventory,
+    crate::{inventory::Inventory, player::Health},
     serde::{Deserialize, Serialize},
     std::path::{Path, PathBuf},
 };
@@ -21,6 +21,7 @@ pub struct PlayerSav {
     pub shirt_color: Rgb,
     pub pants_color: Rgb,
     pub shoes_color: Rgb,
+    pub health: Health,
 }
 
 #[derive(Serialize, Deserialize)]
