@@ -23,6 +23,7 @@ mod audio;
 mod cmdline;
 mod command;
 mod config;
+mod data;
 mod debug;
 mod game;
 mod graphics;

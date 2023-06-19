@@ -1,4 +1,5 @@
 use {
+    crate::data,
     mdv_data::item::{ItemId, ItemStack},
     serde::{Deserialize, Serialize},
 };
@@ -13,7 +14,7 @@ impl Inventory {
         Self {
             slots: vec![
                 ItemStack {
-                    id: ItemId::WOOD_PICK,
+                    id: data::item::WOOD_PICK,
                     qty: 1,
                 },
                 ItemStack {
@@ -37,19 +38,19 @@ impl Inventory {
                     qty: 0,
                 },
                 ItemStack {
-                    id: ItemId::TORCH,
+                    id: data::item::TORCH,
                     qty: 100,
                 },
                 ItemStack {
-                    id: ItemId::PLATFORM,
+                    id: data::item::PLATFORM,
                     qty: 9999,
                 },
                 ItemStack {
-                    id: ItemId::STONE_WALL,
+                    id: data::item::STONE_WALL,
                     qty: 100,
                 },
                 ItemStack {
-                    id: ItemId::DEV_PICK,
+                    id: data::item::DEV_PICK,
                     qty: 1,
                 },
             ],

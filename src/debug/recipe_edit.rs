@@ -1,7 +1,8 @@
 use {
     super::item_db_edit::ItemDbEdit,
+    crate::data,
     mdv_data::{
-        item::{ItemDb, ItemId, ItemStack},
+        item::{ItemDb, ItemStack},
         recipe::{Recipe, RecipeDb, Station},
     },
 };
@@ -34,7 +35,7 @@ impl RecdbEd {
                         stations: vec![Station::Player],
                         input: Vec::new(),
                         output: ItemStack {
-                            id: ItemId::TORCH,
+                            id: data::item::TORCH,
                             qty: 1,
                         },
                     });
@@ -51,7 +52,7 @@ impl RecdbEd {
                         ui.label("Input");
                         if ui.button("✚").clicked() {
                             rec.input.push(ItemStack {
-                                id: ItemId::TORCH,
+                                id: data::item::TORCH,
                                 qty: 1,
                             });
                         }

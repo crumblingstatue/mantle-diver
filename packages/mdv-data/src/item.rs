@@ -25,18 +25,6 @@ pub struct ItemStack {
     pub qty: ItemQty,
 }
 
-impl ItemId {
-    //pub const DIRT_BLOCK: ItemId = Self(1);
-    pub const TORCH: ItemId = Self(2);
-    pub const PLATFORM: ItemId = Self(3);
-    pub const WOOD_PICK: ItemId = Self(4);
-    //pub const PANZERIUM: ItemId = Self(5);
-    pub const STONE_WALL: ItemId = Self(6);
-    //pub const STONE_BLOCK: ItemId = Self(7);
-    //pub const COAL: ItemId = Self(8);
-    pub const DEV_PICK: ItemId = Self(9);
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ItemDef {
     pub name: String,
