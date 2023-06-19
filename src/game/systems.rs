@@ -1,6 +1,9 @@
-use mdv_data::{
-    item::UseAction,
-    tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
+use {
+    crate::itemdrop::PickupCooldown,
+    mdv_data::{
+        item::UseAction,
+        tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
+    },
 };
 
 pub mod pause_menu;
@@ -439,7 +442,23 @@ pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
         mov_extra.jumps_left = 0;
     }
     mov_extra.down_intent = input.down(InputAction::Down);
+    if input.pressed(InputAction::ThrowItem) {
+        if let Some(stack) = game.inventory.take_from_slot(game.selected_inv_slot, 1) {
+            let pos = mov.world_pos();
+            let en = game.ecw.spawn(ItemdropBundle::new_at(stack.id, pos));
+            game.ecw
+                .insert_one(
+                    en,
+                    PickupCooldown {
+                        tick_dropped: game.world.ticks,
+                        cooldown: 100,
+                    },
+                )
+                .unwrap();
+        }
+    }
 }
+
 pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
     let spd = if input.down_raw(Key::LShift) {
         100
@@ -537,9 +556,17 @@ pub(super) fn item_drop_claim_system(
         radius: game.item_pickup_radius,
         c: Color::YELLOW,
     });
-    for (en, (id, mov)) in game.ecw.query::<(&ItemId, &mut MovingEnt)>().iter() {
+    for (en, (id, mov, cd)) in game
+        .ecw
+        .query::<(&ItemId, &mut MovingEnt, Option<&mut PickupCooldown>)>()
+        .iter()
+    {
         // Horizontal friction
         step_towards(&mut mov.hspeed, 0.0, 0.03);
+        if let Some(cd) = cd && game.world.ticks < cd.tick_dropped + cd.cooldown {
+            return;
+        }
+        // Player interaction
         // "Magnetism" behavior when player is close to an item drop
         if mov.within_radius_of_other(plr_mov, game.item_pickup_radius) {
             mov.move_towards_other(plr_mov, 4.0);

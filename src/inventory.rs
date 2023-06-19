@@ -75,4 +75,27 @@ impl Inventory {
         }
         false
     }
+
+    pub(crate) fn take_from_slot(&mut self, idx: usize, qty: u16) -> Option<ItemStack> {
+        match self.slots.get_mut(idx) {
+            Some(slot) => {
+                if slot.id == ItemId::EMPTY {
+                    None
+                } else {
+                    match slot.qty.checked_sub(qty) {
+                        Some(result) => {
+                            slot.qty = result;
+                            let id = slot.id;
+                            if slot.qty == 0 {
+                                slot.id = ItemId::EMPTY;
+                            }
+                            Some(ItemStack { id, qty })
+                        }
+                        None => None,
+                    }
+                }
+            }
+            None => None,
+        }
+    }
 }

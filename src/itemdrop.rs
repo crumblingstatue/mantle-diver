@@ -25,3 +25,8 @@ impl ItemdropBundle {
         }
     }
 }
+
+pub struct PickupCooldown {
+    pub tick_dropped: u64,
+    pub cooldown: u64,
+}

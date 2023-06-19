@@ -38,6 +38,7 @@ fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
     hm.insert(InputAction::Up, Key::W);
     hm.insert(InputAction::Right, Key::D);
     hm.insert(InputAction::Jump, Key::Space);
+    hm.insert(InputAction::ThrowItem, Key::Q);
     hm
 }
 
@@ -106,7 +107,6 @@ impl Input {
             }
         }
     }
-    #[expect(dead_code, reason = "Will probably use later")]
     pub fn pressed(&self, action: InputAction) -> bool {
         self.pressed_raw(self.key_bindings[&action])
     }
@@ -124,6 +124,7 @@ pub enum InputAction {
     Jump,
     Down,
     Up,
+    ThrowItem,
 }
 
 impl InputAction {
@@ -134,6 +135,7 @@ impl InputAction {
             InputAction::Jump => "Jump",
             InputAction::Down => "Down",
             InputAction::Up => "Up",
+            InputAction::ThrowItem => "Throw item",
         }
     }
 }

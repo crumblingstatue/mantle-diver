@@ -1,4 +1,4 @@
-#![feature(lint_reasons)]
+#![feature(lint_reasons, let_chains)]
 #![warn(
     trivial_casts,
     trivial_numeric_casts,
