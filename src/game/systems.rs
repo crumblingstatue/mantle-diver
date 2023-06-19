@@ -63,7 +63,6 @@ pub(super) fn item_use_system(
         return;
     };
     let ticks = game.world.ticks;
-    let t = game.world.tile_at_mut(mouse_tpos);
     let tile_place_cooldown = 8;
     if !ptr_within_circle {
         return;
@@ -77,7 +76,7 @@ pub(super) fn item_use_system(
     };
     do_use_action(
         action,
-        t,
+        &mut game.world,
         ticks,
         tile_place_cooldown,
         active_slot,
@@ -98,7 +97,7 @@ pub(super) fn item_use_system(
 #[expect(clippy::too_many_arguments)]
 fn do_use_action(
     action: &UseAction,
-    t: &mut crate::world::Tile,
+    world: &mut World,
     ticks: u64,
     tile_place_cooldown: u64,
     active_slot: &mut ItemStack,
@@ -112,6 +111,7 @@ fn do_use_action(
 ) {
     match action {
         UseAction::PlaceBgTile { id } => {
+            let t = world.tile_at_mut(mouse_tpos);
             if t.bg.empty() && ticks - *last_tile_place > tile_place_cooldown {
                 t.bg = *id;
                 active_slot.qty -= 1;
@@ -119,17 +119,22 @@ fn do_use_action(
             }
         }
         UseAction::PlaceMidTile { id } => {
+            let t = world.tile_at_mut(mouse_tpos);
             if t.mid.empty() && ticks - *last_tile_place > tile_place_cooldown {
                 t.mid = *id;
                 active_slot.qty -= 1;
                 *last_tile_place = ticks;
             }
         }
-        UseAction::RemoveTile { layer } => match layer {
-            LayerAccess::Bg => t.bg = TileId::EMPTY,
-            LayerAccess::Mid => t.mid = TileId::EMPTY,
-        },
+        UseAction::RemoveTile { layer } => {
+            let t = world.tile_at_mut(mouse_tpos);
+            match layer {
+                LayerAccess::Bg => t.bg = TileId::EMPTY,
+                LayerAccess::Mid => t.mid = TileId::EMPTY,
+            }
+        }
         UseAction::MineTile { power, delay } => {
+            let t = world.tile_at_mut(mouse_tpos);
             mine_tile(
                 &mut t.mid,
                 ticks,
@@ -144,6 +149,26 @@ fn do_use_action(
             );
         }
         UseAction::MineBgTile { power, delay } => {
+            // Only allow digging walls if they have an empty neighbour.
+            //
+            // Being able to just dig any wall gives a "light source cheat" at the dirt level,
+            // and also diminishes the feeling of being deep underground being able to just
+            // poke holes anywhere underground.
+            //
+            // However, the game recognizes the desire to mine backwalls for environment manipulation
+            // and building purposes. This approach tries to strike a balance.
+            //
+            // TODO: Allow digging walls anywhere for user placed walls.
+            // Distinguish them from naturally placed walls, which can't be digged anywhere.
+            let empty_above = world.tile_at_mut(mouse_tpos.y_off(-1)).bg.empty();
+            let empty_below = world.tile_at_mut(mouse_tpos.y_off(1)).bg.empty();
+            let empty_left = world.tile_at_mut(mouse_tpos.x_off(-1)).bg.empty();
+            let empty_right = world.tile_at_mut(mouse_tpos.x_off(1)).bg.empty();
+            let has_empty_neighbour = empty_above || empty_below || empty_left || empty_right;
+            let t = world.tile_at_mut(mouse_tpos);
+            if !has_empty_neighbour {
+                return;
+            }
             mine_tile(
                 &mut t.bg,
                 ticks,
