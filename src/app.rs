@@ -325,7 +325,7 @@ impl App {
             x: (self.rw.size().x / u32::from(self.scale)) as f32,
             y: (self.rw.size().y / u32::from(self.scale)) as f32,
         };
-        rendering::draw_ui(&mut self.game, &mut self.render.rt, res, ui_dims);
+        rendering::draw_ui(&mut self.game, &mut self.render.rt, res, ui_dims, &self.cfg);
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
@@ -339,6 +339,7 @@ impl App {
                     res,
                     &mut self.cmdvec,
                     &self.worlds_dir,
+                    &mut self.cfg,
                 );
             })
             .unwrap();

@@ -1,9 +1,11 @@
 use {
     self::{entity_list::EntityList, item_db_edit::ItemDbEdit, recipe_edit::RecdbEd},
     crate::{
+        config::Config,
         math::WorldRect,
         player::{MovingEnt, PlayerColors},
     },
+    egui::Color32,
     gamedebug_core::MsgBuf,
 };
 
@@ -48,7 +50,12 @@ pub struct DebugState {
     world_mgr: WorldManager,
 }
 
-fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Context) {
+fn debug_panel_ui(
+    debug: &mut DebugState,
+    game: &mut GameState,
+    ctx: &egui::Context,
+    cfg: &mut Config,
+) {
     let mut open = debug.panel;
     egui::Window::new("Debug (F12)")
         .open(&mut open)
@@ -118,6 +125,20 @@ fn debug_panel_ui(debug: &mut DebugState, game: &mut GameState, ctx: &egui::Cont
                 }
                 ui.separator();
             }
+            ui.collapsing("Config", |ui| {
+                ui.label("Inv frame color");
+                cfg.ui.inv_frame_color.as_sf_mut(|c| {
+                    color_edit_button_srgba(ui, c);
+                });
+                ui.label("Inv frame highlight color");
+                cfg.ui.inv_frame_highlight.as_sf_mut(|c| {
+                    color_edit_button_srgba(ui, c);
+                });
+                ui.label("Inv bg color");
+                cfg.ui.inv_bg_color.as_sf_mut(|c| {
+                    color_edit_button_srgba(ui, c);
+                });
+            });
             ui.label("Elapsed ticks");
             ui.add(egui::DragValue::new(&mut game.world.ticks));
             egui::ScrollArea::vertical().show(ui, |ui| {
@@ -138,6 +159,15 @@ fn color_edit_button(ui: &mut egui::Ui, c: &mut Color) {
     c.b = rgb[2];
 }
 
+fn color_edit_button_srgba(ui: &mut egui::Ui, c: &mut Color) {
+    let mut rgba = Color32::from_rgba_premultiplied(c.r, c.g, c.b, c.a);
+    ui.color_edit_button_srgba(&mut rgba);
+    c.r = rgba.r();
+    c.g = rgba.g();
+    c.b = rgba.b();
+    c.a = rgba.a();
+}
+
 pub(crate) fn do_debug_ui(
     ctx: &egui::Context,
     debug: &mut DebugState,
@@ -145,8 +175,9 @@ pub(crate) fn do_debug_ui(
     res: &mut Res,
     cmd: &mut CmdVec,
     worlds_path: &Path,
+    cfg: &mut Config,
 ) {
-    debug_panel_ui(debug, game, ctx);
+    debug_panel_ui(debug, game, ctx, cfg);
     debug.tiledb_edit.ui(
         ctx,
         &mut game.tile_db,

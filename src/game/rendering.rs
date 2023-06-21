@@ -1,6 +1,7 @@
 use {
     super::{for_each_tile_on_screen, Biome, GameState, SfVec2fExt, TilestateKey},
     crate::{
+        config::Config,
         debug::{DebugState, DBG_OVR},
         light::{self, LightEnumInfo, U16Vec},
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
@@ -326,9 +327,15 @@ fn draw_controlled_en_bb(game: &mut GameState, rt: &mut RenderTexture) {
     rt.draw(&rect_sh);
 }
 
-pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims: Vector2f) {
+pub fn draw_ui(
+    game: &mut GameState,
+    rt: &mut RenderTexture,
+    res: &Res,
+    ui_dims: Vector2f,
+    cfg: &Config,
+) {
     let mut s = Sprite::with_texture(&res.atlas.tex);
-    let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 40., 40.));
+    let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
     let mut text = Text::new("", &res.sans_font, 14);
     if let Some(def) = game
         .itemdb
@@ -341,18 +348,24 @@ pub fn draw_ui(game: &mut GameState, rt: &mut RenderTexture, res: &Res, ui_dims:
         rt.draw(&text);
         text.set_outline_thickness(0.0);
     }
-    rs.set_outline_color(Color::YELLOW);
-    rs.set_outline_thickness(1.0);
-    rs.set_fill_color(Color::TRANSPARENT);
+    let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
+    let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
+    let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
     for (i, slot) in game.inventory.slots.iter().enumerate() {
-        s.set_texture_rect(res.atlas.rects["ui/invframe"].to_sf());
         let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
+        rs.set_position((pos.0 + 2., pos.1 + 2.));
+        rs.set_fill_color(inv_bg_color);
+        if i == game.selected_inv_slot {
+            s.set_color(inv_frame_highlight);
+        } else {
+            rs.set_outline_thickness(0.0);
+            s.set_color(inv_frame_color);
+        }
+        rt.draw(&rs);
+        s.set_texture_rect(res.atlas.rects["ui/invframe"].to_sf());
         s.set_position(pos);
         rt.draw(&s);
-        if i == game.selected_inv_slot {
-            rs.set_position(pos);
-            rt.draw(&rs);
-        }
+        s.set_color(Color::WHITE);
         let Some(item_def) = &game.itemdb.get(slot.id) else {
                 continue;
             };
