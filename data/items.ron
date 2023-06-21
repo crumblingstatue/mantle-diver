@@ -101,8 +101,8 @@ ItemDb(
             name: "Coal ",
             graphic_name: "items/coal",
             draw_off: ScreenVec(
-                x: 8,
-                y: 7,
+                x: 12,
+                y: 12,
             ),
             use1: Nothing,
             use2: Nothing,
@@ -112,8 +112,8 @@ ItemDb(
             name: "Dev Pick",
             graphic_name: "items/devpick",
             draw_off: ScreenVec(
-                x: 9,
-                y: 6,
+                x: 4,
+                y: 4,
             ),
             use1: MineTile(
                 power: 1000.0,

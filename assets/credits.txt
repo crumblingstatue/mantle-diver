@@ -31,6 +31,13 @@ Author: ShatteredReality
 
 ---
 
+graphics/items/coal.png
+graphics/items/devpick.png
+
+Author: Eternus
+
+---
+
 music/underground.mp3
 
 Author: CE7710

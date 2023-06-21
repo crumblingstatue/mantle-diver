@@ -84,12 +84,12 @@ CharDb(
         ),
         "items/devpick": Offset(
             left: ScreenVec(
-                x: -11,
-                y: 28,
+                x: -22,
+                y: 25,
             ),
             right: ScreenVec(
-                x: 51,
-                y: 28,
+                x: 62,
+                y: 26,
             ),
         ),
         "items/woodpick": Offset(
