@@ -36,6 +36,7 @@ pub(super) fn item_use_system(
     au_res: &ResAudio,
     au_ctx: &mut AudioCtx,
     mouse_wpos: WorldPos,
+    debug: &DebugState,
 ) {
     let Ok(mov) = game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) else {
         log::warn!("No controlled entity");
@@ -67,7 +68,7 @@ pub(super) fn item_use_system(
     };
     let ticks = game.world.ticks;
     let tile_place_cooldown = 8;
-    if !ptr_within_circle {
+    if !(ptr_within_circle || debug.freecam) {
         return;
     }
     let action = if input.lmb_down {
