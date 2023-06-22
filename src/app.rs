@@ -251,6 +251,7 @@ impl App {
         let mut loc = self.input.mouse_down_loc / ScreenSc::from(self.scale);
         mouse_world_pos.x = mouse_world_pos.x.saturating_add_signed(loc.x.into());
         mouse_world_pos.y = mouse_world_pos.y.saturating_add_signed(loc.y.into());
+        self.debug.mouse_wpos = mouse_world_pos;
         loc.x /= ScreenSc::from(self.scale);
         loc.y /= ScreenSc::from(self.scale);
         let mouse_tpos = mouse_world_pos.tile_pos();
@@ -326,7 +327,14 @@ impl App {
             x: (self.rw.size().x / u32::from(self.scale)) as f32,
             y: (self.rw.size().y / u32::from(self.scale)) as f32,
         };
-        rendering::draw_ui(&mut self.game, &mut self.render.rt, res, ui_dims, &self.cfg);
+        rendering::draw_ui(
+            &mut self.game,
+            &mut self.render.rt,
+            res,
+            ui_dims,
+            &self.cfg,
+            &self.debug,
+        );
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((f32::from(self.scale), f32::from(self.scale)));

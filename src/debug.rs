@@ -47,6 +47,7 @@ pub struct DebugState {
     pub itemdb_edit: ItemDbEdit,
     pub recdb_edit: RecdbEd,
     pub entity_list: EntityList,
+    pub mouse_wpos: WorldPos,
     world_mgr: WorldManager,
 }
 

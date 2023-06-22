@@ -7,6 +7,7 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
+        stringfmt::LengthDisp,
         time::ticks_hm,
     },
     mdv_data::{item::ItemId, tile::LayerAccess},
@@ -333,6 +334,7 @@ pub fn draw_ui(
     res: &Res,
     ui_dims: Vector2f,
     cfg: &Config,
+    debug: &DebugState,
 ) {
     let mut s = Sprite::with_texture(&res.atlas.tex);
     let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
@@ -401,6 +403,12 @@ pub fn draw_ui(
             }
         }
         Err(_) => text.set_string("Not controlling anything"),
+    }
+    if debug.freecam {
+        text.set_string(&format!(
+            "Mouse depth: {}",
+            LengthDisp(debug.mouse_wpos.depth() as f32)
+        ));
     }
     rt.draw(&text);
     text.set_position((0., 48.));

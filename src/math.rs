@@ -56,7 +56,7 @@ pub type WPosSc = u32;
 /// Invariants:
 ///
 /// - Not larger than 8 million (world boundary)
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct WorldPos {
     pub x: WPosSc,
     pub y: WPosSc,
@@ -108,6 +108,13 @@ impl WorldPos {
             i64::from(x),
             i64::from(y),
         )
+    }
+    #[expect(
+        clippy::cast_possible_wrap,
+        reason = "Position is always smaller than i32::MAX"
+    )]
+    pub fn depth(&self) -> i32 {
+        self.y as i32 - WorldPos::SURFACE as i32
     }
 }
 
