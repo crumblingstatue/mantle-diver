@@ -46,6 +46,12 @@ impl AudioCtx {
         self.mus_vol = self.mus_vol.clamp(0.0, 1.0);
         self.music_sink.set_volume(self.mus_vol);
     }
+
+    pub(crate) fn set_mus_vol(&mut self, mus_vol: f32) {
+        self.mus_vol = mus_vol;
+        self.mus_vol = self.mus_vol.clamp(0.0, 1.0);
+        self.music_sink.set_volume(self.mus_vol);
+    }
 }
 
 pub struct SoundPlayer {

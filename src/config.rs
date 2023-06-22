@@ -12,6 +12,8 @@ pub struct Config {
     pub res_folder_path: String,
     #[serde(default)]
     pub ui: UiConfig,
+    #[serde(default)]
+    pub music_vol: f32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -84,6 +86,7 @@ impl Default for Config {
             last_world: Default::default(),
             res_folder_path: default_res_folder_path(),
             ui: UiConfig::default(),
+            music_vol: 1.0,
         }
     }
 }
