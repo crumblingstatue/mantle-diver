@@ -1,5 +1,6 @@
 use {
     crate::{
+        audio::AudioCtx,
         command::{Cmd, CmdVec},
         game::GameState,
         input::{Input, InputAction},
@@ -34,6 +35,7 @@ pub fn pause_menu_system(
     input: &mut Input,
     cmd: &mut CmdVec,
     worlds_dir: &Path,
+    aud: &mut AudioCtx,
 ) {
     if let Some(act) = game.menu.action_to_rebind {
         game.menu.sel_color = Color::RED;
@@ -50,8 +52,9 @@ pub fn pause_menu_system(
     let enter = input.pressed_raw(Key::Enter);
     let left = input.pressed_raw(Key::Left);
     let right = input.pressed_raw(Key::Right);
-    if let Some(list) = game.menu.stack.last() {
-        match &list[game.menu.cursor].action {
+    if let Some(list) = game.menu.stack.last_mut() {
+        let current_menu_item = &mut list[game.menu.cursor];
+        match &mut current_menu_item.action {
             MenuAction::NewRandom => {
                 if enter {
                     let n: u32 = thread_rng().gen();
@@ -108,7 +111,7 @@ pub fn pause_menu_system(
                             action: MenuAction::Input,
                         },
                         MenuItem {
-                            text: "Music volume".into(),
+                            text: mus_vol_text(aud.mus_vol),
                             action: MenuAction::MusicVolume,
                         },
                         MenuItem {
@@ -137,6 +140,7 @@ pub fn pause_menu_system(
                 } else if right {
                     cmd.push(Cmd::MusVolInc)
                 }
+                current_menu_item.text = mus_vol_text(aud.mus_vol);
             }
         }
     }
@@ -163,6 +167,10 @@ pub fn pause_menu_system(
         }
     }
     game.menu.first_frame = false;
+}
+
+fn mus_vol_text(mus_vol: f32) -> String {
+    format!("« Music volume: {:.0}% »", mus_vol * 100.)
 }
 
 fn build_keyconfig_menu(input: &Input) -> Vec<MenuItem> {

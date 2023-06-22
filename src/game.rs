@@ -182,7 +182,7 @@ impl GameState {
         }
         systems::general_input_system(self, input);
         if self.menu.open {
-            systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir);
+            systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir, au_ctx);
             return;
         }
         if self.paused {
