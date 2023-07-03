@@ -35,9 +35,7 @@ trait SpriteExt {
 
 impl SpriteExt for Sprite<'_> {
     fn fit_to_size(&mut self, size: Vector2f) {
-        let Some(tex) = self.texture() else {
-            return
-        };
+        let Some(tex) = self.texture() else { return };
         let self_size: Vector2f = tex.size().as_other();
         self.set_scale((size.x / self_size.x, size.y / self_size.y));
     }
@@ -172,7 +170,10 @@ fn draw_player(game: &mut GameState, rt: &mut RenderTexture, debug: &DebugState,
 }
 
 fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
-    let Ok((mov, mov_extra, colors)) = game.ecw.query_one_mut::<(&MovingEnt, &MoveExtra, &PlayerColors)>(game.player_en) else {
+    let Ok((mov, mov_extra, colors)) = game
+        .ecw
+        .query_one_mut::<(&MovingEnt, &MoveExtra, &PlayerColors)>(game.player_en)
+    else {
         log::error!("Player query failed");
         return;
     };
@@ -369,8 +370,8 @@ pub fn draw_ui(
         rt.draw(&s);
         s.set_color(Color::WHITE);
         let Some(item_def) = &game.itemdb.get(slot.id) else {
-                continue;
-            };
+            continue;
+        };
         if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
             let mut rect = rect.to_sf();
             rect.width = rect.width.min(i32::from(TILE_SIZE));
@@ -436,9 +437,9 @@ pub fn draw_ui(
 
 fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
     let Some(list) = game.menu.stack.last() else {
-            log::warn!("Trying to draw empty menu");
-            return;
-        };
+        log::warn!("Trying to draw empty menu");
+        return;
+    };
     let (x, y, w, h) = (100., 100., 250., 300.);
     let mut rs = RectangleShape::from_rect(Rect::new(x, y, w, h));
     rs.set_fill_color(Color::rgba(20, 20, 40, 120));
@@ -532,8 +533,9 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
     let mut cs = CircleShape::new(0., 30);
     DBG_OVR.for_each(|msg| match msg {
         crate::debug::DbgOvr::WldRect { r, c } => {
-            let (Some(x), Some(y)) = (r.topleft.x.checked_sub(cx), r.topleft.y.checked_sub(cy)) else {
-                return
+            let (Some(x), Some(y)) = (r.topleft.x.checked_sub(cx), r.topleft.y.checked_sub(cy))
+            else {
+                return;
             };
             rs.set_position((x as f32, y as f32));
             rs.set_size((r.w as f32, r.h as f32));
@@ -541,10 +543,10 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
             rs.set_fill_color(Color::TRANSPARENT);
             rs.set_outline_thickness(1.0);
             rt.draw(&rs);
-        },
+        }
         crate::debug::DbgOvr::WldCircle { pos, radius, c } => {
             let (Some(x), Some(y)) = (pos.x.checked_sub(cx), pos.y.checked_sub(cy)) else {
-                return
+                return;
             };
             let rad = f32::from(*radius);
             cs.set_origin((rad, rad));
@@ -554,6 +556,6 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
             cs.set_fill_color(Color::TRANSPARENT);
             cs.set_outline_thickness(1.0);
             rt.draw(&cs);
-        },
+        }
     });
 }

@@ -41,7 +41,10 @@ pub(crate) fn light_fill(light_state: &mut LightState, enum_info: LightEnumInfo)
         if src.map_idx > 0 {
             let idx = src.map_idx - 1;
             let Some(&val) = light_state.light_map.get(idx) else {
-                log::error!("Index {idx} out of bounds (len: {})", light_state.light_map.len());
+                log::error!(
+                    "Index {idx} out of bounds (len: {})",
+                    light_state.light_map.len()
+                );
                 return;
             };
             let new_intensity = src.intensity.saturating_sub(fall_off);

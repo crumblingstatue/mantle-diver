@@ -424,7 +424,10 @@ pub(super) fn biome_watch_system(game: &mut GameState, au_ctx: &mut AudioCtx, re
 
 /// Control the movements of the controlled entity (usually player character)
 pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
-    let Ok((mov, mov_extra)) = game.ecw.query_one_mut::<(&mut MovingEnt, &mut MoveExtra)>(game.controlled_en) else {
+    let Ok((mov, mov_extra)) = game
+        .ecw
+        .query_one_mut::<(&mut MovingEnt, &mut MoveExtra)>(game.controlled_en)
+    else {
         log::warn!("No controlled entity");
         return;
     };
@@ -603,7 +606,7 @@ fn process_tile_item_drop<L: mdv_data::tile::TileLayer>(
         return;
     }
     let Some(drop) = &tile_db[id].item_drop else {
-        return
+        return;
     };
     let amount = thread_rng().gen_range(drop.qty_range.clone());
     for _ in 0..amount {

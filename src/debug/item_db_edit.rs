@@ -55,7 +55,7 @@ impl ItemDbEdit {
                 ui.separator();
                 let Some(def) = itemdb.db.get_mut(self.sel_idx) else {
                     ui.label("No item selected (or out of bounds)");
-                    return
+                    return;
                 };
                 ui.horizontal(|ui| {
                     ui.label("Name");

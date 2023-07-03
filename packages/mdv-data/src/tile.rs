@@ -174,7 +174,7 @@ impl<Layer> PartialEq for TileId<Layer> {
 impl<Layer> Copy for TileId<Layer> {}
 impl<Layer> Clone for TileId<Layer> {
     fn clone(&self) -> Self {
-        Self(self.0, PhantomData)
+        *self
     }
 }
 impl<Layer> std::fmt::Debug for TileId<Layer> {
