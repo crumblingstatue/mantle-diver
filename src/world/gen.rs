@@ -26,7 +26,7 @@ impl Chunk {
             .generate_scaled(-10., 10.);
         // TODO: Take care to generate all chunks with same seed on same world
         assert!(noise.len() == CHUNK_N_TILES);
-        for (i, (t, noise)) in tiles.iter_mut().zip(noise.into_iter()).enumerate() {
+        for (i, (t, noise)) in tiles.iter_mut().zip(noise).enumerate() {
             #[expect(
                 clippy::cast_possible_truncation,
                 reason = "We aren't iterating through this many tiles"
