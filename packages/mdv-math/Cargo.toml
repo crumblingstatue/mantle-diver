@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 num-traits = "0.2.15"
-serde = { version = "1.0.165", features = ["derive"] }
+serde = { version = "1.0.167", features = ["derive"] }
