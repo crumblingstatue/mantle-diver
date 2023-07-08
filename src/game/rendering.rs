@@ -1,5 +1,5 @@
 use {
-    super::{for_each_tile_on_screen, Biome, GameState, SfVec2fExt, TilestateKey},
+    super::{for_each_tile_on_screen, Biome, GameState, TilestateKey},
     crate::{
         config::Config,
         debug::{DebugState, DBG_OVR},
@@ -7,7 +7,7 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
-        sfml::SpriteExt,
+        sfml::{SfVec2fExt, SpriteExt},
         stringfmt::LengthDisp,
         time::ticks_hm,
     },

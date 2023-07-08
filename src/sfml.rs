@@ -1,5 +1,6 @@
 use {
     crate::graphics::ScreenRes,
+    mdv_math::types::ScreenVec,
     sfml::{
         graphics::{Sprite, Transformable},
         system::{Vector2f, Vector2u},
@@ -35,6 +36,19 @@ impl ScreenRes {
         Self {
             w: vec.x as u16,
             h: vec.y as u16,
+        }
+    }
+}
+
+pub trait SfVec2fExt {
+    fn scv_off(&self, off: ScreenVec) -> Self;
+}
+
+impl SfVec2fExt for Vector2f {
+    fn scv_off(&self, off: ScreenVec) -> Self {
+        Self {
+            x: self.x + f32::from(off.x),
+            y: self.y + f32::from(off.y),
         }
     }
 }

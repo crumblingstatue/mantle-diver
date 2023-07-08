@@ -4,10 +4,11 @@ use {
         audio::AudioCtx,
         command::CmdVec,
         debug::{DebugState, DBG_OVR},
+        graphics::ScreenRes,
         input::Input,
         inventory::Inventory,
         item::ItemDbExt,
-        math::{wp_to_tp, ScreenVecExt, WPosSc, WorldPos, TILE_SIZE},
+        math::{wp_to_tp, WPosSc, WorldPos, TILE_SIZE},
         player::PlayerBundle,
         res::{Res, ResAudio},
         save::Save,
@@ -24,7 +25,6 @@ use {
     },
     mdv_math::types::ScreenVec,
     rand::{thread_rng, Rng},
-    sfml::system::{Vector2f, Vector2u},
     std::path::{Path, PathBuf},
 };
 
@@ -85,19 +85,6 @@ pub struct TransientTileState {
 pub enum Biome {
     Surface,
     Underground,
-}
-
-trait SfVec2fExt {
-    fn scv_off(&self, off: ScreenVec) -> Self;
-}
-
-impl SfVec2fExt for Vector2f {
-    fn scv_off(&self, off: ScreenVec) -> Self {
-        Self {
-            x: self.x + f32::from(off.x),
-            y: self.y + f32::from(off.y),
-        }
-    }
 }
 
 impl GameState {
@@ -166,7 +153,7 @@ impl GameState {
         input: &mut Input,
         mouse_wpos: WorldPos,
         mouse_tpos: TilePos,
-        rt_size: Vector2u,
+        rt_size: ScreenRes,
         res: &Res,
         au_ctx: &mut AudioCtx,
         au_res: &ResAudio,
@@ -199,7 +186,7 @@ impl GameState {
         } else {
             systems::move_control_system(self, input);
         }
-        systems::move_system(self, ScreenVec::from_sf_resolution(rt_size), debug);
+        systems::move_system(self, rt_size.to_vec(), debug);
         systems::item_use_system(self, input, mouse_tpos, au_res, au_ctx, mouse_wpos, debug);
         systems::biome_watch_system(self, au_ctx, res);
         systems::inventory_input_system(self, input);

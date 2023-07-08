@@ -273,7 +273,7 @@ impl App {
             &mut self.input,
             mouse_world_pos,
             mouse_tpos,
-            rt_size,
+            ScreenRes::from_sf_vec(rt_size),
             res,
             &mut self.aud,
             aud,
