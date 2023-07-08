@@ -36,6 +36,7 @@ mod math;
 mod player;
 mod res;
 mod save;
+mod sfml;
 mod stringfmt;
 mod texture_atlas;
 mod tiles;

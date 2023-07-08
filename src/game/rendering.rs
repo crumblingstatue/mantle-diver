@@ -7,6 +7,7 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
+        sfml::SpriteExt,
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
@@ -27,18 +28,6 @@ pub struct RenderState {
     pub vert_array: Vec<Vertex>,
     /// RenderTexture for rendering the game at its native resolution
     pub rt: RenderTexture,
-}
-
-trait SpriteExt {
-    fn fit_to_size(&mut self, size: Vector2f);
-}
-
-impl SpriteExt for Sprite<'_> {
-    fn fit_to_size(&mut self, size: Vector2f) {
-        let Some(tex) = self.texture() else { return };
-        let self_size: Vector2f = tex.size().as_other();
-        self.set_scale((size.x / self_size.x, size.y / self_size.y));
-    }
 }
 
 pub(crate) fn draw_world(
