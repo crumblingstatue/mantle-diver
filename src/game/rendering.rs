@@ -471,7 +471,7 @@ pub(crate) fn light_blend_pass(
     light_enum_info: LightEnumInfo,
 ) {
     verts.clear();
-    lt_tex.clear(Color::BLACK);
+    lt_tex.clear(Color::TRANSPARENT);
     let xoff = (camera_offset.x % u32::from(TILE_SIZE)) as f32;
     let yoff = (camera_offset.y % u32::from(TILE_SIZE)) as f32;
     for y in 0..tiles_on_screen.y {

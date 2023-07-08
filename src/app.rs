@@ -297,7 +297,7 @@ impl App {
             self.tiles_on_screen,
             enum_info,
         );
-        self.render.rt.clear(Color::rgb(55, 221, 231));
+        self.render.rt.clear(Color::TRANSPARENT);
         rendering::draw_world(
             &mut self.game,
             &mut self.render.vert_array,
