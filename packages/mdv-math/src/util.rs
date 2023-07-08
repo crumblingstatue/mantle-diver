@@ -1,4 +1,4 @@
-use num_traits::{Num, Signed};
+use num_traits::{Bounded, Num, Signed};
 
 /// Checks if `x` and `y` are within the circle defined by `cx, cy, radius`
 ///
@@ -82,4 +82,13 @@ fn test_smooth_wave() {
 pub fn center_offset<N: From<u8> + Copy + Signed>(xw: N, yw: N) -> N {
     let diff = yw - xw;
     diff / N::from(2)
+}
+
+pub fn min_max_clamp<T: Num + Bounded + PartialOrd>(val: &mut T, min_to_clamp: T, max_to_clamp: T) {
+    if *val < min_to_clamp {
+        *val = T::min_value();
+    }
+    if *val > max_to_clamp {
+        *val = T::max_value();
+    }
 }

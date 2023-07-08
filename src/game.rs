@@ -174,6 +174,7 @@ impl GameState {
         worlds_dir: &Path,
     ) {
         self.ambient_light = daylight(tick_of_day(self.world.ticks));
+        mdv_math::util::min_max_clamp(&mut self.ambient_light, 85, 200);
         if self.respawn_timer > 0 {
             self.respawn_timer -= 1;
         } else if self.player_en == hecs::Entity::DANGLING {
