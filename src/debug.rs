@@ -2,6 +2,7 @@ use {
     self::{entity_list::EntityList, item_db_edit::ItemDbEdit, recipe_edit::RecdbEd},
     crate::{
         config::Config,
+        graphics::ScreenRes,
         math::WorldRect,
         player::{MovingEnt, PlayerColors},
     },
@@ -183,7 +184,7 @@ pub(crate) fn do_debug_ui(
         ctx,
         &mut game.tile_db,
         &game.itemdb,
-        res.atlas.tex.size(),
+        ScreenRes::from_sf_vec(res.atlas.tex.size()),
         cmd,
     );
     debug.chardb_edit.ui(ctx, &mut game.char_db);

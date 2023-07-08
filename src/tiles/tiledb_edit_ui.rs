@@ -1,6 +1,7 @@
 use {
     crate::{
         command::{Cmd, CmdVec},
+        graphics::ScreenRes,
         math::{IntRectExt, TILE_SIZE},
     },
     mdv_data::{
@@ -8,7 +9,6 @@ use {
         tile::{Bg, BgTileId, Mid, MidTileId, TileDb, TileDef, TileItemDrop, TileLayer},
     },
     mdv_math::types::{ScreenSc, ScreenVec},
-    sfml::system::Vector2u,
     std::fmt::Debug,
 };
 
@@ -24,7 +24,7 @@ impl TileDbEdit {
         ctx: &egui::Context,
         tile_db: &mut TileDb,
         item_db: &ItemDb,
-        atlas_size: Vector2u,
+        atlas_size: ScreenRes,
         cmd: &mut CmdVec,
     ) {
         if !self.open {
@@ -127,7 +127,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
     ui: &mut egui::Ui,
     sel_idx: &mut usize,
     item_db: &ItemDb,
-    atlas_size: Vector2u,
+    atlas_size: ScreenRes,
     cmd: &mut CmdVec,
 ) where
     <Layer as TileLayer>::SpecificDef: Debug + Default,

@@ -1,8 +1,11 @@
 use {
-    crate::world::{TPosSc, TilePos, TPOS_SC_MAX},
+    crate::{
+        graphics::ScreenRes,
+        world::{TPosSc, TilePos, TPOS_SC_MAX},
+    },
     extension_traits::extension,
     mdv_math::types::{IntRect, ScreenSc, ScreenVec},
-    sfml::system::{Vector2, Vector2u},
+    sfml::system::Vector2,
     std::fmt::Debug,
 };
 
@@ -205,8 +208,8 @@ impl IntRect {
         }
     }
 
-    fn to_egui_uv(self, tex_size: Vector2u) -> egui::Rect {
-        let (sx, sy) = (tex_size.x as f32, tex_size.y as f32);
+    fn to_egui_uv(self, tex_size: ScreenRes) -> egui::Rect {
+        let (sx, sy) = (f32::from(tex_size.w), f32::from(tex_size.h));
         egui::Rect::from_min_size(
             egui::pos2(self.x as f32 / sx, self.y as f32 / sy),
             egui::vec2(self.w as f32 / sx, self.h as f32 / sy),
