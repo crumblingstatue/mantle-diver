@@ -52,6 +52,14 @@ pub(crate) fn draw_world(
         Biome::Surface => {
             let mut s = Sprite::with_texture(&res.forest_bg);
             s.fit_to_size(rt.size().as_other());
+            let c = if game.ambient_light > 180 {
+                255
+            } else if game.ambient_light < 85 {
+                0
+            } else {
+                game.ambient_light
+            };
+            s.set_color(Color::rgb(c, c, c));
             rt.draw(&s);
         }
         Biome::Underground => rt.clear(Color::rgb(0, 10, 30)),
