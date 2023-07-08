@@ -2,11 +2,11 @@ use {
     crate::{
         data,
         game::GameState,
+        graphics::ScreenRes,
         math::{WPosSc, TILE_SIZE},
         world::{TPosSc, TilePos},
     },
     fnv::FnvHashSet,
-    sfml::system::Vector2u,
     std::collections::VecDeque,
 };
 
@@ -119,14 +119,14 @@ pub struct LightEnumInfo {
 pub(crate) fn enumerate_light_sources(
     game: &mut GameState,
     light_state: &mut LightState,
-    rt_size: Vector2u,
+    rt_res: ScreenRes,
 ) -> LightEnumInfo {
     light_state.light_sources.clear();
     light_state.light_blockers.clear();
     let mut i = 0usize;
     // Define width and height
-    let on_screen_w = rt_size.x / WPosSc::from(TILE_SIZE);
-    let on_screen_h = rt_size.y / WPosSc::from(TILE_SIZE);
+    let on_screen_w = WPosSc::from(rt_res.w) / WPosSc::from(TILE_SIZE);
+    let on_screen_h = WPosSc::from(rt_res.h) / WPosSc::from(TILE_SIZE);
     let reach = TPosSc::from(MAX_TILE_REACH);
     let width = (reach * 2) + on_screen_w;
     let height = (reach * 2) + on_screen_h;

@@ -2,7 +2,7 @@ use {
     crate::math::FPS_TARGET,
     sfml::{
         graphics::RenderWindow,
-        window::{ContextSettings, Style, VideoMode},
+        window::{ContextSettings, Style},
     },
     sfml_xt::graphics::RenderWindowExt,
 };
@@ -10,16 +10,6 @@ use {
 pub struct ScreenRes {
     pub w: u16,
     pub h: u16,
-}
-
-impl ScreenRes {
-    fn to_sf(&self) -> VideoMode {
-        VideoMode {
-            width: self.w.into(),
-            height: self.h.into(),
-            bits_per_pixel: 32,
-        }
-    }
 }
 
 const DEFAULT_RES: ScreenRes = ScreenRes { w: 960, h: 540 };

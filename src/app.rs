@@ -5,7 +5,9 @@ use {
         config::Config,
         debug::{self, DebugState, DBG_OVR},
         game::{rendering, rendering::RenderState, GameState},
-        graphics::{self},
+        graphics::{
+            ScreenRes, {self},
+        },
         input::Input,
         light::{self, LightState, U16Vec},
         math::{ScreenVecExt, WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
@@ -286,7 +288,7 @@ impl App {
         let enum_info = light::enumerate_light_sources(
             &mut self.game,
             &mut self.light_state,
-            self.render.rt.size(),
+            ScreenRes::from_sf_vec(self.render.rt.size()),
         );
         light::light_fill(&mut self.light_state, enum_info);
         rendering::light_blend_pass(
