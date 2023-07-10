@@ -96,6 +96,15 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             }
             Cmd::MusVolInc => app.aud.inc_mus_vol(),
             Cmd::MusVolDec => app.aud.dec_mus_vol(),
+            Cmd::GodToggle => {
+                if let Ok(health) = app
+                    .game
+                    .ecw
+                    .query_one_mut::<&mut Health>(app.game.controlled_en)
+                {
+                    health.invulnerable ^= true;
+                }
+            }
         }
     }
 }

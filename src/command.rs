@@ -27,6 +27,7 @@ pub enum Cmd {
     HurtCtrlEn(f32),
     MusVolInc,
     MusVolDec,
+    GodToggle,
 }
 
 pub type CmdVec = Vec<Cmd>;

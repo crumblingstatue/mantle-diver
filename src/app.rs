@@ -162,6 +162,7 @@ impl App {
                         Health {
                             current: 0.,
                             max: 0.,
+                            invulnerable: false,
                         },
                     ),
                 };

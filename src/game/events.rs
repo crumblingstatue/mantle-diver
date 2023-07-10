@@ -32,7 +32,7 @@ fn on_ground_hit(
     if vspeed > 18. {
         if let Ok(health) = game.ecw.query_one_mut::<&mut Health>(en) {
             au_ctx.plr.play(au_res, "etc/ouch");
-            health.current -= (vspeed - 18.) * 1.75;
+            health.damage((vspeed - 18.) * 1.75);
         }
     }
 }

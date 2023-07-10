@@ -49,6 +49,8 @@ pub enum CmdLine {
     Greload,
     /// Toggle entity list
     Entlist,
+    /// Toggle god mode for controlled entity
+    God,
 }
 
 #[derive(Parser)]
@@ -123,6 +125,7 @@ impl CmdLine {
                 debug.entity_list.open ^= true;
                 Dispatch::Noop
             }
+            CmdLine::God => Dispatch::Cmd(Cmd::GodToggle),
         }
     }
 }

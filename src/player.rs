@@ -28,6 +28,16 @@ pub struct MovingEnt {
 pub struct Health {
     pub current: f32,
     pub max: f32,
+    /// If true, entity cannot be hurt
+    pub invulnerable: bool,
+}
+impl Health {
+    pub(crate) fn damage(&mut self, amount: f32) {
+        if self.invulnerable {
+            return;
+        }
+        self.current -= amount;
+    }
 }
 
 pub struct MoveExtra {
@@ -116,6 +126,7 @@ impl PlayerBundle {
             health: Health {
                 current: 100.,
                 max: 100.,
+                invulnerable: false,
             },
         }
     }
