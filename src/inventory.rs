@@ -76,6 +76,25 @@ impl Inventory {
         false
     }
 
+    /// Returns whether an item could be added into the inventory
+    ///
+    /// TODO: Add quantity handling
+    pub fn item_can_be_added(&self, id: ItemId, _qty: u16) -> bool {
+        // First, try to merge with existing slots
+        for slot in &self.slots {
+            if slot.id == id {
+                return true;
+            }
+        }
+        // Next, try to find an empty slot
+        for slot in &self.slots {
+            if slot.id == ItemId::EMPTY {
+                return true;
+            }
+        }
+        false
+    }
+
     pub(crate) fn take_from_slot(&mut self, idx: usize, qty: u16) -> Option<ItemStack> {
         match self.slots.get_mut(idx) {
             Some(slot) => {

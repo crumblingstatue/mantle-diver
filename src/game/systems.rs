@@ -578,7 +578,9 @@ pub(super) fn item_drop_claim_system(
         }
         // Player interaction
         // "Magnetism" behavior when player is close to an item drop
-        if mov.within_radius_of_other(plr_mov, game.item_pickup_radius) {
+        if game.inventory.item_can_be_added(*id, 1)
+            && mov.within_radius_of_other(plr_mov, game.item_pickup_radius)
+        {
             mov.move_towards_other(plr_mov, 4.0);
         }
         #[expect(clippy::collapsible_if)]
