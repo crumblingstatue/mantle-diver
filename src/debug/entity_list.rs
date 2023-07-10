@@ -1,4 +1,7 @@
-use crate::{game::GameState, player::MoveExtra};
+use crate::{
+    game::GameState,
+    player::{MoveExtra, MovingEnt},
+};
 
 #[derive(Default)]
 pub struct EntityList {
@@ -20,6 +23,11 @@ impl EntityList {
                                 .unwrap();
                             return;
                         }
+                    }
+                    if let Some(mut mov) = en.get::<&mut MovingEnt>() {
+                        ui.add(egui::DragValue::new(&mut mov.vspeed).prefix("vspeed"));
+                        ui.add(egui::DragValue::new(&mut mov.mob.en.bb.x).prefix("bb w"));
+                        ui.add(egui::DragValue::new(&mut mov.mob.en.bb.y).prefix("bb h"));
                     }
                 }
             });

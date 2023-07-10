@@ -24,6 +24,9 @@ pub fn move_towards_hspeed_vspeed(
     let dy = dst_y - src_y;
 
     let distance = ((dx * dx + dy * dy) as f32).sqrt();
+    if distance == 0. {
+        return (0., 0.);
+    }
     let hspeed = speed * dx as f32 / distance;
     let vspeed = speed * dy as f32 / distance;
 
