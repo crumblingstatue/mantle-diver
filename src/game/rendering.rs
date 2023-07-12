@@ -328,6 +328,9 @@ pub fn draw_ui(
     cfg: &Config,
     debug: &DebugState,
 ) {
+    if game.ui.inv.open {
+        draw_inventory(game, rt, res);
+    }
     let mut s = Sprite::with_texture(&res.atlas.tex);
     let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
     let mut text = Text::new("", &res.sans_font, 14);
@@ -451,6 +454,11 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
         rt.draw(&txt);
         y_offset += 22.0;
     }
+}
+
+pub fn draw_inventory(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
+    let text = Text::new("Inventory", &res.sans_font, 20);
+    rt.draw(&text);
 }
 
 pub(crate) fn light_blend_pass(

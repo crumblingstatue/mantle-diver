@@ -638,6 +638,9 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
         // Reverse gravity
         game.gravity = -game.gravity;
     }
+    if input.pressed_raw(Key::I) {
+        game.ui.inv.open ^= true;
+    }
 }
 
 pub(crate) fn health_system(game: &mut GameState) {
