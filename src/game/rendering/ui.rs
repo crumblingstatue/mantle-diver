@@ -32,57 +32,8 @@ pub fn draw_ui(
     if game.ui.inv.open {
         draw_inventory(game, cfg, rt, res);
     }
-    let mut s = Sprite::with_texture(&res.atlas.tex);
-    let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
     let mut text = Text::new("", &res.sans_font, 14);
-    if let Some(def) = game
-        .itemdb
-        .get(game.inventory.slots[game.ui.selected_inv_slot].id)
-    {
-        text.set_outline_thickness(1.0);
-        text.set_outline_color(Color::BLACK);
-        text.set_position((4., ui_dims.y - 70.0));
-        text.set_string(&def.name);
-        rt.draw(&text);
-        text.set_outline_thickness(0.0);
-    }
-    let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
-    let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
-    let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
-    for (i, slot) in game.inventory.slots.iter().take(10).enumerate() {
-        let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
-        rs.set_position((pos.0 + 2., pos.1 + 2.));
-        rs.set_fill_color(inv_bg_color);
-        if i == game.ui.selected_inv_slot {
-            s.set_color(inv_frame_highlight);
-        } else {
-            rs.set_outline_thickness(0.0);
-            s.set_color(inv_frame_color);
-        }
-        rt.draw(&rs);
-        s.set_texture_rect(res.atlas.rects["ui/invframe"].to_sf());
-        s.set_position(pos);
-        rt.draw(&s);
-        s.set_color(Color::WHITE);
-        let Some(item_def) = &game.itemdb.get(slot.id) else {
-            continue;
-        };
-        if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
-            let mut rect = rect.to_sf();
-            rect.width = rect.width.min(i32::from(TILE_SIZE));
-            rect.height = rect.height.min(i32::from(TILE_SIZE));
-            s.set_texture_rect(rect);
-            s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
-            rt.draw(&s);
-            if item_def.consumable {
-                text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
-                text.set_string(&slot.qty.to_string());
-                rt.draw(&text);
-            }
-        } else {
-            log::error!("Missing rect for item {}", item_def.name);
-        }
-    }
+    draw_hotbar(game, &mut text, ui_dims, rt, cfg, res);
     text.set_outline_thickness(2.0);
     text.set_position((0., 0.));
     text.set_character_size(18);
@@ -127,6 +78,66 @@ pub fn draw_ui(
     }
     if game.ui.menu.open {
         draw_menu(game, rt, res);
+    }
+}
+
+fn draw_hotbar(
+    game: &mut GameState,
+    text: &mut Text<'_>,
+    ui_dims: sfml::system::Vector2<f32>,
+    rt: &mut RenderTexture,
+    cfg: &Config,
+    res: &Res,
+) {
+    let mut s = Sprite::with_texture(&res.atlas.tex);
+    let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
+    if let Some(def) = game
+        .itemdb
+        .get(game.inventory.slots[game.ui.selected_inv_slot].id)
+    {
+        text.set_outline_thickness(1.0);
+        text.set_outline_color(Color::BLACK);
+        text.set_position((4., ui_dims.y - 70.0));
+        text.set_string(&def.name);
+        rt.draw(&*text);
+        text.set_outline_thickness(0.0);
+    }
+    let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
+    let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
+    let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
+    for (i, slot) in game.inventory.slots.iter().take(10).enumerate() {
+        let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
+        rs.set_position((pos.0 + 2., pos.1 + 2.));
+        rs.set_fill_color(inv_bg_color);
+        if i == game.ui.selected_inv_slot {
+            s.set_color(inv_frame_highlight);
+        } else {
+            rs.set_outline_thickness(0.0);
+            s.set_color(inv_frame_color);
+        }
+        rt.draw(&rs);
+        s.set_texture_rect(res.atlas.rects["ui/invframe"].to_sf());
+        s.set_position(pos);
+        rt.draw(&s);
+        s.set_color(Color::WHITE);
+        let Some(item_def) = &game.itemdb.get(slot.id) else {
+            continue;
+        };
+        if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
+            let mut rect = rect.to_sf();
+            rect.width = rect.width.min(i32::from(TILE_SIZE));
+            rect.height = rect.height.min(i32::from(TILE_SIZE));
+            s.set_texture_rect(rect);
+            s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
+            rt.draw(&s);
+            if item_def.consumable {
+                text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
+                text.set_string(&slot.qty.to_string());
+                rt.draw(&*text);
+            }
+        } else {
+            log::error!("Missing rect for item {}", item_def.name);
+        }
     }
 }
 
