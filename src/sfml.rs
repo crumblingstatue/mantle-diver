@@ -3,7 +3,7 @@ use {
     extension_traits::extension,
     mdv_math::types::{ScreenRect, ScreenVec},
     sfml::{
-        graphics::{RenderTarget, Sprite, Transformable},
+        graphics::{RectangleShape, RenderTarget, Sprite, Transformable},
         system::{Vector2f, Vector2u},
         window::VideoMode,
     },
@@ -22,7 +22,7 @@ impl SpriteExt for Sprite<'_> {
 }
 
 impl ScreenRes {
-    pub fn to_sf(&self) -> VideoMode {
+    pub fn to_sf(self) -> VideoMode {
         VideoMode {
             width: self.w.into(),
             height: self.h.into(),
@@ -88,5 +88,13 @@ impl ScreenVec {
             x: f32::from(self.x),
             y: f32::from(self.y),
         }
+    }
+}
+
+#[extension(pub trait RectangleShapeExt)]
+impl RectangleShape<'_> {
+    fn set_screen_rect(&mut self, rect: ScreenRect) {
+        self.set_position((f32::from(rect.x), f32::from(rect.y)));
+        self.set_size((f32::from(rect.w), f32::from(rect.h)));
     }
 }

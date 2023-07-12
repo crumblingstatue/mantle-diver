@@ -641,6 +641,13 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
     if input.pressed_raw(Key::I) {
         game.ui.inv.open ^= true;
     }
+    if input.lmb_down {
+        for (i, rect) in game.ui.hotbar_rects.iter().enumerate() {
+            if rect.contains_screen_pos(input.mouse_down_loc) {
+                game.ui.selected_inv_slot = i;
+            }
+        }
+    }
 }
 
 pub(crate) fn health_system(game: &mut GameState) {

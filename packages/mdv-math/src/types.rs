@@ -33,5 +33,11 @@ pub struct Rect<T> {
     pub h: T,
 }
 
+impl ScreenRect {
+    pub fn contains_screen_pos(&self, pos: ScreenVec) -> bool {
+        pos.x > self.x && pos.y > self.y && pos.x < self.x + self.w && pos.y < self.y + self.h
+    }
+}
+
 pub type IntRect = Rect<i32>;
 pub type ScreenRect = Rect<ScreenSc>;

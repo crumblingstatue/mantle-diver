@@ -6,7 +6,7 @@ use {
         math::{IntRectExt, FPS_TARGET, TILE_SIZE},
         player::{Health, MovingEnt},
         res::Res,
-        sfml::{RenderTargetExt, ScreenRectSfExt, SfVec2fExt},
+        sfml::{RectangleShapeExt, RenderTargetExt, ScreenRectSfExt, SfVec2fExt},
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
@@ -104,9 +104,17 @@ fn draw_hotbar(
     let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
     let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
     let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
-    for (i, slot) in game.inventory.slots.iter().take(10).enumerate() {
-        let pos = ((i * 44) as f32 + 8.0, (rt_size.y - 48.));
-        rs.set_position((pos.0 + 2., pos.1 + 2.));
+    for (i, (slot, rect)) in game
+        .inventory
+        .slots
+        .iter()
+        .take(10)
+        .zip(game.ui.hotbar_rects)
+        .enumerate()
+    {
+        rs.set_screen_rect(rect);
+        let (x, y) = (f32::from(rect.x), f32::from(rect.y));
+        rs.set_position((x + 2., y + 2.));
         rs.set_fill_color(inv_bg_color);
         if i == game.ui.selected_inv_slot {
             s.set_color(inv_frame_highlight);
@@ -116,7 +124,7 @@ fn draw_hotbar(
         }
         rt.draw(&rs);
         s.set_texture_rect(res.atlas.rects["ui/invframe"].to_sf());
-        s.set_position(pos);
+        s.set_position((x, y));
         rt.draw(&s);
         s.set_color(Color::WHITE);
         let Some(item_def) = &game.itemdb.get(slot.id) else {
@@ -127,10 +135,10 @@ fn draw_hotbar(
             rect.width = rect.width.min(i32::from(TILE_SIZE));
             rect.height = rect.height.min(i32::from(TILE_SIZE));
             s.set_texture_rect(rect);
-            s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
+            s.set_position(Vector2f::from((x, y)).scv_off(item_def.draw_off));
             rt.draw(&s);
             if item_def.consumable {
-                text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
+                text.set_position(Vector2f::from((x, y)).scv_off(ScreenVec { x: 2, y: 22 }));
                 text.set_string(&slot.qty.to_string());
                 rt.draw(&*text);
             }
@@ -167,7 +175,7 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
     }
 }
 
-pub fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, res: &Res) {
+fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, res: &Res) {
     let rt_res = rt.res();
     let rect = Inventory::screen_rect(rt_res);
     let sf_rect = rect.into_sf();

@@ -8,13 +8,14 @@ use {
     sfml_xt::graphics::RenderWindowExt,
 };
 
+#[derive(Clone, Copy)]
 pub struct ScreenRes {
     pub w: u16,
     pub h: u16,
 }
 impl ScreenRes {
     #[expect(clippy::cast_possible_wrap, reason = "Never exceeds i16::MAX")]
-    pub(crate) fn to_vec(&self) -> mdv_math::types::ScreenVec {
+    pub(crate) fn to_vec(self) -> mdv_math::types::ScreenVec {
         ScreenVec {
             x: self.w as ScreenSc,
             y: self.h as ScreenSc,
