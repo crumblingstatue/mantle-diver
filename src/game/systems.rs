@@ -623,7 +623,7 @@ fn process_tile_item_drop<L: mdv_data::tile::TileLayer>(
 }
 
 pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
-    if input.pressed_raw(Key::Escape) && !game.menu.open {
+    if input.pressed_raw(Key::Escape) && !game.ui.menu.open {
         open_menu(game);
     }
     if input.pressed_raw(Key::P) {

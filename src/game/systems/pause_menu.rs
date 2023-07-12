@@ -37,23 +37,23 @@ pub fn pause_menu_system(
     worlds_dir: &Path,
     aud: &mut AudioCtx,
 ) {
-    if let Some(act) = game.menu.action_to_rebind {
-        game.menu.sel_color = Color::RED;
+    if let Some(act) = game.ui.menu.action_to_rebind {
+        game.ui.menu.sel_color = Color::RED;
         if let Some(key) = input.just_pressed_raw {
             input.key_bindings.insert(act, key);
-            game.menu.action_to_rebind = None;
-            if let Some(items) = game.menu.stack.last_mut() {
+            game.ui.menu.action_to_rebind = None;
+            if let Some(items) = game.ui.menu.stack.last_mut() {
                 *items = build_keyconfig_menu(input);
             }
         }
         return;
     }
-    game.menu.sel_color = Color::YELLOW;
+    game.ui.menu.sel_color = Color::YELLOW;
     let enter = input.pressed_raw(Key::Enter);
     let left = input.pressed_raw(Key::Left);
     let right = input.pressed_raw(Key::Right);
-    if let Some(list) = game.menu.stack.last_mut() {
-        let current_menu_item = &mut list[game.menu.cursor];
+    if let Some(list) = game.ui.menu.stack.last_mut() {
+        let current_menu_item = &mut list[game.ui.menu.cursor];
         match &mut current_menu_item.action {
             MenuAction::NewRandom => {
                 if enter {
@@ -81,8 +81,8 @@ pub fn pause_menu_system(
                     text: "Back".into(),
                     action: MenuAction::Back,
                 });
-                game.menu.stack.push(list);
-                game.menu.cursor = 0;
+                game.ui.menu.stack.push(list);
+                game.ui.menu.cursor = 0;
             }
             MenuAction::Quit => {
                 if enter {
@@ -96,10 +96,10 @@ pub fn pause_menu_system(
             }
             MenuAction::Back => {
                 if enter {
-                    game.menu.cursor = 0;
-                    game.menu.stack.pop();
-                    if game.menu.stack.is_empty() {
-                        game.menu.open = false;
+                    game.ui.menu.cursor = 0;
+                    game.ui.menu.stack.pop();
+                    if game.ui.menu.stack.is_empty() {
+                        game.ui.menu.open = false;
                     }
                 }
             }
@@ -119,19 +119,19 @@ pub fn pause_menu_system(
                             action: MenuAction::Back,
                         },
                     ];
-                    game.menu.stack.push(items);
-                    game.menu.cursor = 0;
+                    game.ui.menu.stack.push(items);
+                    game.ui.menu.cursor = 0;
                 }
             }
             MenuAction::Input => {
                 if enter {
-                    game.menu.stack.push(build_keyconfig_menu(input));
-                    game.menu.cursor = 0;
+                    game.ui.menu.stack.push(build_keyconfig_menu(input));
+                    game.ui.menu.cursor = 0;
                 }
             }
             MenuAction::Rebind(act) => {
                 if enter {
-                    game.menu.action_to_rebind = Some(*act);
+                    game.ui.menu.action_to_rebind = Some(*act);
                 }
             }
             MenuAction::MusicVolume => {
@@ -144,29 +144,29 @@ pub fn pause_menu_system(
             }
         }
     }
-    if input.pressed_raw(Key::Escape) && !game.menu.first_frame {
-        game.menu.cursor = 0;
-        game.menu.stack.pop();
-        dbg!(&game.menu.stack.len());
-        if game.menu.stack.is_empty() {
-            game.menu.open = false;
+    if input.pressed_raw(Key::Escape) && !game.ui.menu.first_frame {
+        game.ui.menu.cursor = 0;
+        game.ui.menu.stack.pop();
+        dbg!(&game.ui.menu.stack.len());
+        if game.ui.menu.stack.is_empty() {
+            game.ui.menu.open = false;
         }
     }
     #[expect(clippy::collapsible_if)]
     if input.pressed_raw(Key::Up) {
-        if game.menu.cursor > 0 {
-            game.menu.cursor -= 1;
+        if game.ui.menu.cursor > 0 {
+            game.ui.menu.cursor -= 1;
         }
     }
-    if let Some(list) = game.menu.stack.last() {
+    if let Some(list) = game.ui.menu.stack.last() {
         #[expect(clippy::collapsible_if)]
         if input.pressed_raw(Key::Down) {
-            if game.menu.cursor + 1 < list.len() {
-                game.menu.cursor += 1;
+            if game.ui.menu.cursor + 1 < list.len() {
+                game.ui.menu.cursor += 1;
             }
         }
     }
-    game.menu.first_frame = false;
+    game.ui.menu.first_frame = false;
 }
 
 fn mus_vol_text(mus_vol: f32) -> String {
@@ -207,9 +207,9 @@ pub fn open_menu(game: &mut GameState) {
             action: MenuAction::Quit,
         },
     ];
-    game.menu.stack.push(list);
-    game.menu.open = true;
-    game.menu.first_frame = true;
+    game.ui.menu.stack.push(list);
+    game.ui.menu.open = true;
+    game.ui.menu.first_frame = true;
 }
 
 pub struct Menu {

@@ -1,5 +1,5 @@
 use {
-    self::{events::EventBuf, systems::pause_menu::Menu, ui::UiState},
+    self::{events::EventBuf, ui::UiState},
     crate::{
         audio::AudioCtx,
         command::CmdVec,
@@ -59,7 +59,6 @@ pub struct GameState {
     pub transient_tile_states: TransientTileStates,
     pub last_mine_attempt: u64,
     pub last_tile_place: u64,
-    pub menu: Menu,
     pub ecw: hecs::World,
     pub ecb: hecs::CommandBuffer,
     pub player_en: hecs::Entity,
@@ -130,7 +129,6 @@ impl GameState {
             transient_tile_states: Default::default(),
             last_mine_attempt: 0,
             last_tile_place: 0,
-            menu: Menu::default(),
             char_db: CharDb::load().unwrap(),
             ecw,
             ecb: hecs::CommandBuffer::default(),
@@ -170,7 +168,7 @@ impl GameState {
             self.controlled_en = self.player_en;
         }
         systems::general_input_system(self, input);
-        if self.menu.open {
+        if self.ui.menu.open {
             systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir, au_ctx);
             return;
         }

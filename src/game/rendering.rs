@@ -421,13 +421,13 @@ pub fn draw_ui(
         ));
         rt.draw(&text);
     }
-    if game.menu.open {
+    if game.ui.menu.open {
         draw_menu(game, rt, res);
     }
 }
 
 fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
-    let Some(list) = game.menu.stack.last() else {
+    let Some(list) = game.ui.menu.stack.last() else {
         log::warn!("Trying to draw empty menu");
         return;
     };
@@ -441,8 +441,8 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
     rt.draw(&txt);
     let mut y_offset = 40.0;
     for (i, item) in list.iter().enumerate() {
-        if i == game.menu.cursor {
-            txt.set_fill_color(game.menu.sel_color);
+        if i == game.ui.menu.cursor {
+            txt.set_fill_color(game.ui.menu.sel_color);
         } else {
             txt.set_fill_color(Color::WHITE);
         }
