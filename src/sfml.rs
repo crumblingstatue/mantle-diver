@@ -80,3 +80,13 @@ impl ScreenRect {
         }
     }
 }
+
+#[extension(pub trait ScreenVecSfExt)]
+impl ScreenVec {
+    fn to_sf_vec2f(&self) -> Vector2f {
+        Vector2f {
+            x: f32::from(self.x),
+            y: f32::from(self.y),
+        }
+    }
+}

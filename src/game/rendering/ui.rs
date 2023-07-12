@@ -6,7 +6,7 @@ use {
         math::{IntRectExt, FPS_TARGET, TILE_SIZE},
         player::{Health, MovingEnt},
         res::Res,
-        sfml::{RenderTargetExt, ScreenRectSfExt, SfVec2fExt},
+        sfml::{RenderTargetExt, ScreenRectSfExt, ScreenVecSfExt, SfVec2fExt},
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
@@ -25,7 +25,7 @@ pub fn draw_ui(
     game: &mut GameState,
     rt: &mut RenderTexture,
     res: &Res,
-    ui_dims: Vector2f,
+    ui_dims: ScreenVec,
     cfg: &Config,
     debug: &DebugState,
 ) {
@@ -84,11 +84,12 @@ pub fn draw_ui(
 fn draw_hotbar(
     game: &mut GameState,
     text: &mut Text<'_>,
-    ui_dims: sfml::system::Vector2<f32>,
+    hotbar_pos: ScreenVec,
     rt: &mut RenderTexture,
     cfg: &Config,
     res: &Res,
 ) {
+    let hotbar_pos = hotbar_pos.to_sf_vec2f();
     let mut s = Sprite::with_texture(&res.atlas.tex);
     let mut rs = RectangleShape::from_rect(Rect::new(0., 0., 36., 36.));
     if let Some(def) = game
@@ -97,7 +98,7 @@ fn draw_hotbar(
     {
         text.set_outline_thickness(1.0);
         text.set_outline_color(Color::BLACK);
-        text.set_position((4., ui_dims.y - 70.0));
+        text.set_position((4., hotbar_pos.y - 70.0));
         text.set_string(&def.name);
         rt.draw(&*text);
         text.set_outline_thickness(0.0);
@@ -106,7 +107,7 @@ fn draw_hotbar(
     let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
     let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
     for (i, slot) in game.inventory.slots.iter().take(10).enumerate() {
-        let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
+        let pos = ((i * 44) as f32 + 8.0, (hotbar_pos.y - 48.));
         rs.set_position((pos.0 + 2., pos.1 + 2.));
         rs.set_fill_color(inv_bg_color);
         if i == game.ui.selected_inv_slot {

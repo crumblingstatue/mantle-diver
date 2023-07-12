@@ -326,9 +326,13 @@ impl App {
         drop(spr);
         // Draw ui on top of in-game scene
         self.render.rt.clear(Color::TRANSPARENT);
-        let ui_dims = Vector2 {
-            x: (self.rw.size().x / u32::from(self.scale)) as f32,
-            y: (self.rw.size().y / u32::from(self.scale)) as f32,
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "Resolution won't exceed i16::MAX"
+        )]
+        let ui_dims = ScreenVec {
+            x: (self.rw.size().x as i16 / i16::from(self.scale)),
+            y: (self.rw.size().y as i16 / i16::from(self.scale)),
         };
         rendering::ui::draw_ui(
             &mut self.game,
