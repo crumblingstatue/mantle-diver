@@ -292,7 +292,7 @@ impl App {
             ScreenRes::from_sf_vec(self.render.rt.size()),
         );
         light::light_fill(&mut self.light_state, enum_info);
-        rendering::light_blend_pass(
+        rendering::game::light_blend_pass(
             self.game.camera_offset,
             &mut self.render.vert_array,
             &mut self.render.light_blend_rt,
@@ -301,15 +301,15 @@ impl App {
             enum_info,
         );
         self.render.rt.clear(Color::TRANSPARENT);
-        rendering::draw_world(
+        rendering::game::draw_world(
             &mut self.game,
             &mut self.render.vert_array,
             &mut self.render.rt,
             res,
         );
-        rendering::draw_entities(&mut self.game, &mut self.render.rt, res, &self.debug);
+        rendering::game::draw_entities(&mut self.game, &mut self.render.rt, res, &self.debug);
         if self.debug.dbg_overlay {
-            rendering::draw_debug_overlay(&mut self.render.rt, &mut self.game);
+            rendering::debug::draw_debug_overlay(&mut self.render.rt, &mut self.game);
         }
         imm_dbg!(self.game.world.chunks.len());
         self.render.rt.display();
@@ -330,7 +330,7 @@ impl App {
             x: (self.rw.size().x / u32::from(self.scale)) as f32,
             y: (self.rw.size().y / u32::from(self.scale)) as f32,
         };
-        rendering::draw_ui(
+        rendering::ui::draw_ui(
             &mut self.game,
             &mut self.render.rt,
             res,
