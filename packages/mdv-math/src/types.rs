@@ -26,9 +26,11 @@ impl Div<ScreenSc> for ScreenVec {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, Copy)]
-pub struct IntRect {
-    pub x: i32,
-    pub y: i32,
-    pub w: i32,
-    pub h: i32,
+pub struct Rect<T> {
+    pub x: T,
+    pub y: T,
+    pub w: T,
+    pub h: T,
 }
+
+pub type IntRect = Rect<i32>;
