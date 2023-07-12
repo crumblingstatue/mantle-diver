@@ -172,7 +172,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     let (x, y, _w, _h) = mov.mob.en.xywh();
     let (co_x, co_y) = game.camera_offset.to_signed();
     let (base_x, base_y) = ((x - co_x) as f32, (y - co_y) as f32);
-    let held_item_id = game.inventory.slots[game.selected_inv_slot].id;
+    let held_item_id = game.inventory.slots[game.ui.selected_inv_slot].id;
     let held_item_graphic = game.itemdb.get(held_item_id).map(|def| &def.graphic_name);
     let mut drawable_tool = false;
     let (
@@ -333,7 +333,7 @@ pub fn draw_ui(
     let mut text = Text::new("", &res.sans_font, 14);
     if let Some(def) = game
         .itemdb
-        .get(game.inventory.slots[game.selected_inv_slot].id)
+        .get(game.inventory.slots[game.ui.selected_inv_slot].id)
     {
         text.set_outline_thickness(1.0);
         text.set_outline_color(Color::BLACK);
@@ -349,7 +349,7 @@ pub fn draw_ui(
         let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
         rs.set_position((pos.0 + 2., pos.1 + 2.));
         rs.set_fill_color(inv_bg_color);
-        if i == game.selected_inv_slot {
+        if i == game.ui.selected_inv_slot {
             s.set_color(inv_frame_highlight);
         } else {
             rs.set_outline_thickness(0.0);

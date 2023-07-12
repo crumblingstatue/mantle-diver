@@ -56,8 +56,8 @@ pub(super) fn item_use_system(
     if !(input.lmb_down || input.rmb_down) {
         return;
     }
-    let Some(active_slot) = game.inventory.slots.get_mut(game.selected_inv_slot) else {
-        log::error!("Selected slot {} out of bounds", game.selected_inv_slot);
+    let Some(active_slot) = game.inventory.slots.get_mut(game.ui.selected_inv_slot) else {
+        log::error!("Selected slot {} out of bounds", game.ui.selected_inv_slot);
         return;
     };
     if active_slot.qty == 0 {
@@ -453,7 +453,7 @@ pub(super) fn move_control_system(game: &mut GameState, input: &Input) {
     }
     mov_extra.down_intent = input.down(InputAction::Down);
     if input.pressed(InputAction::ThrowItem) {
-        if let Some(stack) = game.inventory.take_from_slot(game.selected_inv_slot, 1) {
+        if let Some(stack) = game.inventory.take_from_slot(game.ui.selected_inv_slot, 1) {
             let pos = mov.world_pos();
             let en = game.ecw.spawn(ItemdropBundle::new_at(stack.id, pos));
             game.ecw
@@ -493,34 +493,34 @@ pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
 
 pub(super) fn inventory_input_system(game: &mut GameState, input: &Input) {
     if input.pressed_raw(Key::Num1) {
-        game.selected_inv_slot = 0;
+        game.ui.selected_inv_slot = 0;
     }
     if input.pressed_raw(Key::Num2) {
-        game.selected_inv_slot = 1;
+        game.ui.selected_inv_slot = 1;
     }
     if input.pressed_raw(Key::Num3) {
-        game.selected_inv_slot = 2;
+        game.ui.selected_inv_slot = 2;
     }
     if input.pressed_raw(Key::Num4) {
-        game.selected_inv_slot = 3;
+        game.ui.selected_inv_slot = 3;
     }
     if input.pressed_raw(Key::Num5) {
-        game.selected_inv_slot = 4;
+        game.ui.selected_inv_slot = 4;
     }
     if input.pressed_raw(Key::Num6) {
-        game.selected_inv_slot = 5;
+        game.ui.selected_inv_slot = 5;
     }
     if input.pressed_raw(Key::Num7) {
-        game.selected_inv_slot = 6;
+        game.ui.selected_inv_slot = 6;
     }
     if input.pressed_raw(Key::Num8) {
-        game.selected_inv_slot = 7;
+        game.ui.selected_inv_slot = 7;
     }
     if input.pressed_raw(Key::Num9) {
-        game.selected_inv_slot = 8;
+        game.ui.selected_inv_slot = 8;
     }
     if input.pressed_raw(Key::Num0) {
-        game.selected_inv_slot = 9;
+        game.ui.selected_inv_slot = 9;
     }
 }
 /// Update transient blocks

@@ -1,5 +1,5 @@
 use {
-    self::{events::EventBuf, systems::pause_menu::Menu},
+    self::{events::EventBuf, systems::pause_menu::Menu, ui::UiState},
     crate::{
         audio::AudioCtx,
         command::CmdVec,
@@ -31,6 +31,7 @@ use {
 mod events;
 pub mod rendering;
 mod systems;
+mod ui;
 
 #[derive(Hash, PartialEq, Eq)]
 pub struct TilestateKey {
@@ -54,7 +55,6 @@ pub struct GameState {
     pub recipe_db: RecipeDb,
     pub inventory: Inventory,
     pub itemdb: ItemDb,
-    pub selected_inv_slot: usize,
     pub spawn_point: WorldPos,
     pub transient_tile_states: TransientTileStates,
     pub last_mine_attempt: u64,
@@ -71,6 +71,7 @@ pub struct GameState {
     pub respawn_timer: u32,
     pub tile_interact_radius: u16,
     pub item_pickup_radius: u16,
+    pub ui: UiState,
 }
 
 #[derive(Debug)]
@@ -125,7 +126,6 @@ impl GameState {
             tile_db,
             inventory,
             itemdb,
-            selected_inv_slot: 0,
             spawn_point,
             transient_tile_states: Default::default(),
             last_mine_attempt: 0,
@@ -143,6 +143,7 @@ impl GameState {
             tile_interact_radius: 113,
             item_pickup_radius: 80,
             recipe_db: RecipeDb::load_or_default("data"),
+            ui: UiState::default(),
         }
     }
 
