@@ -11,7 +11,7 @@ pub struct Inventory {
 impl Inventory {
     /// A new inventory filled with some debug items
     pub(crate) fn new_debug() -> Inventory {
-        Self {
+        let mut this = Self {
             slots: vec![
                 ItemStack {
                     id: data::item::WOOD_PICK,
@@ -54,7 +54,14 @@ impl Inventory {
                     qty: 1,
                 },
             ],
+        };
+        for _ in 0..40 {
+            this.slots.push(ItemStack {
+                id: ItemId::EMPTY,
+                qty: 0,
+            });
         }
+        this
     }
     /// Returns false if the item can't be added (full inv)
     pub fn add(&mut self, id: ItemId, qty: u16) -> bool {

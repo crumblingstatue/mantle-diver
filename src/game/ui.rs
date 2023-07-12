@@ -19,8 +19,8 @@ pub struct Inventory {
 impl Inventory {
     #[expect(clippy::cast_possible_wrap, reason = "resolution is always positive")]
     pub fn screen_rect(res: ScreenRes) -> ScreenRect {
-        let w = 800;
-        let h = 400;
+        let w = 450;
+        let h = 270;
         let x = center_offset(w, res.w as i16);
         let y = center_offset(h, res.h as i16);
         ScreenRect { x, y, w, h }

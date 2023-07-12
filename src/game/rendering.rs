@@ -11,6 +11,7 @@ use {
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
+    gamedebug_core::imm_dbg,
     mdv_data::{item::ItemId, tile::LayerAccess},
     mdv_math::types::ScreenVec,
     sfml::{
@@ -348,7 +349,7 @@ pub fn draw_ui(
     let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
     let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
     let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
-    for (i, slot) in game.inventory.slots.iter().enumerate() {
+    for (i, slot) in game.inventory.slots.iter().take(10).enumerate() {
         let pos = ((i * 44) as f32 + 8.0, (ui_dims.y - 48.));
         rs.set_position((pos.0 + 2., pos.1 + 2.));
         rs.set_fill_color(inv_bg_color);
@@ -473,9 +474,12 @@ pub fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture
     let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
     let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
     rs.set_size((36., 36.));
+    let mut y_off = 32.0;
+    let mut x_off = 8.0;
+    imm_dbg!(game.inventory.slots.len());
     for (i, slot) in game.inventory.slots.iter().enumerate() {
-        let x = sf_rect.left + ((i * 44) as f32 + 8.0);
-        let pos = (x, (sf_rect.top + 48.));
+        let x = sf_rect.left + x_off;
+        let pos = (x, sf_rect.top + y_off);
         rs.set_position((pos.0 + 2., pos.1 + 2.));
         rs.set_fill_color(inv_bg_color);
         if i == game.ui.selected_inv_slot {
@@ -489,6 +493,11 @@ pub fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture
         s.set_position(pos);
         rt.draw(&s);
         s.set_color(Color::WHITE);
+        x_off += 44.0;
+        if (i + 1) % 10 == 0 {
+            x_off = 8.;
+            y_off += 48.0;
+        }
         let Some(item_def) = &game.itemdb.get(slot.id) else {
             continue;
         };
