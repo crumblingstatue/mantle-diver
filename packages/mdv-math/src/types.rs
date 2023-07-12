@@ -34,3 +34,4 @@ pub struct Rect<T> {
 }
 
 pub type IntRect = Rect<i32>;
+pub type ScreenRect = Rect<ScreenSc>;

@@ -70,18 +70,18 @@ fn test_smooth_wave() {
     assert_eq!(smoothwave(201, 100), 1);
 }
 
-// Get the offset required to center an object of `xw` width inside an object of `yw` width.
-//
-// For example, let's say `xw` (+) is 10 and we want to center it inside `yw` (-), which is 20
-//
-// ++++++++++           (x uncentered)
-// -------------------- (y)
-//      ++++++++++      (x centered)
-//
-// In this case, we needed to add 5 to x to achieve centering.
-// This is the offset that this function calculates.
-//
-// We can calulate it by subtracting `xw` from `yw` (10), and dividing it by 2.
+/// Get the offset required to center an object of `xw` width inside an object of `yw` width.
+///
+/// For example, let's say `xw` (+) is 10 and we want to center it inside `yw` (-), which is 20
+///
+/// ++++++++++           (x uncentered)
+/// -------------------- (y)
+///      ++++++++++      (x centered)
+///
+/// In this case, we needed to add 5 to x to achieve centering.
+/// This is the offset that this function calculates.
+///
+/// We can calulate it by subtracting `xw` from `yw` (10), and dividing it by 2.
 pub fn center_offset<N: From<u8> + Copy + Signed>(xw: N, yw: N) -> N {
     let diff = yw - xw;
     diff / N::from(2)

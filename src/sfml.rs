@@ -1,8 +1,9 @@
 use {
     crate::graphics::ScreenRes,
-    mdv_math::types::ScreenVec,
+    extension_traits::extension,
+    mdv_math::types::{ScreenRect, ScreenVec},
     sfml::{
-        graphics::{Sprite, Transformable},
+        graphics::{RenderTarget, Sprite, Transformable},
         system::{Vector2f, Vector2u},
         window::VideoMode,
     },
@@ -49,6 +50,33 @@ impl SfVec2fExt for Vector2f {
         Self {
             x: self.x + f32::from(off.x),
             y: self.y + f32::from(off.y),
+        }
+    }
+}
+
+#[extension(pub trait RenderTargetExt)]
+impl<T: RenderTarget> T {
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "Size is smaller than i16::MAX"
+    )]
+    fn res(&self) -> ScreenRes {
+        let size = self.size();
+        ScreenRes {
+            w: size.x as u16,
+            h: size.y as u16,
+        }
+    }
+}
+
+#[extension(pub trait ScreenRectSfExt)]
+impl ScreenRect {
+    fn into_sf(&self) -> sfml::graphics::FloatRect {
+        sfml::graphics::FloatRect {
+            left: f32::from(self.x),
+            top: f32::from(self.y),
+            width: f32::from(self.w),
+            height: f32::from(self.h),
         }
     }
 }

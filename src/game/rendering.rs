@@ -1,5 +1,5 @@
 use {
-    super::{for_each_tile_on_screen, Biome, GameState, TilestateKey},
+    super::{for_each_tile_on_screen, ui::Inventory, Biome, GameState, TilestateKey},
     crate::{
         config::Config,
         debug::{DebugState, DBG_OVR},
@@ -7,7 +7,7 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, FPS_TARGET, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
-        sfml::{SfVec2fExt, SpriteExt},
+        sfml::{RenderTargetExt, ScreenRectSfExt, SfVec2fExt, SpriteExt},
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
@@ -457,7 +457,15 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
 }
 
 pub fn draw_inventory(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
-    let text = Text::new("Inventory", &res.sans_font, 20);
+    let rt_res = rt.res();
+    let rect = Inventory::screen_rect(rt_res);
+    let mut rs = RectangleShape::from_rect(rect.into_sf());
+    rs.set_fill_color(Color::TRANSPARENT);
+    rs.set_outline_color(Color::YELLOW);
+    rs.set_outline_thickness(2.0);
+    rt.draw(&rs);
+    let mut text = Text::new("Inventory", &res.sans_font, 20);
+    text.set_position((f32::from(rect.x), f32::from(rect.y)));
     rt.draw(&text);
 }
 
