@@ -28,6 +28,8 @@ pub enum Cmd {
     MusVolInc,
     MusVolDec,
     GodToggle,
+    SfxVolDec,
+    SfxVolInc,
 }
 
 pub type CmdVec = Vec<Cmd>;

@@ -61,8 +61,10 @@ fn try_main() -> anyhow::Result<()> {
     let mut res = Res::load(&cfg.res_folder_path)?;
     let aud = ResAudio::load(&cfg.res_folder_path)?;
     let mus_vol = cfg.music_vol;
+    let sfx_vol = cfg.sfx_vol;
     let mut app = App::new(cli_args, &mut res, cfg, project_dirs)?;
     app.aud.set_mus_vol(mus_vol);
+    app.aud.plr.sfx_vol = sfx_vol;
     app.do_game_loop(&mut res, &aud);
     Ok(())
 }

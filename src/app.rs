@@ -143,6 +143,7 @@ impl App {
         self.cfg.last_world = Some(self.game.world.name.clone());
         self.cfg.scale = self.scale;
         self.cfg.music_vol = self.aud.mus_vol;
+        self.cfg.sfx_vol = self.aud.plr.sfx_vol;
         self.cfg.save(self.project_dirs.config_dir()).unwrap();
         match self
             .game

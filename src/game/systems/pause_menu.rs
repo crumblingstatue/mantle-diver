@@ -28,6 +28,7 @@ enum MenuAction {
     Input,
     Rebind(InputAction),
     MusicVolume,
+    SfxVolume,
 }
 
 pub fn pause_menu_system(
@@ -111,8 +112,12 @@ pub fn pause_menu_system(
                             action: MenuAction::Input,
                         },
                         MenuItem {
-                            text: mus_vol_text(aud.mus_vol),
+                            text: vol_text("Music", aud.mus_vol),
                             action: MenuAction::MusicVolume,
+                        },
+                        MenuItem {
+                            text: vol_text("Sfx", aud.plr.sfx_vol),
+                            action: MenuAction::SfxVolume,
                         },
                         MenuItem {
                             text: "Back".into(),
@@ -140,7 +145,15 @@ pub fn pause_menu_system(
                 } else if right {
                     cmd.push(Cmd::MusVolInc)
                 }
-                current_menu_item.text = mus_vol_text(aud.mus_vol);
+                current_menu_item.text = vol_text("Music", aud.mus_vol);
+            }
+            MenuAction::SfxVolume => {
+                if left {
+                    cmd.push(Cmd::SfxVolDec);
+                } else if right {
+                    cmd.push(Cmd::SfxVolInc)
+                }
+                current_menu_item.text = vol_text("Sfx", aud.plr.sfx_vol);
             }
         }
     }
@@ -169,8 +182,8 @@ pub fn pause_menu_system(
     game.ui.menu.first_frame = false;
 }
 
-fn mus_vol_text(mus_vol: f32) -> String {
-    format!("« Music volume: {:.0}% »", mus_vol * 100.)
+fn vol_text(pre: &str, mus_vol: f32) -> String {
+    format!("« {pre} volume: {:.0}% »", mus_vol * 100.)
 }
 
 fn build_keyconfig_menu(input: &Input) -> Vec<MenuItem> {

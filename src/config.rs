@@ -14,6 +14,8 @@ pub struct Config {
     pub ui: UiConfig,
     #[serde(default)]
     pub music_vol: f32,
+    #[serde(default)]
+    pub sfx_vol: f32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -87,6 +89,7 @@ impl Default for Config {
             res_folder_path: default_res_folder_path(),
             ui: UiConfig::default(),
             music_vol: 1.0,
+            sfx_vol: 1.0,
         }
     }
 }

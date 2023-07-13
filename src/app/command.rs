@@ -105,6 +105,8 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
                     health.invulnerable ^= true;
                 }
             }
+            Cmd::SfxVolDec => app.aud.plr.sfx_vol -= 0.1,
+            Cmd::SfxVolInc => app.aud.plr.sfx_vol += 0.1,
         }
     }
 }

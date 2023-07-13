@@ -57,6 +57,7 @@ impl AudioCtx {
 pub struct SoundPlayer {
     sounds: VecDeque<rodio::Sink>,
     stream_handle: OutputStreamHandle,
+    pub sfx_vol: f32,
 }
 
 impl SoundPlayer {
@@ -64,10 +65,12 @@ impl SoundPlayer {
         Self {
             sounds: Default::default(),
             stream_handle: stream,
+            sfx_vol: 1.0,
         }
     }
     pub fn play(&mut self, aud: &ResAudio, name: &str) {
         let sink = rodio::Sink::try_new(&self.stream_handle).unwrap();
+        sink.set_volume(self.sfx_vol);
         let mut rng = thread_rng();
         sink.set_speed(rng.gen_range(0.94..=1.1));
         match aud.sounds.get(name) {
