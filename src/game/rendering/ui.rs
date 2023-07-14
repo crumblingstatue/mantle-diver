@@ -6,7 +6,7 @@ use {
         math::{IntRectExt, FPS_TARGET, TILE_SIZE},
         player::{Health, MovingEnt},
         res::Res,
-        sfml::{RectangleShapeExt, RenderTargetExt, ScreenRectSfExt, SfVec2fExt},
+        sfml::{RectangleShapeExt, RenderTargetExt, ScreenRectSfExt, ScreenVecSfExt, SfVec2fExt},
         stringfmt::LengthDisp,
         time::ticks_hm,
     },
@@ -27,9 +27,10 @@ pub fn draw_ui(
     res: &Res,
     cfg: &Config,
     debug: &DebugState,
+    mouse_pos: ScreenVec,
 ) {
     if game.ui.inv.open {
-        draw_inventory(game, cfg, rt, res);
+        draw_inventory(game, cfg, rt, res, mouse_pos);
     }
     let mut text = Text::new("", &res.sans_font, 14);
     draw_hotbar(game, &mut text, rt, cfg, res);
@@ -175,7 +176,13 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
     }
 }
 
-fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, res: &Res) {
+fn draw_inventory(
+    game: &mut GameState,
+    cfg: &Config,
+    rt: &mut RenderTexture,
+    res: &Res,
+    mouse_pos: ScreenVec,
+) {
     let rt_res = rt.res();
     let rect = Inventory::screen_rect(rt_res);
     let sf_rect = rect.into_sf();
@@ -185,20 +192,22 @@ fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, re
     rs.set_outline_color(Color::YELLOW);
     rs.set_outline_thickness(2.0);
     rt.draw(&rs);
-    let mut text = Text::new("Inventory", &res.sans_font, 20);
+    let mut text = Text::new("Inventory", &res.sans_font, 14);
     text.set_position((f32::from(rect.x), f32::from(rect.y)));
     rt.draw(&text);
     let inv_bg_color = cfg.ui.inv_bg_color.to_sf();
     let inv_frame_highlight = cfg.ui.inv_frame_highlight.to_sf();
     let inv_frame_color = cfg.ui.inv_frame_color.to_sf();
-    rs.set_size((36., 36.));
-    let mut y_off = 32.0;
-    let mut x_off = 8.0;
     imm_dbg!(game.inventory.slots.len());
-    for (i, slot) in game.inventory.slots.iter().enumerate() {
-        let x = sf_rect.left + x_off;
-        let pos = (x, sf_rect.top + y_off);
-        rs.set_position((pos.0 + 2., pos.1 + 2.));
+    for ((i, slot), srect) in game
+        .inventory
+        .slots
+        .iter()
+        .enumerate()
+        .zip(&game.ui.inv_rects)
+    {
+        let pos = srect.sf_position();
+        rs.set_screen_rect(*srect);
         rs.set_fill_color(inv_bg_color);
         if i == game.ui.selected_inv_slot {
             s.set_color(inv_frame_highlight);
@@ -211,11 +220,6 @@ fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, re
         s.set_position(pos);
         rt.draw(&s);
         s.set_color(Color::WHITE);
-        x_off += 44.0;
-        if (i + 1) % 10 == 0 {
-            x_off = 8.;
-            y_off += 48.0;
-        }
         let Some(item_def) = &game.itemdb.get(slot.id) else {
             continue;
         };
@@ -229,6 +233,27 @@ fn draw_inventory(game: &mut GameState, cfg: &Config, rt: &mut RenderTexture, re
             if item_def.consumable {
                 text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
                 text.set_string(&slot.qty.to_string());
+                rt.draw(&text);
+            }
+        } else {
+            log::error!("Missing rect for item {}", item_def.name);
+        }
+    }
+    if let Some(grabbed) = &game.inventory.grabbed {
+        let Some(item_def) = &game.itemdb.get(grabbed.id) else {
+            return;
+        };
+        let pos = mouse_pos.to_sf_vec2f();
+        if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
+            let mut rect = rect.to_sf();
+            rect.width = rect.width.min(i32::from(TILE_SIZE));
+            rect.height = rect.height.min(i32::from(TILE_SIZE));
+            s.set_texture_rect(rect);
+            s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
+            rt.draw(&s);
+            if item_def.consumable {
+                text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
+                text.set_string(&grabbed.qty.to_string());
                 rt.draw(&text);
             }
         } else {

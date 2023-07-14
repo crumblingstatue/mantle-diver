@@ -15,7 +15,7 @@ pub struct UiState {
 
 impl UiState {
     #[expect(clippy::cast_possible_wrap, reason = "Doesn't exceed i16::MAX")]
-    pub fn update_rects(&mut self, rt_res: ScreenRes) {
+    pub fn update_rects(&mut self, inv: &super::Inventory, rt_res: ScreenRes) {
         for i in 0..10u16 {
             let (x, y) = ((i * 44) + 8, (rt_res.h - 48));
             let rect = &mut self.hotbar_rects[i as usize];
@@ -23,6 +23,23 @@ impl UiState {
             rect.y = y as i16;
             rect.w = 36;
             rect.h = 36;
+        }
+        let inv_rect = Inventory::screen_rect(rt_res);
+        let mut y_off = 32;
+        let mut x_off = 8;
+        self.inv_rects.clear();
+        for i in 0..inv.slots.len() {
+            self.inv_rects.push(ScreenRect {
+                x: inv_rect.x + x_off,
+                y: inv_rect.y + y_off,
+                w: 36,
+                h: 36,
+            });
+            x_off += 44;
+            if (i + 1) % 10 == 0 {
+                x_off = 8;
+                y_off += 48;
+            }
         }
     }
 }

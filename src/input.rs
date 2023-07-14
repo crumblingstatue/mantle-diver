@@ -10,6 +10,7 @@ pub struct Input {
     pressed: FnvHashSet<Key>,
     pub key_bindings: FnvHashMap<InputAction, Key>,
     pub lmb_down: bool,
+    pub lmb_pressed: bool,
     pub rmb_down: bool,
     pub mouse_down_loc: ScreenVec,
     pub mid_pressed: bool,
@@ -23,6 +24,7 @@ impl Default for Input {
             pressed: Default::default(),
             key_bindings: default_key_bindings(),
             lmb_down: Default::default(),
+            lmb_pressed: false,
             rmb_down: Default::default(),
             mouse_down_loc: Default::default(),
             mid_pressed: Default::default(),
@@ -57,6 +59,7 @@ impl Input {
                 self.mouse_down_loc = ScreenVec::from_reso_i32(x, y);
                 if button == mouse::Button::Left {
                     self.lmb_down = true;
+                    self.lmb_pressed = true;
                 }
                 if button == mouse::Button::Right {
                     self.rmb_down = true;
@@ -91,6 +94,7 @@ impl Input {
         self.mid_pressed = false;
         self.pressed.clear();
         self.just_pressed_raw = None;
+        self.lmb_pressed = false;
     }
     pub fn down_raw(&self, key: Key) -> bool {
         self.down.contains(&key)

@@ -293,6 +293,7 @@ impl App {
             ScreenRes::from_sf_vec(self.render.rt.size()),
         );
         light::light_fill(&mut self.light_state, enum_info);
+        let mouse_pos = self.input.mouse_down_loc;
         rendering::game::light_blend_pass(
             self.game.camera_offset,
             &mut self.render.vert_array,
@@ -333,6 +334,7 @@ impl App {
             res,
             &self.cfg,
             &self.debug,
+            mouse_pos,
         );
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());

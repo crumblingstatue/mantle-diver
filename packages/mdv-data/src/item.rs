@@ -25,6 +25,18 @@ pub struct ItemStack {
     pub qty: ItemQty,
 }
 
+impl ItemStack {
+    // TODO: Not an associated constant because of a rust-analyzer bug that crashes RA.
+    //
+    // Bug should be reported to RA.
+    pub const fn empty() -> Self {
+        Self {
+            id: ItemId::EMPTY,
+            qty: 0,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ItemDef {
     pub name: String,

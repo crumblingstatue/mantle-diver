@@ -79,6 +79,9 @@ impl ScreenRect {
             height: f32::from(self.h),
         }
     }
+    fn sf_position(&self) -> Vector2f {
+        Vector2f::new(f32::from(self.x), f32::from(self.y))
+    }
 }
 
 #[extension(pub trait ScreenVecSfExt)]

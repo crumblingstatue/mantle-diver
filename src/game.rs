@@ -159,7 +159,7 @@ impl GameState {
         cmd: &mut CmdVec,
         worlds_dir: &Path,
     ) {
-        self.ui.update_rects(rt_size);
+        self.ui.update_rects(&self.inventory, rt_size);
         self.ambient_light = daylight(tick_of_day(self.world.ticks));
         mdv_math::util::min_max_clamp(&mut self.ambient_light, 85, 200);
         if self.respawn_timer > 0 {

@@ -7,6 +7,7 @@ use {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Inventory {
     pub slots: Vec<ItemStack>,
+    pub grabbed: Option<ItemStack>,
 }
 impl Inventory {
     /// A new inventory filled with some debug items
@@ -54,6 +55,7 @@ impl Inventory {
                     qty: 1,
                 },
             ],
+            grabbed: None,
         };
         for _ in 0..40 {
             this.slots.push(ItemStack {
