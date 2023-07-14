@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 ron = "0.8.0"
-serde = { version = "1.0.167", features = ["derive"] }
+serde = { version = "1.0.171", features = ["derive"] }
 thiserror = "1.0.43"
 log = "0.4.19"
 
