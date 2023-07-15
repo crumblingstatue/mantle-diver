@@ -115,8 +115,26 @@ fn do_use_action(
 ) {
     match action {
         UseAction::PlaceBgTile { id } => {
+            let mut can_place_this_here = true;
+            let above = world.tile_at_mut(mouse_tpos.y_off(-1)).bg;
+            let below = world.tile_at_mut(mouse_tpos.y_off(1)).bg;
+            let left = world.tile_at_mut(mouse_tpos.x_off(-1)).bg;
+            let right = world.tile_at_mut(mouse_tpos.x_off(1)).bg;
             let t = world.tile_at_mut(mouse_tpos);
-            if t.bg.empty() && ticks - *last_tile_place > tile_place_cooldown {
+            let is_bg_wall_here = !t.bg.empty();
+            // Don't allow placing bg tiles in thin air. They need to be connected to some other bg tile.
+            #[expect(clippy::collapsible_else_if, reason = "It's easier to read this way")]
+            if is_bg_wall_here {
+                return;
+            } else {
+                if ![above, below, left, right]
+                    .into_iter()
+                    .any(|id| !id.empty())
+                {
+                    can_place_this_here = false;
+                }
+            }
+            if can_place_this_here && ticks - *last_tile_place > tile_place_cooldown {
                 if let Some(snd) = &tile_db[*id].hit_sound {
                     au_ctx.plr.play(au_res, snd);
                 }
