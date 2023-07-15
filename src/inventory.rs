@@ -39,8 +39,8 @@ impl Inventory {
                     qty: 0,
                 },
                 ItemStack {
-                    id: data::item::TORCH,
-                    qty: 100,
+                    id: ItemId::EMPTY,
+                    qty: 0,
                 },
                 ItemStack {
                     id: data::item::PLATFORM,

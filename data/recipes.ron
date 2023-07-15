@@ -13,7 +13,7 @@ RecipeDb(
                 ),
                 /*[1]*/ ItemStack(
                     id: 11,
-                    qty: 2,
+                    qty: 1,
                 ),
             ],
             output: ItemStack(
