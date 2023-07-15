@@ -35,10 +35,10 @@ impl UiState {
                 w: 36,
                 h: 36,
             });
-            x_off += 44;
+            x_off += 42;
             if (i + 1) % 10 == 0 {
                 x_off = 8;
-                y_off += 48;
+                y_off += 42;
             }
         }
     }
@@ -52,8 +52,8 @@ pub struct Inventory {
 impl Inventory {
     #[expect(clippy::cast_possible_wrap, reason = "resolution is always positive")]
     pub fn screen_rect(res: ScreenRes) -> ScreenRect {
-        let w = 450;
-        let h = 270;
+        let w = 434;
+        let h = 250;
         let x = center_offset(w, res.w as i16);
         let y = center_offset(h, res.h as i16);
         ScreenRect { x, y, w, h }
