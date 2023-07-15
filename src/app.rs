@@ -281,6 +281,7 @@ impl App {
             aud,
             &mut self.cmdvec,
             &self.worlds_dir,
+            self.scale,
         );
         self.game.world.remove_old_chunks();
         self::command::dispatch(self, res, mouse_world_pos);
@@ -335,6 +336,7 @@ impl App {
             &self.cfg,
             &self.debug,
             mouse_pos,
+            self.scale,
         );
         self.render.rt.display();
         let mut spr = Sprite::with_texture(self.render.rt.texture());

@@ -13,6 +13,16 @@ pub struct ScreenVec {
     pub x: ScreenSc,
     pub y: ScreenSc,
 }
+impl ScreenVec {
+    /// Divided by the scale amount. Used to adjust window position to in-game position.
+    pub fn scaled<T: Into<ScreenSc>>(self, scale: T) -> Self {
+        let scale = scale.into();
+        Self {
+            x: self.x / scale,
+            y: self.y / scale,
+        }
+    }
+}
 
 impl Div<ScreenSc> for ScreenVec {
     type Output = Self;

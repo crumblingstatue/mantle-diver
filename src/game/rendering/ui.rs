@@ -28,9 +28,10 @@ pub fn draw_ui(
     cfg: &Config,
     debug: &DebugState,
     mouse_pos: ScreenVec,
+    scale: u8,
 ) {
     if game.ui.inv.open {
-        draw_inventory(game, cfg, rt, res, mouse_pos);
+        draw_inventory(game, cfg, rt, res, mouse_pos, scale);
     }
     let mut text = Text::new("", &res.sans_font, 14);
     draw_hotbar(game, &mut text, rt, cfg, res);
@@ -182,6 +183,7 @@ fn draw_inventory(
     rt: &mut RenderTexture,
     res: &Res,
     mouse_pos: ScreenVec,
+    scale: u8,
 ) {
     let rt_res = rt.res();
     let rect = Inventory::screen_rect(rt_res);
@@ -253,7 +255,7 @@ fn draw_inventory(
         let Some(item_def) = &game.itemdb.get(grabbed.id) else {
             return;
         };
-        let pos = mouse_pos.to_sf_vec2f();
+        let pos = mouse_pos.scaled(scale).to_sf_vec2f();
         if let Some(rect) = res.atlas.rects.get(&item_def.graphic_name) {
             let mut rect = rect.to_sf();
             rect.width = rect.width.min(i32::from(TILE_SIZE));

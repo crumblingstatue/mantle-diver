@@ -158,6 +158,7 @@ impl GameState {
         au_res: &ResAudio,
         cmd: &mut CmdVec,
         worlds_dir: &Path,
+        scale: u8,
     ) {
         self.ui.update_rects(&self.inventory, rt_size);
         self.ambient_light = daylight(tick_of_day(self.world.ticks));
@@ -168,7 +169,7 @@ impl GameState {
             self.player_en = self.ecw.spawn(PlayerBundle::new_at(self.spawn_point));
             self.controlled_en = self.player_en;
         }
-        systems::general_input_system(self, input);
+        systems::general_input_system(self, input, scale);
         if self.ui.menu.open {
             systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir, au_ctx);
             return;

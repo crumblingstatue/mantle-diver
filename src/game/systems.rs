@@ -662,7 +662,7 @@ fn process_tile_item_drop<L: mdv_data::tile::TileLayer>(
     }
 }
 
-pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
+pub(crate) fn general_input_system(game: &mut GameState, input: &Input, scale: u8) {
     if input.pressed_raw(Key::Escape) && !game.ui.menu.open {
         open_menu(game);
     }
@@ -681,15 +681,16 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input) {
     if input.pressed_raw(Key::I) {
         game.ui.inv.open ^= true;
     }
+    let mp = input.mouse_down_loc.scaled(scale);
     if input.lmb_pressed {
         for (i, rect) in game.ui.hotbar_rects.iter().enumerate() {
-            if rect.contains_screen_pos(input.mouse_down_loc) {
+            if rect.contains_screen_pos(mp) {
                 game.ui.selected_inv_slot = i;
             }
         }
         if game.ui.inv.open {
             for (i, rect) in game.ui.inv_rects.iter().enumerate() {
-                if rect.contains_screen_pos(input.mouse_down_loc) {
+                if rect.contains_screen_pos(mp) {
                     match &mut game.inventory.grabbed {
                         Some(grabbed) => {
                             std::mem::swap(grabbed, &mut game.inventory.slots[i]);
