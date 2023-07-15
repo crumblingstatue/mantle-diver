@@ -50,6 +50,15 @@ impl Rgba {
         self.b = sf.b;
         self.a = sf.a;
     }
+
+    pub(crate) fn coffset(&self, amount: i8) -> Self {
+        Self {
+            r: self.r.saturating_add_signed(amount),
+            g: self.g.saturating_add_signed(amount),
+            b: self.b.saturating_add_signed(amount),
+            a: self.a,
+        }
+    }
 }
 
 impl Default for UiConfig {
