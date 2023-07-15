@@ -201,10 +201,10 @@ fn draw_inventory(
     rs.set_outline_color(cfg.ui.inv_frame_color.coffset(-50).to_sf());
     rs.set_fill_color(cfg.ui.inv_bg_color.to_sf());
     rt.draw(&rs);
-    let mut text = Text::new("Inventory", &res.sans_font, 18);
+    let mut text = Text::new("Inventory", &res.sans_font, 16);
     text.set_outline_thickness(1.0);
     text.set_outline_color(Color::BLACK);
-    text.set_position((f32::from(rect.x), f32::from(rect.y)));
+    text.set_position((f32::from(rect.x + 2), f32::from(rect.y)));
     rt.draw(&text);
     text.set_character_size(14);
     let inv_bg_color = cfg.ui.inv_bg_color.to_sf();

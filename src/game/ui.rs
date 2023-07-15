@@ -25,7 +25,7 @@ impl UiState {
             rect.h = 36;
         }
         let inv_rect = Inventory::screen_rect(rt_res);
-        let mut y_off = 32;
+        let mut y_off = 24;
         let mut x_off = 8;
         self.inv_rects.clear();
         for i in 0..inv.slots.len() {
@@ -53,7 +53,7 @@ impl Inventory {
     #[expect(clippy::cast_possible_wrap, reason = "resolution is always positive")]
     pub fn screen_rect(res: ScreenRes) -> ScreenRect {
         let w = 434;
-        let h = 250;
+        let h = 240;
         let x = center_offset(w, res.w as i16);
         let y = center_offset(h, res.h as i16);
         ScreenRect { x, y, w, h }
