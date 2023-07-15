@@ -47,6 +47,15 @@ impl ScreenRect {
     pub fn contains_screen_pos(&self, pos: ScreenVec) -> bool {
         pos.x > self.x && pos.y > self.y && pos.x < self.x + self.w && pos.y < self.y + self.h
     }
+
+    pub fn offset(self, x: ScreenSc, y: ScreenSc) -> Self {
+        Self {
+            x: self.x.saturating_add(x),
+            y: self.y.saturating_add(y),
+            w: self.w,
+            h: self.h,
+        }
+    }
 }
 
 pub type IntRect = Rect<i32>;

@@ -219,7 +219,7 @@ fn draw_inventory(
         .zip(&game.ui.inv_rects)
     {
         let pos = srect.sf_position();
-        rs.set_screen_rect(*srect);
+        rs.set_screen_rect(srect.offset(1, 1));
         rs.set_fill_color(inv_bg_color);
         if i == game.ui.selected_inv_slot {
             s.set_color(inv_frame_highlight);
