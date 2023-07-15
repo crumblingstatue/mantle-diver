@@ -250,6 +250,7 @@ impl App {
     }
 
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
+        self.sf_egui.begin_frame();
         let rt_size = self.render.rt.size();
         let mut mouse_world_pos = self.game.camera_offset;
         let mut loc = self.input.mouse_down_loc / ScreenSc::from(self.scale);
@@ -342,19 +343,15 @@ impl App {
         let mut spr = Sprite::with_texture(self.render.rt.texture());
         spr.set_scale((f32::from(self.scale), f32::from(self.scale)));
         self.rw.draw(&spr);
-        self.sf_egui
-            .do_frame(|ctx| {
-                debug::do_debug_ui(
-                    ctx,
-                    &mut self.debug,
-                    &mut self.game,
-                    res,
-                    &mut self.cmdvec,
-                    &self.worlds_dir,
-                    &mut self.cfg,
-                );
-            })
-            .unwrap();
+        debug::do_debug_ui(
+            self.sf_egui.context(),
+            &mut self.debug,
+            &mut self.game,
+            res,
+            &mut self.cmdvec,
+            &self.worlds_dir,
+            &mut self.cfg,
+        );
         if self.debug.show_atlas {
             let atlas = &res.atlas.tex;
             let size = atlas.size();
@@ -366,6 +363,7 @@ impl App {
         let mut user_tex = EguiUserTex {
             atlas: &res.atlas.tex,
         };
+        self.sf_egui.end_frame().unwrap();
         self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
         self.rw.display();
     }

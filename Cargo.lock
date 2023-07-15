@@ -470,7 +470,7 @@ dependencies = [
 [[package]]
 name = "egui-sfml"
 version = "0.4.0"
-source = "git+https://github.com/crumblingstatue/egui-sfml.git#503ef443a757637b164ca0a40816e84843e2eea2"
+source = "git+https://github.com/crumblingstatue/egui-sfml.git#3bee5bf3bc2f8a649b66acdc3374138ebed33dd3"
 dependencies = [
  "egui",
  "glu-sys",
