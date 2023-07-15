@@ -169,7 +169,7 @@ impl GameState {
             self.player_en = self.ecw.spawn(PlayerBundle::new_at(self.spawn_point));
             self.controlled_en = self.player_en;
         }
-        systems::general_input_system(self, input, scale);
+        let hud_msg = systems::ui_hud_input_system(self, input, scale, rt_size);
         if self.ui.menu.open {
             systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir, au_ctx);
             return;
@@ -188,7 +188,9 @@ impl GameState {
             systems::move_control_system(self, input);
         }
         systems::move_system(self, rt_size.to_vec(), debug);
-        systems::item_use_system(self, input, mouse_tpos, au_res, au_ctx, mouse_wpos, debug);
+        if !hud_msg.cursor_occupied() {
+            systems::item_use_system(self, input, mouse_tpos, au_res, au_ctx, mouse_wpos, debug);
+        }
         systems::biome_watch_system(self, au_ctx, res);
         systems::inventory_input_system(self, input);
         systems::item_drop_claim_system(self, au_ctx, au_res);

@@ -1,5 +1,5 @@
 use {
-    crate::itemdrop::PickupCooldown,
+    crate::{graphics::ScreenRes, itemdrop::PickupCooldown},
     mdv_data::{
         item::UseAction,
         tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
@@ -662,7 +662,26 @@ fn process_tile_item_drop<L: mdv_data::tile::TileLayer>(
     }
 }
 
-pub(crate) fn general_input_system(game: &mut GameState, input: &Input, scale: u8) {
+pub enum UiHudInputSystemMsg {
+    None,
+    CursorOccupied,
+}
+
+impl UiHudInputSystemMsg {
+    pub fn cursor_occupied(&self) -> bool {
+        matches!(self, UiHudInputSystemMsg::CursorOccupied)
+    }
+}
+
+/// Input system for UI/HUD.
+#[must_use]
+pub(crate) fn ui_hud_input_system(
+    game: &mut GameState,
+    input: &Input,
+    scale: u8,
+    screen_res: ScreenRes,
+) -> UiHudInputSystemMsg {
+    let mut msg = UiHudInputSystemMsg::None;
     if input.pressed_raw(Key::Escape) && !game.ui.menu.open {
         open_menu(game);
     }
@@ -682,6 +701,11 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input, scale: u
         game.ui.inv.open ^= true;
     }
     let mp = input.mouse_down_loc.scaled(scale);
+    if game.ui.inv.open
+        && crate::game::ui::Inventory::screen_rect(screen_res).contains_screen_pos(mp)
+    {
+        msg = UiHudInputSystemMsg::CursorOccupied;
+    }
     if input.lmb_pressed {
         for (i, rect) in game.ui.hotbar_rects.iter().enumerate() {
             if rect.contains_screen_pos(mp) {
@@ -705,6 +729,7 @@ pub(crate) fn general_input_system(game: &mut GameState, input: &Input, scale: u
             }
         }
     }
+    msg
 }
 
 pub(crate) fn health_system(game: &mut GameState) {
