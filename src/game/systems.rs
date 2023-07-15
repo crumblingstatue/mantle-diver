@@ -1,5 +1,5 @@
 use {
-    crate::{graphics::ScreenRes, itemdrop::PickupCooldown},
+    crate::{graphics::ScreenRes, itemdrop::PickupCooldown, math::IntRectExt},
     mdv_data::{
         item::UseAction,
         tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
@@ -700,6 +700,9 @@ pub(crate) fn ui_hud_input_system(
     if input.pressed_raw(Key::I) {
         game.ui.inv.open ^= true;
     }
+    if input.pressed_raw(Key::C) {
+        game.ui.craft.open ^= true;
+    }
     let mp = input.mouse_down_loc.scaled(scale);
     if game.ui.inv.open
         && crate::game::ui::Inventory::screen_rect(screen_res).contains_screen_pos(mp)
@@ -743,4 +746,88 @@ pub(crate) fn health_system(game: &mut GameState) {
         }
     }
     game.ecb.run_on(&mut game.ecw);
+}
+
+pub(crate) fn craft_ui_system(
+    game: &mut GameState,
+    egui_ctx: &egui::Context,
+    atlas_size: ScreenRes,
+) {
+    if !game.ui.craft.open {
+        return;
+    }
+    egui::Window::new("Crafting").show(egui_ctx, |ui| {
+        ui.horizontal(|ui| {
+            ui.vertical(|ui| {
+                for (rec_idx, recipe) in game.recipe_db.recipes.iter().enumerate() {
+                    let item_id = recipe.output.id;
+
+                    if let Some(out_def) = game.itemdb.get(item_id) {
+                        ui.horizontal(|ui| {
+                            ui.add(
+                                egui::Image::new(
+                                    egui::TextureId::User(0),
+                                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
+                                )
+                                .uv(out_def.tex_rect.to_egui_uv(atlas_size)),
+                            );
+                            if ui
+                                .selectable_label(
+                                    game.ui.craft.selected_recipe == Some(rec_idx),
+                                    &out_def.name,
+                                )
+                                .clicked()
+                            {
+                                game.ui.craft.selected_recipe = Some(rec_idx);
+                            }
+                        });
+                    }
+                }
+            });
+            ui.vertical(|ui| {
+                let mut can_craft = true;
+                if let &Some(rec_idx) = &game.ui.craft.selected_recipe {
+                    let recipe = &game.recipe_db.recipes[rec_idx];
+                    ui.heading("Requires");
+                    for inp_stack in &recipe.input {
+                        let Some(item_def) = game.itemdb.get(inp_stack.id) else {
+                            ui.label("<invalid recipe>");
+                            continue;
+                        };
+                        let need = inp_stack.qty;
+                        let have = game.inventory.count_item(inp_stack.id);
+                        if u64::from(need) > have {
+                            can_craft = false;
+                        }
+                        ui.horizontal(|ui| {
+                            ui.add(
+                                egui::Image::new(
+                                    egui::TextureId::User(0),
+                                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
+                                )
+                                .uv(item_def.tex_rect.to_egui_uv(atlas_size)),
+                            );
+                            ui.label(format!("{}: {have}/{need}", &item_def.name));
+                        });
+                    }
+                    ui.heading("Crafted at");
+                    for station in &recipe.stations {
+                        let label = match station {
+                            mdv_data::recipe::Station::Player => "anywhere",
+                        };
+                        ui.label(label);
+                    }
+                    if ui
+                        .add_enabled(can_craft, egui::Button::new("Craft"))
+                        .clicked()
+                    {
+                        for inp_stack in &recipe.input {
+                            game.inventory.remove(inp_stack.id, inp_stack.qty);
+                        }
+                        game.inventory.add(recipe.output.id, recipe.output.qty);
+                    }
+                }
+            });
+        });
+    });
 }

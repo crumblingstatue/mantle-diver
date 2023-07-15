@@ -9,6 +9,7 @@ pub struct UiState {
     pub selected_inv_slot: usize,
     pub menu: Menu,
     pub inv: Inventory,
+    pub craft: CraftWnd,
     pub hotbar_rects: [ScreenRect; 10],
     pub inv_rects: Vec<ScreenRect>,
 }
@@ -58,4 +59,10 @@ impl Inventory {
         let y = center_offset(h, res.h as i16);
         ScreenRect { x, y, w, h }
     }
+}
+
+#[derive(Default)]
+pub struct CraftWnd {
+    pub open: bool,
+    pub selected_recipe: Option<usize>,
 }

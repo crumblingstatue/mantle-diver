@@ -126,4 +126,31 @@ impl Inventory {
             None => None,
         }
     }
+    /// How many items of type `id` do we have?
+    pub(crate) fn count_item(&self, id: ItemId) -> u64 {
+        let mut sum = 0;
+        for slot in &self.slots {
+            if slot.id == id {
+                sum += u64::from(slot.qty);
+            }
+        }
+        sum
+    }
+    /// Removes `qty` amount of item `id`, or all of it if there is not enough.
+    pub(crate) fn remove(&mut self, id: ItemId, mut qty: u16) {
+        for slot in &mut self.slots {
+            if slot.id == id {
+                if slot.qty < qty {
+                    qty -= slot.qty;
+                    slot.qty = 0;
+                } else {
+                    slot.qty -= qty;
+                    qty = 0;
+                }
+            }
+            if qty == 0 {
+                break;
+            }
+        }
+    }
 }

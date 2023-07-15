@@ -159,6 +159,7 @@ impl GameState {
         cmd: &mut CmdVec,
         worlds_dir: &Path,
         scale: u8,
+        egui_ctx: &egui::Context,
     ) {
         self.ui.update_rects(&self.inventory, rt_size);
         self.ambient_light = daylight(tick_of_day(self.world.ticks));
@@ -174,6 +175,7 @@ impl GameState {
             systems::pause_menu::pause_menu_system(self, input, cmd, worlds_dir, au_ctx);
             return;
         }
+        systems::craft_ui_system(self, egui_ctx, ScreenRes::from_sf_vec(res.atlas.tex.size()));
         if self.paused {
             return;
         }

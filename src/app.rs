@@ -283,6 +283,7 @@ impl App {
             &mut self.cmdvec,
             &self.worlds_dir,
             self.scale,
+            self.sf_egui.context(),
         );
         self.game.world.remove_old_chunks();
         self::command::dispatch(self, res, mouse_world_pos);
