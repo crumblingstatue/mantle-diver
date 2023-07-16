@@ -148,6 +148,10 @@ impl Inventory {
                     qty = 0;
                 }
             }
+            // Make any slots that reached a qty of 0 empty
+            if slot.qty == 0 {
+                slot.id = ItemId::EMPTY;
+            }
             if qty == 0 {
                 break;
             }
