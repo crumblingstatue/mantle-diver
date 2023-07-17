@@ -15,8 +15,12 @@ impl Inventory {
         let mut this = Self {
             slots: vec![
                 ItemStack {
-                    id: data::item::WOOD_PICK,
-                    qty: 1,
+                    id: ItemId::EMPTY,
+                    qty: 0,
+                },
+                ItemStack {
+                    id: ItemId::EMPTY,
+                    qty: 0,
                 },
                 ItemStack {
                     id: ItemId::EMPTY,
@@ -45,10 +49,6 @@ impl Inventory {
                 ItemStack {
                     id: data::item::PLATFORM,
                     qty: 9999,
-                },
-                ItemStack {
-                    id: data::item::STONE_WALL,
-                    qty: 100,
                 },
                 ItemStack {
                     id: data::item::DEV_PICK,
