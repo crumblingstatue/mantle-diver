@@ -831,3 +831,21 @@ pub(crate) fn craft_ui_system(
         });
     });
 }
+
+pub(crate) fn interact_system(
+    game: &mut GameState,
+    input: &mut Input,
+    mouse_tpos: TilePos,
+    mouse_wpos: WorldPos,
+) {
+    let Ok(mov) = game.ecw.query_one_mut::<&mut MovingEnt>(game.controlled_en) else {
+        log::warn!("No controlled entity");
+        return;
+    };
+    let player_pos = WorldPos::from_en(&mov.mob.en);
+    let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
+    if input.pressed(InputAction::Interact) && ptr_within_circle {
+        let tile = game.world.tile_at_mut(mouse_tpos);
+        tile.mid = TileId::EMPTY;
+    }
+}

@@ -191,6 +191,7 @@ impl GameState {
         }
         systems::move_system(self, rt_size.to_vec(), debug);
         if !hud_msg.cursor_occupied() {
+            systems::interact_system(self, input, mouse_tpos, mouse_wpos);
             systems::item_use_system(self, input, mouse_tpos, au_res, au_ctx, mouse_wpos, debug);
         }
         systems::biome_watch_system(self, au_ctx, res);
