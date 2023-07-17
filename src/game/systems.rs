@@ -846,6 +846,7 @@ pub(crate) fn interact_system(
     let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
     if input.pressed(InputAction::Interact) && ptr_within_circle {
         let tile = game.world.tile_at_mut(mouse_tpos);
+        process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, &mouse_tpos);
         tile.mid = TileId::EMPTY;
     }
 }
