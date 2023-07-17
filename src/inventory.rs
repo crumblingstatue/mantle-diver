@@ -1,6 +1,6 @@
 use {
     crate::data,
-    mdv_data::item::{ItemId, ItemStack},
+    mdv_data::item::{ItemDb, ItemId, ItemStack},
     serde::{Deserialize, Serialize},
 };
 
@@ -66,7 +66,19 @@ impl Inventory {
         this
     }
     /// Returns false if the item can't be added (full inv)
-    pub fn add(&mut self, id: ItemId, qty: u16) -> bool {
+    pub fn add(&mut self, id: ItemId, qty: u16, itemdb: &ItemDb) -> bool {
+        let stackable = itemdb.get(id).map_or(false, |en| en.stackable);
+        if !stackable {
+            // Just try to find an empty slot
+            for slot in &mut self.slots {
+                if slot.id == ItemId::EMPTY {
+                    slot.id = id;
+                    // Quantity doesn't matter for non-stackable items
+                    slot.qty = 1;
+                    return true;
+                }
+            }
+        }
         // First, try to merge with existing slots
         for slot in &mut self.slots {
             if slot.id == id {

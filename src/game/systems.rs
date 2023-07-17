@@ -625,7 +625,7 @@ pub(super) fn item_drop_claim_system(
         }
         #[expect(clippy::collapsible_if)]
         if plr_mov.mob.en.collides(&mov.mob.en) {
-            if game.inventory.add(*id, 1) {
+            if game.inventory.add(*id, 1, &game.itemdb) {
                 au_ctx.plr.play(au_res, "etc/pickup");
                 game.ecb.despawn(en);
             }
@@ -824,7 +824,8 @@ pub(crate) fn craft_ui_system(
                         for inp_stack in &recipe.input {
                             game.inventory.remove(inp_stack.id, inp_stack.qty);
                         }
-                        game.inventory.add(recipe.output.id, recipe.output.qty);
+                        game.inventory
+                            .add(recipe.output.id, recipe.output.qty, &game.itemdb);
                     }
                 }
             });

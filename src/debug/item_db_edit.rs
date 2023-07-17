@@ -31,7 +31,7 @@ impl ItemDbEdit {
                         draw_off: ScreenVec::default(),
                         use1: UseAction::Nothing,
                         use2: UseAction::Nothing,
-                        consumable: false,
+                        stackable: false,
                     })
                 }
                 ui.separator();
@@ -70,7 +70,7 @@ impl ItemDbEdit {
                     ui.add(egui::DragValue::new(&mut def.draw_off.x));
                     ui.add(egui::DragValue::new(&mut def.draw_off.y));
                 });
-                ui.checkbox(&mut def.consumable, "Consumable");
+                ui.checkbox(&mut def.stackable, "Stackable");
                 use_dropdown_combo(&mut def.use1, ui, "Primary use");
                 use_dropdown_combo(&mut def.use2, ui, "Secondary use");
             });

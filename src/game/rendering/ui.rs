@@ -139,7 +139,7 @@ fn draw_hotbar(
             s.set_texture_rect(rect);
             s.set_position(Vector2f::from((x, y)).scv_off(item_def.draw_off));
             rt.draw(&s);
-            if item_def.consumable {
+            if item_def.stackable {
                 text.set_position(Vector2f::from((x, y)).scv_off(ScreenVec { x: 2, y: 22 }));
                 text.set_string(&slot.qty.to_string());
                 rt.draw(&*text);
@@ -242,7 +242,7 @@ fn draw_inventory(
             s.set_texture_rect(rect);
             s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
             rt.draw(&s);
-            if item_def.consumable {
+            if item_def.stackable {
                 text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
                 text.set_string(&slot.qty.to_string());
                 rt.draw(&text);
@@ -263,7 +263,7 @@ fn draw_inventory(
             s.set_texture_rect(rect);
             s.set_position(Vector2f::from(pos).scv_off(item_def.draw_off));
             rt.draw(&s);
-            if item_def.consumable {
+            if item_def.stackable {
                 text.set_position(Vector2f::from(pos).scv_off(ScreenVec { x: 2, y: 22 }));
                 text.set_string(&grabbed.qty.to_string());
                 rt.draw(&text);

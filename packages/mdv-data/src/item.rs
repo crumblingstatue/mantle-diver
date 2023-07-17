@@ -48,7 +48,8 @@ pub struct ItemDef {
     pub use1: UseAction,
     /// Secondary use
     pub use2: UseAction,
-    pub consumable: bool,
+    #[serde(alias = "consumable")]
+    pub stackable: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Default)]

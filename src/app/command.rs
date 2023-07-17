@@ -64,7 +64,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             Cmd::GiveItemByName { name, amount } => {
                 for (id, item) in app.game.itemdb.iter() {
                     if item.name == name {
-                        app.game.inventory.add(id, amount);
+                        app.game.inventory.add(id, amount, &app.game.itemdb);
                         return;
                     }
                 }

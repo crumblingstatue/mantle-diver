@@ -13,7 +13,7 @@ ItemDb(
                 id: TileId(1),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[1]*/ ItemDef(
             name: "Torch",
@@ -26,7 +26,7 @@ ItemDb(
                 id: TileId(3),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[2]*/ ItemDef(
             name: "Platform",
@@ -39,7 +39,7 @@ ItemDb(
                 id: TileId(4),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[3]*/ ItemDef(
             name: "Wood Pick",
@@ -56,7 +56,7 @@ ItemDb(
                 power: 1.0,
                 delay: 35,
             ),
-            consumable: false,
+            stackable: false,
         ),
         /*[4]*/ ItemDef(
             name: "Panzerium",
@@ -69,7 +69,7 @@ ItemDb(
                 id: TileId(5),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[5]*/ ItemDef(
             name: "Stone wall",
@@ -82,7 +82,7 @@ ItemDb(
                 id: TileId(2),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[6]*/ ItemDef(
             name: "Stone block",
@@ -95,7 +95,7 @@ ItemDb(
                 id: TileId(2),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[7]*/ ItemDef(
             name: "Coal ",
@@ -106,7 +106,7 @@ ItemDb(
             ),
             use1: Nothing,
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[8]*/ ItemDef(
             name: "Dev Pick",
@@ -123,7 +123,7 @@ ItemDb(
                 power: 1000.0,
                 delay: 1,
             ),
-            consumable: false,
+            stackable: false,
         ),
         /*[9]*/ ItemDef(
             name: "Small rock",
@@ -137,7 +137,7 @@ ItemDb(
                 delay: 0,
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[10]*/ ItemDef(
             name: "Stick",
@@ -151,7 +151,7 @@ ItemDb(
                 delay: 0,
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
         /*[11]*/ ItemDef(
             name: "Dirt wall",
@@ -164,7 +164,7 @@ ItemDb(
                 id: TileId(1),
             ),
             use2: Nothing,
-            consumable: true,
+            stackable: true,
         ),
     ],
 )
