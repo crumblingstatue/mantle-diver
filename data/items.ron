@@ -132,10 +132,7 @@ ItemDb(
                 x: 5,
                 y: 12,
             ),
-            use1: MineTile(
-                power: 0.0,
-                delay: 0,
-            ),
+            use1: Nothing,
             use2: Nothing,
             stackable: true,
         ),
@@ -146,10 +143,7 @@ ItemDb(
                 x: 4,
                 y: 12,
             ),
-            use1: MineTile(
-                power: 0.0,
-                delay: 0,
-            ),
+            use1: Nothing,
             use2: Nothing,
             stackable: true,
         ),
