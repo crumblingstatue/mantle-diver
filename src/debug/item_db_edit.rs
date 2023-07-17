@@ -23,56 +23,63 @@ impl ItemDbEdit {
         egui::Window::new("Item db")
             .open(&mut self.open)
             .show(ctx, |ui| {
-                if ui.button("New item").clicked() {
-                    itemdb.db.push(ItemDef {
-                        name: "New item".into(),
-                        graphic_name: "".into(),
-                        tex_rect: IntRect::default(),
-                        draw_off: ScreenVec::default(),
-                        use1: UseAction::Nothing,
-                        use2: UseAction::Nothing,
-                        stackable: false,
-                    })
-                }
-                ui.separator();
-                for (i, def) in itemdb.db.iter().enumerate() {
-                    ui.horizontal(|ui| {
-                        if ui.selectable_label(i == self.sel_idx, &def.name).clicked() {
-                            self.sel_idx = i;
+                ui.horizontal(|ui| {
+                    ui.vertical(|ui| {
+                        ui.set_max_width(150.0);
+                        if ui.button("New item").clicked() {
+                            itemdb.db.push(ItemDef {
+                                name: "New item".into(),
+                                graphic_name: "".into(),
+                                tex_rect: IntRect::default(),
+                                draw_off: ScreenVec::default(),
+                                use1: UseAction::Nothing,
+                                use2: UseAction::Nothing,
+                                stackable: false,
+                            })
                         }
-                        if self.extern_sel_mode {
-                            #[expect(
-                                clippy::cast_possible_truncation,
-                                reason = "We won't have more than 65535 items"
-                            )]
-                            if ui.button("Select this").clicked() {
-                                self.sel_for_extern = Some(ItemId((i + 1) as u16));
-                                self.extern_sel_mode = false;
-                            }
+                        ui.separator();
+                        for (i, def) in itemdb.db.iter().enumerate() {
+                            ui.horizontal(|ui| {
+                                if ui.selectable_label(i == self.sel_idx, &def.name).clicked() {
+                                    self.sel_idx = i;
+                                }
+                                if self.extern_sel_mode {
+                                    #[expect(
+                                        clippy::cast_possible_truncation,
+                                        reason = "We won't have more than 65535 items"
+                                    )]
+                                    if ui.button("Select this").clicked() {
+                                        self.sel_for_extern = Some(ItemId((i + 1) as u16));
+                                        self.extern_sel_mode = false;
+                                    }
+                                }
+                            });
                         }
                     });
-                }
-                ui.separator();
-                let Some(def) = itemdb.db.get_mut(self.sel_idx) else {
-                    ui.label("No item selected (or out of bounds)");
-                    return;
-                };
-                ui.horizontal(|ui| {
-                    ui.label("Name");
-                    ui.text_edit_singleline(&mut def.name);
+                    ui.separator();
+                    ui.vertical(|ui| {
+                        let Some(def) = itemdb.db.get_mut(self.sel_idx) else {
+                            ui.label("No item selected (or out of bounds)");
+                            return;
+                        };
+                        ui.horizontal(|ui| {
+                            ui.label("Name");
+                            ui.text_edit_singleline(&mut def.name);
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label("Graphic name");
+                            ui.text_edit_singleline(&mut def.graphic_name);
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label("Graphic offset");
+                            ui.add(egui::DragValue::new(&mut def.draw_off.x));
+                            ui.add(egui::DragValue::new(&mut def.draw_off.y));
+                        });
+                        ui.checkbox(&mut def.stackable, "Stackable");
+                        use_dropdown_combo(&mut def.use1, ui, "Primary use");
+                        use_dropdown_combo(&mut def.use2, ui, "Secondary use");
+                    });
                 });
-                ui.horizontal(|ui| {
-                    ui.label("Graphic name");
-                    ui.text_edit_singleline(&mut def.graphic_name);
-                });
-                ui.horizontal(|ui| {
-                    ui.label("Graphic offset");
-                    ui.add(egui::DragValue::new(&mut def.draw_off.x));
-                    ui.add(egui::DragValue::new(&mut def.draw_off.y));
-                });
-                ui.checkbox(&mut def.stackable, "Stackable");
-                use_dropdown_combo(&mut def.use1, ui, "Primary use");
-                use_dropdown_combo(&mut def.use2, ui, "Secondary use");
             });
     }
 }
