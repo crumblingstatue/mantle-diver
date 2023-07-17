@@ -41,6 +41,7 @@ fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
     hm.insert(InputAction::Right, Key::D);
     hm.insert(InputAction::Jump, Key::Space);
     hm.insert(InputAction::ThrowItem, Key::Q);
+    hm.insert(InputAction::Interact, Key::E);
     hm
 }
 
@@ -129,6 +130,7 @@ pub enum InputAction {
     Down,
     Up,
     ThrowItem,
+    Interact,
 }
 
 impl InputAction {
@@ -140,6 +142,7 @@ impl InputAction {
             InputAction::Down => "Down",
             InputAction::Up => "Up",
             InputAction::ThrowItem => "Throw item",
+            InputAction::Interact => "Interact",
         }
     }
 }
