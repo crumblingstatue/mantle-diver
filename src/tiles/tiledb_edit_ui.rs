@@ -245,6 +245,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
                 }
             }
         }
+        ui.checkbox(&mut def.uprootable, "Uprootable");
         Layer::special_ui(&mut def.layer, ui);
         ui.label("O to paint tile at cursor");
         if ui.input(|inp| inp.key_down(egui::Key::O)) {

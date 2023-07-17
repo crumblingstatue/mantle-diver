@@ -17,6 +17,7 @@ TileDb(
         health: 0.0,
         hit_sound: None,
         item_drop: None,
+        uprootable: false,
     ),
     unknown_mid: TileDef(
         light: ScreenVec(
@@ -42,6 +43,7 @@ TileDb(
         health: 0.0,
         hit_sound: None,
         item_drop: None,
+        uprootable: false,
     ),
     bg: [
         /*[0]*/ TileDef(
@@ -63,6 +65,7 @@ TileDb(
                 ),
                 id: 12,
             ),
+            uprootable: false,
         ),
         /*[1]*/ TileDef(
             light: None,
@@ -83,6 +86,7 @@ TileDb(
                 ),
                 id: 6,
             ),
+            uprootable: false,
         ),
     ],
     mid: [
@@ -116,6 +120,7 @@ TileDb(
                 ),
                 id: 1,
             ),
+            uprootable: false,
         ),
         /*[1]*/ TileDef(
             light: None,
@@ -147,6 +152,7 @@ TileDb(
                 ),
                 id: 7,
             ),
+            uprootable: false,
         ),
         /*[2]*/ TileDef(
             light: ScreenVec(
@@ -173,6 +179,7 @@ TileDb(
                 ),
                 id: 2,
             ),
+            uprootable: false,
         ),
         /*[3]*/ TileDef(
             light: None,
@@ -201,6 +208,7 @@ TileDb(
                 ),
                 id: 3,
             ),
+            uprootable: false,
         ),
         /*[4]*/ TileDef(
             light: None,
@@ -229,6 +237,7 @@ TileDb(
                 ),
                 id: 5,
             ),
+            uprootable: false,
         ),
         /*[5]*/ TileDef(
             light: None,
@@ -246,6 +255,7 @@ TileDb(
             health: 10.0,
             hit_sound: "dig/tree",
             item_drop: None,
+            uprootable: false,
         ),
         /*[6]*/ TileDef(
             light: None,
@@ -269,6 +279,7 @@ TileDb(
                 ),
                 id: 10,
             ),
+            uprootable: true,
         ),
         /*[7]*/ TileDef(
             light: None,
@@ -292,6 +303,7 @@ TileDb(
                 ),
                 id: 11,
             ),
+            uprootable: true,
         ),
         /*[8]*/ TileDef(
             light: ScreenVec(
@@ -326,6 +338,7 @@ TileDb(
                 ),
                 id: 8,
             ),
+            uprootable: false,
         ),
         /*[9]*/ TileDef(
             light: None,
@@ -357,6 +370,7 @@ TileDb(
                 ),
                 id: 8,
             ),
+            uprootable: false,
         ),
     ],
 )

@@ -30,6 +30,9 @@ pub struct TileDef<Layer: TileLayer> {
     pub hit_sound: Option<String>,
     #[serde(default)]
     pub item_drop: Option<TileItemDrop>,
+    /// Whether the tile can be "uprooted" by interacting with it (sticks/stones/plants, etc.)
+    #[serde(default)]
+    pub uprootable: bool,
 }
 
 impl<Layer: TileLayer> std::fmt::Debug for TileDef<Layer>
@@ -133,6 +136,7 @@ impl Bg {
             hit_sound: None,
             item_drop: None,
             blend_list: vec![],
+            uprootable: false,
         }
     }
 }
@@ -158,6 +162,7 @@ impl Mid {
             hit_sound: None,
             item_drop: None,
             blend_list: vec![],
+            uprootable: false,
         }
     }
 }
@@ -209,6 +214,7 @@ where
             hit_sound: None,
             item_drop: None,
             blend_list: vec![],
+            uprootable: false,
         }
     }
 }
