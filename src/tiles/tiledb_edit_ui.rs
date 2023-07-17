@@ -132,124 +132,135 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
 ) where
     <Layer as TileLayer>::SpecificDef: Debug + Default,
 {
-    if ui.button("Add new default").clicked() {
-        db.push(Default::default());
-    }
-    egui::ScrollArea::vertical()
-        .max_height(400.0)
-        .show(ui, |ui| {
-            for (i, def) in db.iter().enumerate() {
-                if ui
-                    .selectable_label(*sel_idx == i, format!("{} {}", i + 1, def.graphic_name))
-                    .clicked()
-                {
-                    *sel_idx = i;
-                }
+    ui.horizontal(|ui| {
+        ui.vertical(|ui| {
+            ui.set_min_height(300.0);
+            if ui.button("Add new default").clicked() {
+                db.push(Default::default());
             }
-        });
-    ui.separator();
-    if let Some(def) = db.get_mut(*sel_idx) {
-        ui.horizontal(|ui| {
-            ui.add(
-                egui::Image::new(
-                    egui::TextureId::User(0),
-                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
-                )
-                .uv(def.tex_rect.to_egui_uv(atlas_size)),
-            );
-            ui.text_edit_singleline(&mut def.graphic_name);
-        });
-        ui.checkbox(&mut def.neigh_aware, "Neighbour aware");
-        ui.horizontal(|ui| {
-            ui.label("Draw offset x");
-            ui.add(egui::DragValue::new(&mut def.draw_offs.x));
-            ui.label("y");
-            ui.add(egui::DragValue::new(&mut def.draw_offs.y));
-        });
-        ui.horizontal(|ui| {
-            ui.label("Blend list");
-            if ui.button("✚").clicked() {
-                def.blend_list.push(0);
-            }
-        });
-        def.blend_list.retain_mut(|id| {
-            let mut retain = true;
-            ui.horizontal(|ui| {
-                ui.add(egui::DragValue::new(id));
-                if ui.button("➖").clicked() {
-                    retain = false;
-                }
-            });
-            retain
-        });
-        match &mut def.light {
-            Some(light) => {
-                ui.horizontal(|ui| {
-                    ui.label("x");
-                    ui.add(egui::DragValue::new(&mut light.x));
-                    ui.label("y");
-                    ui.add(egui::DragValue::new(&mut light.y));
+            egui::ScrollArea::vertical()
+                .max_height(400.0)
+                .show(ui, |ui| {
+                    for (i, def) in db.iter().enumerate() {
+                        if ui
+                            .selectable_label(
+                                *sel_idx == i,
+                                format!("{} {}", i + 1, def.graphic_name),
+                            )
+                            .clicked()
+                        {
+                            *sel_idx = i;
+                        }
+                    }
                 });
-            }
-            None => {
-                if ui.button("Insert light emit").clicked() {
-                    def.light = Some(ScreenVec {
-                        x: ScreenSc::from(TILE_SIZE) / 2,
-                        y: ScreenSc::from(TILE_SIZE) / 2,
-                    });
-                }
-            }
-        }
-        ui.horizontal(|ui| {
-            ui.label("Health");
-            ui.add(egui::DragValue::new(&mut def.health));
         });
-        ui.horizontal(|ui| match &mut def.item_drop {
-            Some(drop) => {
-                egui::ComboBox::new("itemdrop_combo", "Item drop")
-                    .selected_text(
-                        item_db
-                            .get(drop.id)
-                            .map(|def| &def.name[..])
-                            .unwrap_or("Nothing"),
-                    )
-                    .show_ui(ui, |ui| {
-                        for (id, item_def) in item_db.iter() {
-                            if ui.selectable_label(drop.id == id, &item_def.name).clicked() {
-                                drop.id = id;
-                            }
+        ui.separator();
+        ui.vertical(|ui| {
+            if let Some(def) = db.get_mut(*sel_idx) {
+                ui.horizontal(|ui| {
+                    ui.add(
+                        egui::Image::new(
+                            egui::TextureId::User(0),
+                            egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
+                        )
+                        .uv(def.tex_rect.to_egui_uv(atlas_size)),
+                    );
+                    ui.text_edit_singleline(&mut def.graphic_name);
+                });
+                ui.checkbox(&mut def.neigh_aware, "Neighbour aware");
+                ui.horizontal(|ui| {
+                    ui.label("Draw offset x");
+                    ui.add(egui::DragValue::new(&mut def.draw_offs.x));
+                    ui.label("y");
+                    ui.add(egui::DragValue::new(&mut def.draw_offs.y));
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Blend list");
+                    if ui.button("✚").clicked() {
+                        def.blend_list.push(0);
+                    }
+                });
+                def.blend_list.retain_mut(|id| {
+                    let mut retain = true;
+                    ui.horizontal(|ui| {
+                        ui.add(egui::DragValue::new(id));
+                        if ui.button("➖").clicked() {
+                            retain = false;
                         }
                     });
-                ui.label("Amount range");
-                let (mut start, mut end) = (*drop.qty_range.start(), *drop.qty_range.end());
-                ui.add(egui::DragValue::new(&mut start));
-                ui.add(egui::DragValue::new(&mut end));
-                drop.qty_range = start..=end;
-            }
-            None => {
-                if ui.button("Add drop").clicked() {
-                    def.item_drop = Some(TileItemDrop {
-                        qty_range: 0..=0,
-                        id: ItemId::EMPTY,
-                    })
+                    retain
+                });
+                match &mut def.light {
+                    Some(light) => {
+                        ui.horizontal(|ui| {
+                            ui.label("x");
+                            ui.add(egui::DragValue::new(&mut light.x));
+                            ui.label("y");
+                            ui.add(egui::DragValue::new(&mut light.y));
+                        });
+                    }
+                    None => {
+                        if ui.button("Insert light emit").clicked() {
+                            def.light = Some(ScreenVec {
+                                x: ScreenSc::from(TILE_SIZE) / 2,
+                                y: ScreenSc::from(TILE_SIZE) / 2,
+                            });
+                        }
+                    }
+                }
+                ui.horizontal(|ui| {
+                    ui.label("Health");
+                    ui.add(egui::DragValue::new(&mut def.health));
+                });
+                ui.horizontal(|ui| match &mut def.item_drop {
+                    Some(drop) => {
+                        egui::ComboBox::new("itemdrop_combo", "Item drop")
+                            .selected_text(
+                                item_db
+                                    .get(drop.id)
+                                    .map(|def| &def.name[..])
+                                    .unwrap_or("Nothing"),
+                            )
+                            .show_ui(ui, |ui| {
+                                for (id, item_def) in item_db.iter() {
+                                    if ui.selectable_label(drop.id == id, &item_def.name).clicked()
+                                    {
+                                        drop.id = id;
+                                    }
+                                }
+                            });
+                        ui.label("Amount range");
+                        let (mut start, mut end) = (*drop.qty_range.start(), *drop.qty_range.end());
+                        ui.add(egui::DragValue::new(&mut start));
+                        ui.add(egui::DragValue::new(&mut end));
+                        drop.qty_range = start..=end;
+                    }
+                    None => {
+                        if ui.button("Add drop").clicked() {
+                            def.item_drop = Some(TileItemDrop {
+                                qty_range: 0..=0,
+                                id: ItemId::EMPTY,
+                            })
+                        }
+                    }
+                });
+                match &mut def.hit_sound {
+                    Some(snd) => {
+                        ui.text_edit_singleline(snd);
+                    }
+                    None => {
+                        if ui.button("Add hit sound").clicked() {
+                            def.hit_sound = Some(String::default());
+                        }
+                    }
+                }
+                ui.checkbox(&mut def.uprootable, "Uprootable");
+                Layer::special_ui(&mut def.layer, ui);
+                ui.label("O to paint tile at cursor");
+                if ui.input(|inp| inp.key_down(egui::Key::O)) {
+                    Layer::paint(*sel_idx + 1, cmd)
                 }
             }
         });
-        match &mut def.hit_sound {
-            Some(snd) => {
-                ui.text_edit_singleline(snd);
-            }
-            None => {
-                if ui.button("Add hit sound").clicked() {
-                    def.hit_sound = Some(String::default());
-                }
-            }
-        }
-        ui.checkbox(&mut def.uprootable, "Uprootable");
-        Layer::special_ui(&mut def.layer, ui);
-        ui.label("O to paint tile at cursor");
-        if ui.input(|inp| inp.key_down(egui::Key::O)) {
-            Layer::paint(*sel_idx + 1, cmd)
-        }
-    }
+    });
 }
