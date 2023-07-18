@@ -112,6 +112,7 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
                 app.rw
                     .desktop_fullscreen("Mantle Diver", &ContextSettings::default());
                 app.rw.set_framerate_limit(FPS_TARGET.into());
+                app.adapt_to_window_size_and_scale(ScreenVec::from_sf_resolution(app.rw.size()));
             }
         }
     }
