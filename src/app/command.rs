@@ -3,14 +3,15 @@ use {
     crate::{
         command::Cmd,
         game::GameState,
-        math::{ScreenVecExt, WorldPos},
+        math::{ScreenVecExt, WorldPos, FPS_TARGET},
         player::{Health, MovingEnt},
         res::Res,
         texture_atlas::AtlasBundle,
         tiles::TileDbExt,
     },
     mdv_math::types::ScreenVec,
-    sfml::graphics::RenderTarget,
+    sfml::{graphics::RenderTarget, window::ContextSettings},
+    sfml_xt::graphics::RenderWindowExt,
     std::fmt::Write,
 };
 
@@ -107,6 +108,11 @@ pub(super) fn dispatch(app: &mut App, res: &mut Res, mouse_world_pos: WorldPos) 
             }
             Cmd::SfxVolDec => app.aud.plr.sfx_vol -= 0.1,
             Cmd::SfxVolInc => app.aud.plr.sfx_vol += 0.1,
+            Cmd::DesktopFullscreen => {
+                app.rw
+                    .desktop_fullscreen("Mantle Diver", &ContextSettings::default());
+                app.rw.set_framerate_limit(FPS_TARGET.into());
+            }
         }
     }
 }

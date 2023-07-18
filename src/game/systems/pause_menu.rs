@@ -29,6 +29,7 @@ enum MenuAction {
     Rebind(InputAction),
     MusicVolume,
     SfxVolume,
+    DesktopFullscreen,
 }
 
 pub fn pause_menu_system(
@@ -120,6 +121,10 @@ pub fn pause_menu_system(
                             action: MenuAction::SfxVolume,
                         },
                         MenuItem {
+                            text: "Desktop fullscreen".into(),
+                            action: MenuAction::DesktopFullscreen,
+                        },
+                        MenuItem {
                             text: "Back".into(),
                             action: MenuAction::Back,
                         },
@@ -154,6 +159,11 @@ pub fn pause_menu_system(
                     cmd.push(Cmd::SfxVolInc)
                 }
                 current_menu_item.text = vol_text("Sfx", aud.plr.sfx_vol);
+            }
+            MenuAction::DesktopFullscreen => {
+                if enter {
+                    cmd.push(Cmd::DesktopFullscreen);
+                }
             }
         }
     }

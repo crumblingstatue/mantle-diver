@@ -30,6 +30,7 @@ pub enum Cmd {
     GodToggle,
     SfxVolDec,
     SfxVolInc,
+    DesktopFullscreen,
 }
 
 pub type CmdVec = Vec<Cmd>;
