@@ -215,6 +215,10 @@ impl IntRect {
             egui::vec2(self.w as f32 / sx, self.h as f32 / sy),
         )
     }
+
+    fn to_egui_size(self) -> egui::Vec2 {
+        egui::vec2(self.w as f32, self.h as f32)
+    }
 }
 
 #[test]

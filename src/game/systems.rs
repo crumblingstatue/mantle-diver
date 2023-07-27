@@ -767,7 +767,7 @@ pub(crate) fn craft_ui_system(
                             ui.add(
                                 egui::Image::new(
                                     egui::TextureId::User(0),
-                                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
+                                    out_def.tex_rect.to_egui_size(),
                                 )
                                 .uv(out_def.tex_rect.to_egui_uv(atlas_size)),
                             );
@@ -803,7 +803,7 @@ pub(crate) fn craft_ui_system(
                             ui.add(
                                 egui::Image::new(
                                     egui::TextureId::User(0),
-                                    egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
+                                    item_def.tex_rect.to_egui_size(),
                                 )
                                 .uv(item_def.tex_rect.to_egui_uv(atlas_size)),
                             );
