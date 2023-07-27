@@ -164,5 +164,16 @@ ItemDb(
             use2: Nothing,
             stackable: true,
         ),
+        /*[12]*/ ItemDef(
+            name: "Sharp rock",
+            graphic_name: "items/sharpstone",
+            draw_off: ScreenVec(
+                x: 10,
+                y: 7,
+            ),
+            use1: Nothing,
+            use2: Nothing,
+            stackable: true,
+        ),
     ],
 )
