@@ -1,5 +1,5 @@
 use {
-    crate::data,
+    crate::{data, graphics::ScreenRes, math::IntRectExt},
     extension_traits::extension,
     mdv_data::{
         item::{ItemDb, ItemDef, ItemId, UseAction},
@@ -19,7 +19,7 @@ pub struct ItemDbEdit {
 }
 
 impl ItemDbEdit {
-    pub fn ui(&mut self, ctx: &egui::Context, itemdb: &mut ItemDb) {
+    pub fn ui(&mut self, ctx: &egui::Context, itemdb: &mut ItemDb, atlas_size: ScreenRes) {
         egui::Window::new("Item db")
             .open(&mut self.open)
             .show(ctx, |ui| {
@@ -68,6 +68,13 @@ impl ItemDbEdit {
                         });
                         ui.horizontal(|ui| {
                             ui.label("Graphic name");
+                            ui.add(
+                                egui::Image::new(
+                                    egui::TextureId::User(0),
+                                    def.tex_rect.to_egui_size(),
+                                )
+                                .uv(def.tex_rect.to_egui_uv(atlas_size)),
+                            );
                             ui.text_edit_singleline(&mut def.graphic_name);
                         });
                         ui.horizontal(|ui| {

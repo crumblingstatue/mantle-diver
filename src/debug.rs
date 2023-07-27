@@ -180,15 +180,12 @@ pub(crate) fn do_debug_ui(
     cfg: &mut Config,
 ) {
     debug_panel_ui(debug, game, ctx, cfg);
-    debug.tiledb_edit.ui(
-        ctx,
-        &mut game.tile_db,
-        &game.itemdb,
-        ScreenRes::from_sf_vec(res.atlas.tex.size()),
-        cmd,
-    );
+    let atlas_size = ScreenRes::from_sf_vec(res.atlas.tex.size());
+    debug
+        .tiledb_edit
+        .ui(ctx, &mut game.tile_db, &game.itemdb, atlas_size, cmd);
     debug.chardb_edit.ui(ctx, &mut game.char_db);
-    debug.itemdb_edit.ui(ctx, &mut game.itemdb);
+    debug.itemdb_edit.ui(ctx, &mut game.itemdb, atlas_size);
     debug.recdb_edit.ui(
         ctx,
         &mut game.recipe_db,
