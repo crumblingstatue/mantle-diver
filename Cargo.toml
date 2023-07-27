@@ -6,19 +6,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.71"
+anyhow = "1.0.72"
 egui = "0.22.0"
 fnv = "1.0.7"
 hecs = { version = "0.10.3", features = ["macros"] }
-num-traits = "0.2.15"
+num-traits = "0.2.16"
 rand = "0.8.5"
 rfd = "0.11.4"
-rmp-serde = "1.1.1"
-serde = { version = "1.0.171", features = ["derive"] }
+rmp-serde = "1.1.2"
+serde = { version = "1.0.176", features = ["derive"] }
 log = "0.4.19"
 env_logger = "0.10.0"
-zstd = "0.12.3"
-clap = { version = "4.3.12", default-features = false, features = [
+zstd = "0.12.4"
+clap = { version = "4.3.19", default-features = false, features = [
     "std",
     "help",
     "derive",
