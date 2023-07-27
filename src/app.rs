@@ -61,7 +61,7 @@ pub struct App {
 impl App {
     pub fn new(
         args: CliArgs,
-        res: &mut Res,
+        res: &Res,
         cfg: Config,
         project_dirs: ProjectDirs,
     ) -> anyhow::Result<Self> {
@@ -289,7 +289,7 @@ impl App {
         self::command::dispatch(self, res, mouse_world_pos);
     }
 
-    fn do_rendering(&mut self, res: &mut Res) {
+    fn do_rendering(&mut self, res: &Res) {
         let enum_info = light::enumerate_light_sources(
             &mut self.game,
             &mut self.light_state,
@@ -314,7 +314,7 @@ impl App {
         );
         rendering::game::draw_entities(&mut self.game, &mut self.render.rt, res, &self.debug);
         if self.debug.dbg_overlay {
-            rendering::debug::draw_debug_overlay(&mut self.render.rt, &mut self.game);
+            rendering::debug::draw_debug_overlay(&mut self.render.rt, &self.game);
         }
         imm_dbg!(self.game.world.chunks.len());
         self.render.rt.display();

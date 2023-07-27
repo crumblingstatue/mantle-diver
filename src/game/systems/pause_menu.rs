@@ -37,7 +37,7 @@ pub fn pause_menu_system(
     input: &mut Input,
     cmd: &mut CmdVec,
     worlds_dir: &Path,
-    aud: &mut AudioCtx,
+    aud: &AudioCtx,
 ) {
     if let Some(act) = game.ui.menu.action_to_rebind {
         game.ui.menu.sel_color = Color::RED;

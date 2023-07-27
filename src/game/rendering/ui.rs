@@ -83,7 +83,7 @@ pub fn draw_ui(
 }
 
 fn draw_hotbar(
-    game: &mut GameState,
+    game: &GameState,
     text: &mut Text<'_>,
     rt: &mut RenderTexture,
     cfg: &Config,
@@ -150,7 +150,7 @@ fn draw_hotbar(
     }
 }
 
-fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
+fn draw_menu(game: &GameState, rt: &mut RenderTexture, res: &Res) {
     let Some(list) = game.ui.menu.stack.last() else {
         log::warn!("Trying to draw empty menu");
         return;
@@ -178,7 +178,7 @@ fn draw_menu(game: &mut GameState, rt: &mut RenderTexture, res: &Res) {
 }
 
 fn draw_inventory(
-    game: &mut GameState,
+    game: &GameState,
     cfg: &Config,
     rt: &mut RenderTexture,
     res: &Res,

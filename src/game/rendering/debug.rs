@@ -5,7 +5,7 @@ use {
     },
 };
 
-pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &mut GameState) {
+pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &GameState) {
     let mut rs = RectangleShape::new();
     let (cx, cy) = (game.camera_offset.x, game.camera_offset.y);
     let mut cs = CircleShape::new(0., 30);

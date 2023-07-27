@@ -174,7 +174,7 @@ pub(crate) fn do_debug_ui(
     ctx: &egui::Context,
     debug: &mut DebugState,
     game: &mut GameState,
-    res: &mut Res,
+    res: &Res,
     cmd: &mut CmdVec,
     worlds_path: &Path,
     cfg: &mut Config,

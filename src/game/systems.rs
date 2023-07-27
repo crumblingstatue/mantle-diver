@@ -186,7 +186,7 @@ fn do_use_action(
         UseAction::MineTile { power, delay } => {
             let t = world.tile_at_mut(mouse_tpos);
             mine_tile(
-                &mut t.mid,
+                &t.mid,
                 ticks,
                 delay,
                 mouse_tpos,
@@ -222,7 +222,7 @@ fn do_use_action(
                 return;
             }
             mine_tile(
-                &mut t.bg,
+                &t.bg,
                 ticks,
                 delay,
                 mouse_tpos,
@@ -240,7 +240,7 @@ fn do_use_action(
 
 #[expect(clippy::too_many_arguments)]
 fn mine_tile<L: TileLayer>(
-    tid: &mut TileId<L>,
+    tid: &TileId<L>,
     ticks: u64,
     delay: &u64,
     mouse_tpos: TilePos,
@@ -441,7 +441,7 @@ fn calc_tile_ents(world: &mut World, tile_db: &TileDb, wrect: WorldRect) -> Vec<
     ents
 }
 
-pub(super) fn biome_watch_system(game: &mut GameState, au_ctx: &mut AudioCtx, res: &Res) {
+pub(super) fn biome_watch_system(game: &mut GameState, au_ctx: &AudioCtx, res: &Res) {
     let depth = world_y_depth(game.camera_offset.y);
     let depth_tiles = depth / i32::from(TILE_SIZE);
     if depth_tiles > 70 {
@@ -835,7 +835,7 @@ pub(crate) fn craft_ui_system(
 
 pub(crate) fn interact_system(
     game: &mut GameState,
-    input: &mut Input,
+    input: &Input,
     mouse_tpos: TilePos,
     mouse_wpos: WorldPos,
 ) {

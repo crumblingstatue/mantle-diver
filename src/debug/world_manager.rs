@@ -19,7 +19,7 @@ impl WorldManager {
     pub fn ui(
         &mut self,
         ctx: &egui::Context,
-        game: &mut GameState,
+        game: &GameState,
         worlds_path: &Path,
         cmd: &mut CmdVec,
     ) {

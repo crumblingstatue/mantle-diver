@@ -21,7 +21,7 @@ pub(crate) fn draw_world(
     game: &mut GameState,
     verts: &mut Vec<Vertex>,
     rt: &mut RenderTexture,
-    res: &mut Res,
+    res: &Res,
 ) {
     verts.clear();
     match game.current_biome {
