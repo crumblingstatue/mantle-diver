@@ -25,6 +25,7 @@ mod command;
 mod config;
 mod data;
 mod debug;
+mod egui_ext;
 mod game;
 mod graphics;
 mod input;

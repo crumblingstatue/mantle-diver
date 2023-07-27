@@ -1,5 +1,5 @@
 use {
-    crate::{graphics::ScreenRes, itemdrop::PickupCooldown, math::IntRectExt},
+    crate::{egui_ext::EguiUiExt, graphics::ScreenRes, itemdrop::PickupCooldown},
     mdv_data::{
         item::UseAction,
         tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
@@ -764,13 +764,7 @@ pub(crate) fn craft_ui_system(
 
                     if let Some(out_def) = game.itemdb.get(item_id) {
                         ui.horizontal(|ui| {
-                            ui.add(
-                                egui::Image::new(
-                                    egui::TextureId::User(0),
-                                    out_def.tex_rect.to_egui_size(),
-                                )
-                                .uv(out_def.tex_rect.to_egui_uv(atlas_size)),
-                            );
+                            ui.graphic_image(&out_def.tex_rect, atlas_size);
                             if ui
                                 .selectable_label(
                                     game.ui.craft.selected_recipe == Some(rec_idx),
@@ -800,13 +794,7 @@ pub(crate) fn craft_ui_system(
                             can_craft = false;
                         }
                         ui.horizontal(|ui| {
-                            ui.add(
-                                egui::Image::new(
-                                    egui::TextureId::User(0),
-                                    item_def.tex_rect.to_egui_size(),
-                                )
-                                .uv(item_def.tex_rect.to_egui_uv(atlas_size)),
-                            );
+                            ui.graphic_image(&item_def.tex_rect, atlas_size);
                             ui.label(format!("{}: {have}/{need}", &item_def.name));
                         });
                     }

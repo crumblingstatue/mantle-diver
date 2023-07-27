@@ -1,8 +1,9 @@
 use {
     crate::{
         command::{Cmd, CmdVec},
+        egui_ext::EguiUiExt,
         graphics::ScreenRes,
-        math::{IntRectExt, TILE_SIZE},
+        math::TILE_SIZE,
     },
     mdv_data::{
         item::ItemId,
@@ -158,13 +159,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
         ui.vertical(|ui| {
             if let Some(def) = db.get_mut(*sel_idx) {
                 ui.horizontal(|ui| {
-                    ui.add(
-                        egui::Image::new(
-                            egui::TextureId::User(0),
-                            egui::vec2(f32::from(TILE_SIZE), f32::from(TILE_SIZE)),
-                        )
-                        .uv(def.tex_rect.to_egui_uv(atlas_size)),
-                    );
+                    ui.graphic_image(&def.tex_rect, atlas_size);
                     ui.text_edit_singleline(&mut def.graphic_name);
                 });
                 ui.checkbox(&mut def.neigh_aware, "Neighbour aware");

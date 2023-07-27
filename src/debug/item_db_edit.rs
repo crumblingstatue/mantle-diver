@@ -1,5 +1,5 @@
 use {
-    crate::{data, graphics::ScreenRes, math::IntRectExt},
+    crate::{data, egui_ext::EguiUiExt, graphics::ScreenRes},
     extension_traits::extension,
     mdv_data::{
         item::{ItemDb, ItemDef, ItemId, UseAction},
@@ -68,13 +68,7 @@ impl ItemDbEdit {
                         });
                         ui.horizontal(|ui| {
                             ui.label("Graphic name");
-                            ui.add(
-                                egui::Image::new(
-                                    egui::TextureId::User(0),
-                                    def.tex_rect.to_egui_size(),
-                                )
-                                .uv(def.tex_rect.to_egui_uv(atlas_size)),
-                            );
+                            ui.graphic_image(&def.tex_rect, atlas_size);
                             ui.text_edit_singleline(&mut def.graphic_name);
                         });
                         ui.horizontal(|ui| {
