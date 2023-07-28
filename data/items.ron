@@ -175,5 +175,19 @@ ItemDb(
             use2: Nothing,
             stackable: true,
         ),
+        /*[13]*/ ItemDef(
+            name: "Crude Axe",
+            graphic_name: "items/crudeaxe",
+            draw_off: ScreenVec(
+                x: 6,
+                y: 8,
+            ),
+            use1: MineTile(
+                power: 1.0,
+                delay: 32,
+            ),
+            use2: Nothing,
+            stackable: false,
+        ),
     ],
 )
