@@ -790,7 +790,7 @@ pub(crate) fn craft_ui_system(
                         };
                         let need = inp_stack.qty;
                         let have = game.inventory.count_item(inp_stack.id);
-                        if u64::from(need) > have {
+                        if have == 0 || u64::from(need) > have {
                             can_craft = false;
                         }
                         ui.horizontal(|ui| {
