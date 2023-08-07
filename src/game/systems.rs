@@ -795,7 +795,11 @@ pub(crate) fn craft_ui_system(
                         }
                         ui.horizontal(|ui| {
                             ui.graphic_image(&item_def.tex_rect, atlas_size);
-                            ui.label(format!("{}: {have}/{need}", &item_def.name));
+                            if need == 0 {
+                                ui.label(&item_def.name);
+                            } else {
+                                ui.label(format!("{}: {have}/{need}", &item_def.name));
+                            }
                         });
                     }
                     ui.heading("Crafted at");
