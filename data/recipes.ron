@@ -51,5 +51,24 @@ RecipeDb(
                 qty: 1,
             ),
         ),
+        /*[3]*/ Recipe(
+            stations: [
+                /*[0]*/ Player,
+            ],
+            input: [
+                /*[0]*/ ItemStack(
+                    id: 13,
+                    qty: 0,
+                ),
+                /*[1]*/ ItemStack(
+                    id: 11,
+                    qty: 1,
+                ),
+            ],
+            output: ItemStack(
+                id: 14,
+                qty: 1,
+            ),
+        ),
     ],
 )

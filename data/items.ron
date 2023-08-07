@@ -175,5 +175,16 @@ ItemDb(
             use2: Nothing,
             stackable: true,
         ),
+        /*[13]*/ ItemDef(
+            name: "Branch fiber",
+            graphic_name: "items/branchfiber",
+            draw_off: ScreenVec(
+                x: 8,
+                y: 8,
+            ),
+            use1: Nothing,
+            use2: Nothing,
+            stackable: true,
+        ),
     ],
 )
