@@ -94,7 +94,7 @@ impl GameState {
         tile_db.update_rects(&res.atlas.rects);
         let mut itemdb = ItemDb::load_or_default("data");
         itemdb.update_rects(&res.atlas.rects);
-        let mut inventory = Inventory::new_debug();
+        let mut inventory = Inventory::new_empty();
         let mut world;
         let mut plr = PlayerBundle::new_at(spawn_point);
         spawn_point.y -= WPosSc::try_from(plr.mov.mob.en.bb.y).unwrap();

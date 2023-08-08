@@ -1,5 +1,4 @@
 use {
-    crate::data,
     mdv_data::item::{ItemDb, ItemId, ItemStack},
     serde::{Deserialize, Serialize},
 };
@@ -10,60 +9,19 @@ pub struct Inventory {
     pub grabbed: Option<ItemStack>,
 }
 impl Inventory {
-    /// A new inventory filled with some debug items
-    pub(crate) fn new_debug() -> Inventory {
-        let mut this = Self {
-            slots: vec![
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: ItemId::EMPTY,
-                    qty: 0,
-                },
-                ItemStack {
-                    id: data::item::PLATFORM,
-                    qty: 9999,
-                },
-                ItemStack {
-                    id: data::item::DEV_PICK,
-                    qty: 1,
-                },
-            ],
-            grabbed: None,
-        };
-        for _ in 0..40 {
-            this.slots.push(ItemStack {
+    /// A new inventory filled with empty slots
+    pub(crate) fn new_empty() -> Self {
+        let mut slots = Vec::new();
+        for _ in 0..20 {
+            slots.push(ItemStack {
                 id: ItemId::EMPTY,
                 qty: 0,
             });
         }
-        this
+        Self {
+            slots,
+            grabbed: None,
+        }
     }
     /// Returns false if the item can't be added (full inv)
     pub fn add(&mut self, id: ItemId, qty: u16, itemdb: &ItemDb) -> bool {
