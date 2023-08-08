@@ -1,9 +1,9 @@
 use {
     super::graphic_picker::GraphicPicker,
-    crate::{data, egui_ext::EguiUiExt, graphics::ScreenRes},
+    crate::{data, egui_ext::EguiUiExt, game::GameState, graphics::ScreenRes},
     extension_traits::extension,
     mdv_data::{
-        item::{ItemDb, ItemDef, ItemId, UseAction},
+        item::{ItemDef, ItemId, UseAction},
         tile::LayerAccess,
     },
     mdv_math::types::{IntRect, ScreenVec},
@@ -23,9 +23,9 @@ impl ItemDbEdit {
     pub fn ui(
         &mut self,
         ctx: &egui::Context,
-        itemdb: &mut ItemDb,
         atlas_size: ScreenRes,
         graphic_picker: &mut GraphicPicker,
+        game: &mut GameState,
     ) {
         egui::Window::new("Item db")
             .open(&mut self.open)
@@ -34,7 +34,7 @@ impl ItemDbEdit {
                     ui.vertical(|ui| {
                         ui.set_max_width(150.0);
                         if ui.button("New item").clicked() {
-                            itemdb.db.push(ItemDef {
+                            game.itemdb.db.push(ItemDef {
                                 name: "New item".into(),
                                 graphic_name: "".into(),
                                 tex_rect: IntRect::default(),
@@ -45,7 +45,7 @@ impl ItemDbEdit {
                             })
                         }
                         ui.separator();
-                        for (i, def) in itemdb.db.iter().enumerate() {
+                        for (i, def) in game.itemdb.db.iter().enumerate() {
                             ui.horizontal(|ui| {
                                 if ui.selectable_label(i == self.sel_idx, &def.name).clicked() {
                                     self.sel_idx = i;
@@ -65,7 +65,7 @@ impl ItemDbEdit {
                     });
                     ui.separator();
                     ui.vertical(|ui| {
-                        let Some(def) = itemdb.db.get_mut(self.sel_idx) else {
+                        let Some(def) = game.itemdb.db.get_mut(self.sel_idx) else {
                             ui.label("No item selected (or out of bounds)");
                             return;
                         };
@@ -92,6 +92,13 @@ impl ItemDbEdit {
                         ui.checkbox(&mut def.stackable, "Stackable");
                         use_dropdown_combo(&mut def.use1, ui, "Primary use");
                         use_dropdown_combo(&mut def.use2, ui, "Secondary use");
+                        if ui.button("Give").clicked() {
+                            game.inventory.add(
+                                ItemId(u16::try_from(self.sel_idx + 1).unwrap()),
+                                1,
+                                &game.itemdb,
+                            );
+                        }
                     });
                 });
             });

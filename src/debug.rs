@@ -197,7 +197,7 @@ pub(crate) fn do_debug_ui(
     debug.chardb_edit.ui(ctx, &mut game.char_db);
     debug
         .itemdb_edit
-        .ui(ctx, &mut game.itemdb, atlas_size, &mut debug.graphic_picker);
+        .ui(ctx, atlas_size, &mut debug.graphic_picker, game);
     debug.recdb_edit.ui(
         ctx,
         &mut game.recipe_db,
