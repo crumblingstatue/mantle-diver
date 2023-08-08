@@ -705,7 +705,8 @@ pub(crate) fn ui_hud_input_system(
     }
     let mp = input.mouse_down_loc.scaled(scale);
     if game.ui.inv.open
-        && crate::game::ui::Inventory::screen_rect(screen_res).contains_screen_pos(mp)
+        && crate::game::ui::Inventory::screen_rect(screen_res, game.inventory.slots.len())
+            .contains_screen_pos(mp)
     {
         msg = UiHudInputSystemMsg::CursorOccupied;
     }

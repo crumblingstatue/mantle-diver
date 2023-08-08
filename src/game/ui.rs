@@ -1,7 +1,10 @@
 use {
     super::systems::pause_menu::Menu,
     crate::graphics::ScreenRes,
-    mdv_math::{types::ScreenRect, util::center_offset},
+    mdv_math::{
+        types::{ScreenRect, ScreenSc},
+        util::center_offset,
+    },
 };
 
 #[derive(Default)]
@@ -25,7 +28,7 @@ impl UiState {
             rect.w = 36;
             rect.h = 36;
         }
-        let inv_rect = Inventory::screen_rect(rt_res);
+        let inv_rect = Inventory::screen_rect(rt_res, inv.slots.len());
         let mut y_off = 24;
         let mut x_off = 8;
         self.inv_rects.clear();
@@ -50,11 +53,15 @@ pub struct Inventory {
     pub open: bool,
 }
 
+const ITEMS_PER_ROW: u8 = 10;
+
 impl Inventory {
     #[expect(clippy::cast_possible_wrap, reason = "resolution is always positive")]
-    pub fn screen_rect(res: ScreenRes) -> ScreenRect {
-        let w = 434;
-        let h = 240;
+    pub fn screen_rect(res: ScreenRes, slots: usize) -> ScreenRect {
+        let items_per_row = ScreenSc::from(ITEMS_PER_ROW);
+        let rows = ScreenSc::try_from(slots).unwrap() / items_per_row;
+        let w = (items_per_row * 40) + 34;
+        let h = (rows * 40) + 34;
         let x = center_offset(w, res.w as i16);
         let y = center_offset(h, res.h as i16);
         ScreenRect { x, y, w, h }

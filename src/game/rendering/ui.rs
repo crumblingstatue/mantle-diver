@@ -186,7 +186,7 @@ fn draw_inventory(
     scale: u8,
 ) {
     let rt_res = rt.res();
-    let rect = Inventory::screen_rect(rt_res);
+    let rect = Inventory::screen_rect(rt_res, game.inventory.slots.len());
     let sf_rect = rect.into_sf();
     let mut rs = RectangleShape::from_rect(sf_rect);
     let mut s = Sprite::with_texture(&res.atlas.tex);
