@@ -1,6 +1,7 @@
 use {
     crate::{
         command::{Cmd, CmdVec},
+        debug::graphic_picker::GraphicPicker,
         egui_ext::EguiUiExt,
         graphics::ScreenRes,
         math::TILE_SIZE,
@@ -27,6 +28,7 @@ impl TileDbEdit {
         item_db: &ItemDb,
         atlas_size: ScreenRes,
         cmd: &mut CmdVec,
+        graphic_picker: &mut GraphicPicker,
     ) {
         if !self.open {
             return;
@@ -47,6 +49,7 @@ impl TileDbEdit {
                         item_db,
                         atlas_size,
                         cmd,
+                        graphic_picker,
                     ),
                     Layer::Mid => db_ui(
                         &mut tile_db.mid,
@@ -55,6 +58,7 @@ impl TileDbEdit {
                         item_db,
                         atlas_size,
                         cmd,
+                        graphic_picker,
                     ),
                 }
             });
@@ -130,6 +134,7 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
     item_db: &ItemDb,
     atlas_size: ScreenRes,
     cmd: &mut CmdVec,
+    graphic_picker: &mut GraphicPicker,
 ) where
     <Layer as TileLayer>::SpecificDef: Debug + Default,
 {
@@ -159,7 +164,13 @@ fn db_ui<Layer: TileLayer + TileLayerExt + Debug>(
         ui.vertical(|ui| {
             if let Some(def) = db.get_mut(*sel_idx) {
                 ui.horizontal(|ui| {
-                    ui.graphic_image(&def.tex_rect, atlas_size);
+                    if ui.graphic_image_button(&def.tex_rect, atlas_size).clicked() {
+                        graphic_picker.open = true;
+                    }
+                    if let Some((name, rect)) = graphic_picker.picked.take() {
+                        def.graphic_name = name;
+                        def.tex_rect = rect;
+                    }
                     ui.text_edit_singleline(&mut def.graphic_name);
                 });
                 ui.checkbox(&mut def.neigh_aware, "Neighbour aware");

@@ -1,4 +1,5 @@
 use {
+    super::graphic_picker::GraphicPicker,
     crate::{data, egui_ext::EguiUiExt, graphics::ScreenRes},
     extension_traits::extension,
     mdv_data::{
@@ -19,7 +20,13 @@ pub struct ItemDbEdit {
 }
 
 impl ItemDbEdit {
-    pub fn ui(&mut self, ctx: &egui::Context, itemdb: &mut ItemDb, atlas_size: ScreenRes) {
+    pub fn ui(
+        &mut self,
+        ctx: &egui::Context,
+        itemdb: &mut ItemDb,
+        atlas_size: ScreenRes,
+        graphic_picker: &mut GraphicPicker,
+    ) {
         egui::Window::new("Item db")
             .open(&mut self.open)
             .show(ctx, |ui| {
@@ -68,7 +75,13 @@ impl ItemDbEdit {
                         });
                         ui.horizontal(|ui| {
                             ui.label("Graphic name");
-                            ui.graphic_image(&def.tex_rect, atlas_size);
+                            if ui.graphic_image_button(&def.tex_rect, atlas_size).clicked() {
+                                graphic_picker.open = true;
+                            }
+                            if let Some((name, rect)) = graphic_picker.picked.take() {
+                                def.graphic_name = name;
+                                def.tex_rect = rect;
+                            }
                             ui.text_edit_singleline(&mut def.graphic_name);
                         });
                         ui.horizontal(|ui| {
