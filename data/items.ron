@@ -42,19 +42,19 @@ ItemDb(
             stackable: true,
         ),
         /*[3]*/ ItemDef(
-            name: "Wood Pick",
-            graphic_name: "items/woodpick",
+            name: "Crude pickaxe",
+            graphic_name: "items/crudepick",
             draw_off: ScreenVec(
-                x: 5,
-                y: 4,
+                x: 6,
+                y: 6,
             ),
             use1: MineTile(
                 power: 1.0,
-                delay: 35,
+                delay: 40,
             ),
             use2: MineBgTile(
                 power: 1.0,
-                delay: 35,
+                delay: 40,
             ),
             stackable: false,
         ),
@@ -142,7 +142,7 @@ ItemDb(
             name: "Stick",
             graphic_name: "tiles/stick",
             draw_off: ScreenVec(
-                x: 4,
+                x: 3,
                 y: 12,
             ),
             use1: PlaceMidTile(

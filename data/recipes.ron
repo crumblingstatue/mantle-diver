@@ -28,7 +28,15 @@ RecipeDb(
             input: [
                 /*[0]*/ ItemStack(
                     id: 11,
-                    qty: 10,
+                    qty: 3,
+                ),
+                /*[1]*/ ItemStack(
+                    id: 13,
+                    qty: 1,
+                ),
+                /*[2]*/ ItemStack(
+                    id: 14,
+                    qty: 4,
                 ),
             ],
             output: ItemStack(

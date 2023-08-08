@@ -82,6 +82,16 @@ CharDb(
                 y: 0,
             ),
         ),
+        "items/crudepick": Offset(
+            left: ScreenVec(
+                x: -18,
+                y: 29,
+            ),
+            right: ScreenVec(
+                x: 58,
+                y: 30,
+            ),
+        ),
         "items/devpick": Offset(
             left: ScreenVec(
                 x: -22,
