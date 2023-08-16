@@ -17,6 +17,7 @@ pub struct ItemDbEdit {
     pub extern_sel_mode: bool,
     /// Selected item for external item requests
     pub sel_for_extern: Option<ItemId>,
+    give_amount: u16,
 }
 
 impl ItemDbEdit {
@@ -92,13 +93,16 @@ impl ItemDbEdit {
                         ui.checkbox(&mut def.stackable, "Stackable");
                         use_dropdown_combo(&mut def.use1, ui, "Primary use");
                         use_dropdown_combo(&mut def.use2, ui, "Secondary use");
-                        if ui.button("Give").clicked() {
-                            game.inventory.add(
-                                ItemId(u16::try_from(self.sel_idx + 1).unwrap()),
-                                1,
-                                &game.itemdb,
-                            );
-                        }
+                        ui.horizontal(|ui| {
+                            if ui.button("Give").clicked() {
+                                game.inventory.add(
+                                    ItemId(u16::try_from(self.sel_idx + 1).unwrap()),
+                                    self.give_amount,
+                                    &game.itemdb,
+                                );
+                            }
+                            ui.add(egui::DragValue::new(&mut self.give_amount).prefix("amount: "));
+                        });
                     });
                 });
             });
