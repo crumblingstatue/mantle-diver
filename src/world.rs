@@ -27,7 +27,6 @@ pub type ChkPosSc = u16;
 /// Each region holds 8 chunks in one direction (8x8).
 /// Region index is a byte, so 255 max.
 /// 255 * 8 = 2040
-#[expect(dead_code)]
 pub const CHK_POS_SC_MAX: ChkPosSc = REGION_CHUNK_EXTENT as ChkPosSc * 255;
 #[expect(clippy::assertions_on_constants)]
 const _: () = assert!(
