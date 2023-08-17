@@ -187,6 +187,13 @@ impl TilePos {
         }
     }
 
+    pub(crate) fn subtract(&self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+
     #[expect(dead_code, reason = "Could be useful in the future")]
     pub(crate) fn to_world(self) -> WorldPos {
         WorldPos {

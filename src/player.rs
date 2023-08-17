@@ -2,6 +2,7 @@ use {
     crate::{
         math::{WPosSc, WorldPos},
         stringfmt::LengthDisp,
+        world::TilePos,
     },
     mdv_math::util::{move_towards_hspeed_vspeed, point_within_circle},
     s2dc::{vec2, MobileEntity},
@@ -106,6 +107,9 @@ impl MovingEnt {
             x: self.mob.en.pos.x as WPosSc,
             y: self.mob.en.pos.y as WPosSc,
         }
+    }
+    pub(crate) fn tile_pos(&self) -> TilePos {
+        self.world_pos().tile_pos()
     }
 }
 

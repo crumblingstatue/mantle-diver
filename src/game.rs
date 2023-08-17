@@ -19,7 +19,7 @@ use {
     fnv::FnvHashMap,
     mdv_data::{
         char::CharDb,
-        item::ItemDb,
+        item::{ItemDb, ItemStack},
         recipe::RecipeDb,
         tile::{LayerAccess, TileDb},
     },
@@ -202,6 +202,14 @@ impl GameState {
         self.world.ticks += 1;
         let ev_buf = std::mem::take(&mut self.event_buf);
         events::process_events(self, ev_buf, au_ctx, au_res);
+    }
+
+    pub(crate) fn selected_item_is(&self, id: mdv_data::item::ItemId) -> bool {
+        self.selected_slot().map_or(false, |slot| slot.id == id)
+    }
+
+    pub(crate) fn selected_slot(&self) -> Option<&ItemStack> {
+        self.inventory.slots.get(self.ui.selected_inv_slot)
     }
 }
 

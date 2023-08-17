@@ -4,6 +4,7 @@ use {
         game::GameState,
         graphics::ScreenRes,
         math::{WPosSc, TILE_SIZE},
+        player::MovingEnt,
         world::{TPosSc, TilePos},
     },
     fnv::FnvHashSet,
@@ -138,7 +139,20 @@ pub(crate) fn enumerate_light_sources(
     // Separate trackers... Sorry, I'm bad at math
     let mut x = 0;
     let mut y = 0;
+    let torch_selected = game.selected_item_is(data::item::TORCH);
+    let held_torch_pos = if torch_selected {
+        match game.ecw.query_one_mut::<&MovingEnt>(game.controlled_en) {
+            Ok(en) => Some(en.tile_pos().subtract(tp)),
+            Err(_) => None,
+        }
+    } else {
+        None
+    };
     loop {
+        let held_torch_here = match held_torch_pos {
+            Some(torch_pos) => x == torch_pos.x && y == torch_pos.y,
+            None => false,
+        };
         let t = game.world.tile_at_mut(tp);
         let underground = tp.y > TilePos::SURFACE + 100;
         let empty = t.bg.empty() && t.mid.empty();
@@ -152,7 +166,7 @@ pub(crate) fn enumerate_light_sources(
             255
         };
         let ls = t.mid == data::tile::mid::TILES_TORCH || empty;
-        if ls {
+        if ls || held_torch_here {
             light_state.light_sources.push_back(LightSrc {
                 map_idx: i,
                 intensity,
