@@ -84,12 +84,12 @@ CharDb(
         ),
         "items/crudepick": Offset(
             left: ScreenVec(
-                x: -18,
-                y: 29,
+                x: -19,
+                y: 28,
             ),
             right: ScreenVec(
-                x: 58,
-                y: 30,
+                x: 59,
+                y: 28,
             ),
         ),
         "items/devpick": Offset(

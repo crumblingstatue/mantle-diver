@@ -33,6 +33,9 @@ Author: ShatteredReality
 
 graphics/items/coal.png
 graphics/items/devpick.png
+graphics/items/crudepick.png
+graphics/items/branchfiber.png
+graphics/items/sharpstone.png
 
 Author: Eternus
 

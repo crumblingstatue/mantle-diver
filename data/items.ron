@@ -45,8 +45,8 @@ ItemDb(
             name: "Crude pickaxe",
             graphic_name: "items/crudepick",
             draw_off: ScreenVec(
-                x: 6,
-                y: 6,
+                x: 4,
+                y: 4,
             ),
             use1: MineTile(
                 power: 1.0,
@@ -168,8 +168,8 @@ ItemDb(
             name: "Sharp rock",
             graphic_name: "items/sharpstone",
             draw_off: ScreenVec(
-                x: 10,
-                y: 7,
+                x: 8,
+                y: 6,
             ),
             use1: Nothing,
             use2: Nothing,
@@ -179,8 +179,8 @@ ItemDb(
             name: "Branch fiber",
             graphic_name: "items/branchfiber",
             draw_off: ScreenVec(
-                x: 8,
-                y: 8,
+                x: 6,
+                y: 4,
             ),
             use1: Nothing,
             use2: Nothing,
