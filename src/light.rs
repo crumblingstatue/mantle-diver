@@ -156,7 +156,7 @@ pub(crate) fn enumerate_light_sources(
         let t = game.world.tile_at_mut(tp);
         let underground = tp.y > TilePos::SURFACE + 100;
         let empty = t.bg.empty() && t.mid.empty();
-        let intensity = if empty {
+        let mut intensity = if empty {
             if underground {
                 0
             } else {
@@ -165,6 +165,9 @@ pub(crate) fn enumerate_light_sources(
         } else {
             255
         };
+        if held_torch_here {
+            intensity = 255;
+        }
         let ls = t.mid == data::tile::mid::TILES_TORCH || empty;
         if ls || held_torch_here {
             light_state.light_sources.push_back(LightSrc {
