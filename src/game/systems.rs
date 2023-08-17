@@ -1,5 +1,5 @@
 use {
-    crate::{egui_ext::EguiUiExt, graphics::ScreenRes, itemdrop::PickupCooldown},
+    crate::{data, egui_ext::EguiUiExt, graphics::ScreenRes, itemdrop::PickupCooldown},
     mdv_data::{
         item::UseAction,
         tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
@@ -561,6 +561,11 @@ pub(super) fn inventory_input_system(game: &mut GameState, input: &Input) {
     }
     if input.pressed_raw(Key::Num0) {
         game.ui.selected_inv_slot = 9;
+    }
+    if input.pressed(InputAction::SelectTorch) {
+        if let Some(slot) = game.inventory.find_item_idx(data::item::TORCH) {
+            game.ui.selected_inv_slot = slot;
+        }
     }
 }
 /// Update transient blocks

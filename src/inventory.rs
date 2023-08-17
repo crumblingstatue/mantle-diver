@@ -127,4 +127,13 @@ impl Inventory {
             }
         }
     }
+
+    pub(crate) fn find_item_idx(&self, id: ItemId) -> Option<usize> {
+        for (i, slot) in self.slots.iter().enumerate() {
+            if slot.id == id && slot.qty > 0 {
+                return Some(i);
+            }
+        }
+        None
+    }
 }
