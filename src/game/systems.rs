@@ -533,39 +533,41 @@ pub(super) fn freecam_move_system(game: &mut GameState, input: &Input) {
 
 pub(super) fn inventory_input_system(game: &mut GameState, input: &Input) {
     if input.pressed_raw(Key::Num1) {
-        game.ui.selected_inv_slot = 0;
+        game.ui.select_inv_slot(0);
     }
     if input.pressed_raw(Key::Num2) {
-        game.ui.selected_inv_slot = 1;
+        game.ui.select_inv_slot(1);
     }
     if input.pressed_raw(Key::Num3) {
-        game.ui.selected_inv_slot = 2;
+        game.ui.select_inv_slot(2);
     }
     if input.pressed_raw(Key::Num4) {
-        game.ui.selected_inv_slot = 3;
+        game.ui.select_inv_slot(3);
     }
     if input.pressed_raw(Key::Num5) {
-        game.ui.selected_inv_slot = 4;
+        game.ui.select_inv_slot(4);
     }
     if input.pressed_raw(Key::Num6) {
-        game.ui.selected_inv_slot = 5;
+        game.ui.select_inv_slot(5);
     }
     if input.pressed_raw(Key::Num7) {
-        game.ui.selected_inv_slot = 6;
+        game.ui.select_inv_slot(6);
     }
     if input.pressed_raw(Key::Num8) {
-        game.ui.selected_inv_slot = 7;
+        game.ui.select_inv_slot(7);
     }
     if input.pressed_raw(Key::Num9) {
-        game.ui.selected_inv_slot = 8;
+        game.ui.select_inv_slot(8);
     }
     if input.pressed_raw(Key::Num0) {
-        game.ui.selected_inv_slot = 9;
+        game.ui.select_inv_slot(9);
     }
-    if input.pressed(InputAction::SelectTorch) {
+    if input.down(InputAction::SelectTorch) {
         if let Some(slot) = game.inventory.find_item_idx(data::item::TORCH) {
             game.ui.selected_inv_slot = slot;
         }
+    } else {
+        game.ui.selected_inv_slot = game.ui.persistent_selected_inv_slot;
     }
 }
 /// Update transient blocks

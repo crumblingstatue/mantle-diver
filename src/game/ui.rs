@@ -10,6 +10,7 @@ use {
 #[derive(Default)]
 pub struct UiState {
     pub selected_inv_slot: usize,
+    pub persistent_selected_inv_slot: usize,
     pub menu: Menu,
     pub inv: Inventory,
     pub craft: CraftWnd,
@@ -45,6 +46,11 @@ impl UiState {
                 y_off += 42;
             }
         }
+    }
+
+    pub(crate) fn select_inv_slot(&mut self, slot: usize) {
+        self.selected_inv_slot = slot;
+        self.persistent_selected_inv_slot = slot;
     }
 }
 
