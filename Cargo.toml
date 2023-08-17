@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.72"
+anyhow = "1.0.75"
 egui = "0.22.0"
 fnv = "1.0.7"
 hecs = { version = "0.10.3", features = ["macros"] }
@@ -14,11 +14,11 @@ num-traits = "0.2.16"
 rand = "0.8.5"
 rfd = "0.11.4"
 rmp-serde = "1.1.2"
-serde = { version = "1.0.176", features = ["derive"] }
-log = "0.4.19"
+serde = { version = "1.0.183", features = ["derive"] }
+log = "0.4.20"
 env_logger = "0.10.0"
 zstd = "0.12.4"
-clap = { version = "4.3.19", default-features = false, features = [
+clap = { version = "4.3.22", default-features = false, features = [
     "std",
     "help",
     "derive",
@@ -26,8 +26,8 @@ clap = { version = "4.3.19", default-features = false, features = [
 directories = "5.0.1"
 texture_packer = "0.25.0"
 walkdir = "2.3.3"
-image = { version = "0.24.6", default-features = false, features = ["png"] }
-ron = "0.8.0"
+image = { version = "0.24.7", default-features = false, features = ["png"] }
+ron = "0.8.1"
 simdnoise = "3.1.6"
 splitty = "1.0.1"
 rodio = "0.17.1"
