@@ -1,9 +1,10 @@
 use {
     crate::{
-        math::{WPosSc, WorldPos},
+        math::{WPosSc, WorldPos, WorldRect},
         stringfmt::LengthDisp,
         world::TilePos,
     },
+    extension_traits::extension,
     mdv_math::util::{move_towards_hspeed_vspeed, point_within_circle},
     s2dc::{vec2, MobileEntity},
     serde::{Deserialize, Serialize},
@@ -110,6 +111,31 @@ impl MovingEnt {
     }
     pub(crate) fn tile_pos(&self) -> TilePos {
         self.world_pos().tile_pos()
+    }
+    pub fn overlaps_tp(&self, tp: TilePos) -> bool {
+        self.world_rect().overlaps(&tp.tile_world_rect())
+    }
+    pub fn world_rect(&self) -> WorldRect {
+        self.mob.en.to_world_rect()
+    }
+}
+
+#[extension(trait S2dcEnExt)]
+impl s2dc::Entity {
+    #[expect(
+        clippy::cast_sign_loss,
+        reason = "Entity coordinates are kept positive"
+    )]
+    fn to_world_rect(&self) -> WorldRect {
+        let (x, y, w, h) = self.xywh();
+        WorldRect {
+            topleft: WorldPos {
+                x: x as u32,
+                y: y as u32,
+            },
+            w: w as u32,
+            h: h as u32,
+        }
     }
 }
 

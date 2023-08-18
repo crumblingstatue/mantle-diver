@@ -1,6 +1,6 @@
 use {
     crate::{
-        math::{WorldPos, TILE_SIZE},
+        math::{WorldPos, WorldRect, TILE_SIZE},
         time::HOUR_IN_TICKS,
     },
     mdv_data::tile::{BgTileId, MidTileId, TileId},
@@ -194,7 +194,6 @@ impl TilePos {
         }
     }
 
-    #[expect(dead_code, reason = "Could be useful in the future")]
     pub(crate) fn to_world(self) -> WorldPos {
         WorldPos {
             x: self.x * u32::from(TILE_SIZE),
@@ -217,6 +216,14 @@ impl TilePos {
     /// - The player being able to reach 20 kms high comfortably
     /// - Reaching 100 kms deep with a comfortable buffer zone until bottom boundary
     pub const SURFACE: TPosSc = 42_000;
+
+    pub(crate) fn tile_world_rect(&self) -> WorldRect {
+        WorldRect {
+            topleft: self.to_world(),
+            w: TILE_SIZE.into(),
+            h: TILE_SIZE.into(),
+        }
+    }
 }
 
 #[expect(clippy::cast_possible_truncation, reason = "See `CHK_POS_SC_MAX`")]

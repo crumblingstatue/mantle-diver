@@ -6,7 +6,7 @@ use {
     extension_traits::extension,
     mdv_math::types::{IntRect, ScreenSc, ScreenVec},
     sfml::system::Vector2,
-    std::fmt::Debug,
+    std::{fmt::Debug, ops::Add},
 };
 
 #[extension(pub trait ScreenVecExt)]
@@ -137,6 +137,32 @@ impl WorldRect {
             h,
         }
     }
+    pub fn overlaps(&self, other: &Self) -> bool {
+        rect_overlap_xywh(
+            self.topleft.x,
+            self.topleft.y,
+            self.w,
+            self.h,
+            other.topleft.x,
+            other.topleft.y,
+            other.w,
+            other.h,
+        )
+    }
+}
+
+#[expect(clippy::too_many_arguments)]
+pub fn rect_overlap_xywh<T: Add<Output = T> + Copy + PartialOrd>(
+    x1: T,
+    y1: T,
+    w1: T,
+    h1: T,
+    x2: T,
+    y2: T,
+    w2: T,
+    h2: T,
+) -> bool {
+    x1 + w1 > x2 && x1 < x2 + w2 && y1 + h1 > y2 && y1 < y2 + h2
 }
 
 /// Tile size in pixels

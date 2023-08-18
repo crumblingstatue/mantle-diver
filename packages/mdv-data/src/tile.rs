@@ -34,6 +34,12 @@ pub struct TileDef<Layer: TileLayer> {
     #[serde(default)]
     pub uprootable: bool,
 }
+impl TileDef<Mid> {
+    /// Whether this tile is solid/impassable for entities
+    pub fn is_impassable(&self) -> bool {
+        self.layer.bb.is_some() && !self.layer.platform
+    }
+}
 
 impl<Layer: TileLayer> std::fmt::Debug for TileDef<Layer>
 where

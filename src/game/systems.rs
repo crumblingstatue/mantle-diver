@@ -1,33 +1,31 @@
 use {
-    crate::{data, egui_ext::EguiUiExt, graphics::ScreenRes, itemdrop::PickupCooldown},
-    mdv_data::{
-        item::UseAction,
-        tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
-    },
-};
-
-pub mod pause_menu;
-
-use {
     self::pause_menu::open_menu,
     super::{events::Event, Biome, GameState, TransientTileState, TransientTileStates},
     crate::{
         app::TileColEn,
         audio::AudioCtx,
+        data,
         debug::{DbgOvr, DebugState, DBG_OVR},
+        egui_ext::EguiUiExt,
+        graphics::ScreenRes,
         input::{Input, InputAction},
-        itemdrop::ItemdropBundle,
+        itemdrop::{ItemdropBundle, PickupCooldown},
         math::{world_y_depth, WorldPos, WorldRect, TILE_SIZE},
         player::{FacingDir, Health, MoveExtra, MovingEnt},
         res::{Res, ResAudio},
         world::{TilePos, World},
     },
-    mdv_data::item::{ItemId, ItemStack},
+    mdv_data::{
+        item::{ItemId, ItemStack, UseAction},
+        tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
+    },
     mdv_math::{types::ScreenVec, util::step_towards},
     rand::{seq::SliceRandom, thread_rng, Rng},
     sfml::{graphics::Color, window::Key},
     std::ops::Index,
 };
+
+pub mod pause_menu;
 
 pub(super) fn item_use_system(
     game: &mut GameState,
@@ -91,6 +89,7 @@ pub(super) fn item_use_system(
         &mut game.last_mine_attempt,
         &mut game.transient_tile_states,
         &game.tile_db,
+        mov,
     );
     // Make sure that fully consumed stacks are cleared
     if active_slot.qty == 0 {
@@ -112,6 +111,7 @@ fn do_use_action(
     last_mine_attempt: &mut u64,
     transient_block_states: &mut TransientTileStates,
     tile_db: &TileDb,
+    player_mov: &MovingEnt,
 ) {
     match action {
         UseAction::PlaceBgTile { id } => {
@@ -168,7 +168,11 @@ fn do_use_action(
                 can_place_this_here = false;
             }
             if can_place_this_here && ticks - *last_tile_place > tile_place_cooldown {
-                if let Some(snd) = &tile_db[*id].hit_sound {
+                let tdef = &tile_db[*id];
+                if tdef.is_impassable() && player_mov.overlaps_tp(mouse_tpos) {
+                    return;
+                }
+                if let Some(snd) = &tdef.hit_sound {
                     au_ctx.plr.play(au_res, snd);
                 }
                 t.mid = *id;
