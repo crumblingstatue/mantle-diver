@@ -21,18 +21,18 @@ pub struct Input {
 }
 
 fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
-    let mut hm = FnvHashMap::default();
-    hm.insert(InputAction::Down, Key::S);
-    hm.insert(InputAction::Left, Key::A);
-    hm.insert(InputAction::Up, Key::W);
-    hm.insert(InputAction::Right, Key::D);
-    hm.insert(InputAction::Jump, Key::Space);
-    hm.insert(InputAction::ThrowItem, Key::Q);
-    hm.insert(InputAction::Interact, Key::E);
-    hm.insert(InputAction::SelectTorch, Key::LShift);
-    hm.insert(InputAction::Inventory, Key::I);
-    hm.insert(InputAction::Crafting, Key::C);
-    hm
+    FnvHashMap::from_iter([
+        (InputAction::Down, Key::S),
+        (InputAction::Left, Key::A),
+        (InputAction::Up, Key::W),
+        (InputAction::Right, Key::D),
+        (InputAction::Jump, Key::Space),
+        (InputAction::ThrowItem, Key::Q),
+        (InputAction::Interact, Key::E),
+        (InputAction::SelectTorch, Key::LShift),
+        (InputAction::Inventory, Key::I),
+        (InputAction::Crafting, Key::C),
+    ])
 }
 
 impl Input {
