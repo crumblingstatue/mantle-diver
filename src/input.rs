@@ -3,11 +3,14 @@ use {
     fnv::{FnvHashMap, FnvHashSet},
     mdv_math::types::ScreenVec,
     sfml::window::{mouse, Event, Key},
+    smart_default::SmartDefault,
 };
 
+#[derive(SmartDefault)]
 pub struct Input {
     down: FnvHashSet<Key>,
     pressed: FnvHashSet<Key>,
+    #[default(default_key_bindings())]
     pub key_bindings: FnvHashMap<InputAction, Key>,
     pub lmb_down: bool,
     pub lmb_pressed: bool,
@@ -15,22 +18,6 @@ pub struct Input {
     pub mouse_down_loc: ScreenVec,
     pub mid_pressed: bool,
     pub just_pressed_raw: Option<Key>,
-}
-
-impl Default for Input {
-    fn default() -> Self {
-        Self {
-            down: Default::default(),
-            pressed: Default::default(),
-            key_bindings: default_key_bindings(),
-            lmb_down: Default::default(),
-            lmb_pressed: false,
-            rmb_down: Default::default(),
-            mouse_down_loc: Default::default(),
-            mid_pressed: Default::default(),
-            just_pressed_raw: None,
-        }
-    }
 }
 
 fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
