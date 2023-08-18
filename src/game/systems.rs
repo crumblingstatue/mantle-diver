@@ -22,10 +22,28 @@ use {
     mdv_math::{types::ScreenVec, util::step_towards},
     rand::{seq::SliceRandom, thread_rng, Rng},
     sfml::{graphics::Color, window::Key},
-    std::ops::Index,
+    std::ops::{ControlFlow, Index},
 };
 
 pub mod pause_menu;
+
+enum DominantOffset {
+    Horizontal,
+    Vertical,
+}
+
+/// Determines whether `target` is more horizontally or more vertically offset from `source`.
+#[expect(clippy::cast_possible_wrap, reason = "Positions can fit in i32")]
+fn dominant_offset(source: WorldPos, target: WorldPos) -> DominantOffset {
+    let x_offset = (target.x as i32 - source.x as i32).abs();
+    let y_offset = (target.y as i32 - source.y as i32).abs();
+
+    if x_offset > y_offset {
+        DominantOffset::Horizontal
+    } else {
+        DominantOffset::Vertical
+    }
+}
 
 pub(super) fn item_use_system(
     game: &mut GameState,
@@ -51,6 +69,54 @@ pub(super) fn item_use_system(
             Color::RED
         },
     });
+    let mut target_tpos = None;
+    if game.smart_cursor && !debug.freecam {
+        // Cast multiple different lines until we succeed
+        let sources = match dominant_offset(player_pos, mouse_wpos) {
+            DominantOffset::Horizontal => [
+                player_pos.tile_pos(),
+                player_pos.tile_pos().y_off(-1),
+                player_pos.tile_pos().y_off(1),
+            ],
+            DominantOffset::Vertical => [
+                player_pos.tile_pos(),
+                player_pos.tile_pos().x_off(-1),
+                player_pos.tile_pos().x_off(1),
+            ],
+        };
+        for src_tpos in sources {
+            bresenham(src_tpos.to_signed(), mouse_tpos.to_signed(), |tpos| {
+                if !tpos
+                    .to_world()
+                    .within_circle(player_pos, game.tile_interact_radius)
+                {
+                    return ControlFlow::Break(());
+                }
+                DBG_OVR.push(DbgOvr::WldRect {
+                    r: tpos.tile_world_rect(),
+                    c: Color::CYAN,
+                });
+                if !game.world.tile_at_mut(tpos).mid.empty() {
+                    target_tpos = Some(tpos);
+                    return ControlFlow::Break(());
+                }
+                ControlFlow::Continue(())
+            });
+            if target_tpos.is_some() {
+                break;
+            }
+        }
+        game.highlight_tp = target_tpos;
+    } else {
+        game.highlight_tp = None;
+        if ptr_within_circle || debug.freecam {
+            target_tpos = Some(mouse_tpos);
+        }
+    }
+    DBG_OVR.push(DbgOvr::WldLine {
+        p1: player_pos,
+        p2: mouse_wpos,
+    });
     if !(input.lmb_down || input.rmb_down) {
         return;
     }
@@ -66,14 +132,15 @@ pub(super) fn item_use_system(
     };
     let ticks = game.world.ticks;
     let tile_place_cooldown = 8;
-    if !(ptr_within_circle || debug.freecam) {
-        return;
-    }
     let action = if input.lmb_down {
         &itemdef.use1
     } else if input.rmb_down {
         &itemdef.use2
     } else {
+        return;
+    };
+    // Not all use actions might need a target tile position, but right now they do
+    let Some(tpos_needed_always_fixme) = target_tpos else {
         return;
     };
     do_use_action(
@@ -82,7 +149,7 @@ pub(super) fn item_use_system(
         ticks,
         tile_place_cooldown,
         active_slot,
-        mouse_tpos,
+        tpos_needed_always_fixme,
         au_ctx,
         au_res,
         &mut game.last_tile_place,
@@ -104,7 +171,7 @@ fn do_use_action(
     ticks: u64,
     tile_place_cooldown: u64,
     active_slot: &mut ItemStack,
-    mouse_tpos: TilePos,
+    target_tpos: TilePos,
     au_ctx: &mut AudioCtx,
     au_res: &ResAudio,
     last_tile_place: &mut u64,
@@ -116,11 +183,11 @@ fn do_use_action(
     match action {
         UseAction::PlaceBgTile { id } => {
             let mut can_place_this_here = true;
-            let above = world.tile_at_mut(mouse_tpos.y_off(-1)).bg;
-            let below = world.tile_at_mut(mouse_tpos.y_off(1)).bg;
-            let left = world.tile_at_mut(mouse_tpos.x_off(-1)).bg;
-            let right = world.tile_at_mut(mouse_tpos.x_off(1)).bg;
-            let t = world.tile_at_mut(mouse_tpos);
+            let above = world.tile_at_mut(target_tpos.y_off(-1)).bg;
+            let below = world.tile_at_mut(target_tpos.y_off(1)).bg;
+            let left = world.tile_at_mut(target_tpos.x_off(-1)).bg;
+            let right = world.tile_at_mut(target_tpos.x_off(1)).bg;
+            let t = world.tile_at_mut(target_tpos);
             let is_bg_wall_here = !t.bg.empty();
             // Don't allow placing bg tiles in thin air. They need to be connected to some other bg tile.
             #[expect(clippy::collapsible_else_if, reason = "It's easier to read this way")]
@@ -145,11 +212,11 @@ fn do_use_action(
         }
         UseAction::PlaceMidTile { id } => {
             let mut can_place_this_here = true;
-            let above = world.tile_at_mut(mouse_tpos.y_off(-1)).mid;
-            let below = world.tile_at_mut(mouse_tpos.y_off(1)).mid;
-            let left = world.tile_at_mut(mouse_tpos.x_off(-1)).mid;
-            let right = world.tile_at_mut(mouse_tpos.x_off(1)).mid;
-            let t = world.tile_at_mut(mouse_tpos);
+            let above = world.tile_at_mut(target_tpos.y_off(-1)).mid;
+            let below = world.tile_at_mut(target_tpos.y_off(1)).mid;
+            let left = world.tile_at_mut(target_tpos.x_off(-1)).mid;
+            let right = world.tile_at_mut(target_tpos.x_off(1)).mid;
+            let t = world.tile_at_mut(target_tpos);
             let is_bg_wall_here = !t.bg.empty();
             // Don't allow placing tiles in thin air. They need to be connected to some other solid block.
             // Or at least there needs to be a background wall there.
@@ -169,7 +236,7 @@ fn do_use_action(
             }
             if can_place_this_here && ticks - *last_tile_place > tile_place_cooldown {
                 let tdef = &tile_db[*id];
-                if tdef.is_impassable() && player_mov.overlaps_tp(mouse_tpos) {
+                if tdef.is_impassable() && player_mov.overlaps_tp(target_tpos) {
                     return;
                 }
                 if let Some(snd) = &tdef.hit_sound {
@@ -181,19 +248,19 @@ fn do_use_action(
             }
         }
         UseAction::RemoveTile { layer } => {
-            let t = world.tile_at_mut(mouse_tpos);
+            let t = world.tile_at_mut(target_tpos);
             match layer {
                 LayerAccess::Bg => t.bg = TileId::EMPTY,
                 LayerAccess::Mid => t.mid = TileId::EMPTY,
             }
         }
         UseAction::MineTile { power, delay } => {
-            let t = world.tile_at_mut(mouse_tpos);
+            let t = world.tile_at_mut(target_tpos);
             mine_tile(
                 &t.mid,
                 ticks,
                 delay,
-                mouse_tpos,
+                target_tpos,
                 power,
                 au_ctx,
                 au_res,
@@ -214,12 +281,12 @@ fn do_use_action(
             //
             // TODO: Allow digging walls anywhere for user placed walls.
             // Distinguish them from naturally placed walls, which can't be digged anywhere.
-            let empty_above = world.tile_at_mut(mouse_tpos.y_off(-1)).bg.empty();
-            let empty_below = world.tile_at_mut(mouse_tpos.y_off(1)).bg.empty();
-            let empty_left = world.tile_at_mut(mouse_tpos.x_off(-1)).bg.empty();
-            let empty_right = world.tile_at_mut(mouse_tpos.x_off(1)).bg.empty();
+            let empty_above = world.tile_at_mut(target_tpos.y_off(-1)).bg.empty();
+            let empty_below = world.tile_at_mut(target_tpos.y_off(1)).bg.empty();
+            let empty_left = world.tile_at_mut(target_tpos.x_off(-1)).bg.empty();
+            let empty_right = world.tile_at_mut(target_tpos.x_off(1)).bg.empty();
             let has_empty_neighbour = empty_above || empty_below || empty_left || empty_right;
-            let t = world.tile_at_mut(mouse_tpos);
+            let t = world.tile_at_mut(target_tpos);
             // Also only allow digging the backwall if the mid tile is empty.
             let empty_mid = t.mid.empty();
             if !has_empty_neighbour || !empty_mid {
@@ -229,7 +296,7 @@ fn do_use_action(
                 &t.bg,
                 ticks,
                 delay,
-                mouse_tpos,
+                target_tpos,
                 power,
                 au_ctx,
                 au_res,
@@ -852,15 +919,6 @@ pub(crate) fn interact_system(
     };
     let player_pos = WorldPos::from_en(&mov.mob.en);
     let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
-    if game.smart_cursor {
-        game.highlight_tp = Some(mouse_tpos);
-    } else {
-        game.highlight_tp = None;
-    }
-    DBG_OVR.push(DbgOvr::WldLine {
-        p1: player_pos,
-        p2: mouse_wpos,
-    });
     if input.pressed(InputAction::Interact) && ptr_within_circle {
         let tile = game.world.tile_at_mut(mouse_tpos);
         if !tile.mid.empty() {
@@ -869,6 +927,71 @@ pub(crate) fn interact_system(
                 process_tile_item_drop(&game.tile_db, &mut game.ecw, tile.mid, &mouse_tpos);
                 tile.mid = TileId::EMPTY;
             }
+        }
+    }
+}
+
+struct TilePosSigned {
+    x: i32,
+    y: i32,
+}
+
+impl TilePos {
+    #[expect(clippy::cast_possible_wrap, reason = "Positions can fit in i32")]
+    fn to_signed(self) -> TilePosSigned {
+        TilePosSigned {
+            x: self.x as i32,
+            y: self.y as i32,
+        }
+    }
+}
+
+/// Based on https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#Rust
+fn bresenham(p1: TilePosSigned, p2: TilePosSigned, mut f: impl FnMut(TilePos) -> ControlFlow<()>) {
+    let dx: i32 = i32::abs(p2.x - p1.x);
+    let dy: i32 = i32::abs(p2.y - p1.y);
+    let sx: i32 = {
+        if p1.x < p2.x {
+            1
+        } else {
+            -1
+        }
+    };
+    let sy: i32 = {
+        if p1.y < p2.y {
+            1
+        } else {
+            -1
+        }
+    };
+
+    let mut error: i32 = (if dx > dy { dx } else { -dy }) / 2;
+    let mut current_x: i32 = p1.x;
+    let mut current_y: i32 = p1.y;
+    #[expect(clippy::cast_sign_loss, reason = "Positions are always positive")]
+    loop {
+        if f(TilePos {
+            x: current_x as u32,
+            y: current_y as u32,
+        })
+        .is_break()
+        {
+            return;
+        }
+
+        if current_x == p2.x && current_y == p2.y {
+            break;
+        }
+
+        let error2: i32 = error;
+
+        if error2 > -dx {
+            error -= dy;
+            current_x += sx;
+        }
+        if error2 < dy {
+            error += dx;
+            current_y += sy;
         }
     }
 }
