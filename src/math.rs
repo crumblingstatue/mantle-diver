@@ -121,6 +121,16 @@ impl WorldPos {
     }
 }
 
+impl std::ops::Sub for WorldPos {
+    type Output = Self;
+
+    fn sub(mut self, rhs: Self) -> Self::Output {
+        self.x = self.x.saturating_sub(rhs.x);
+        self.y = self.y.saturating_sub(rhs.y);
+        self
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct WorldRect {
     pub topleft: WorldPos,

@@ -7,13 +7,13 @@ use {
         math::{IntRectExt, ScreenVecExt, WorldPos, TILE_SIZE},
         player::{FacingDir, MoveExtra, MovingEnt, PlayerColors},
         res::Res,
-        sfml::SpriteExt,
+        sfml::{SpriteExt, WorldRectExt},
     },
     mdv_data::{item::ItemId, tile::LayerAccess},
     mdv_math::types::ScreenVec,
     sfml::graphics::{
-        Color, PrimitiveType, Rect, RenderStates, RenderTarget, RenderTexture, Sprite, Transform,
-        Transformable, Vertex,
+        Color, PrimitiveType, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
+        Shape, Sprite, Transform, Transformable, Vertex,
     },
 };
 
@@ -125,6 +125,15 @@ pub(crate) fn draw_world(
     let mut rs = RenderStates::DEFAULT;
     rs.set_texture(Some(&res.atlas.tex));
     rt.draw_primitives(verts, PrimitiveType::QUADS, &rs);
+    // Draw tile highlight rect
+    if let Some(hi_rect) = &game.highlight_tp {
+        let sf_rect = hi_rect.tile_world_rect().to_sf_draw(game.camera_offset);
+        let mut rs = RectangleShape::from_rect(sf_rect);
+        rs.set_outline_color(Color::YELLOW);
+        rs.set_outline_thickness(-1.0);
+        rs.set_fill_color(Color::rgba(227, 200, 0, 128));
+        rt.draw(&rs);
+    }
 }
 pub fn draw_entities(game: &mut GameState, rt: &mut RenderTexture, res: &Res, debug: &DebugState) {
     let mut s = Sprite::with_texture(&res.atlas.tex);

@@ -1,9 +1,12 @@
 use {
-    crate::graphics::ScreenRes,
+    crate::{
+        graphics::ScreenRes,
+        math::{WorldPos, WorldRect},
+    },
     extension_traits::extension,
     mdv_math::types::{ScreenRect, ScreenVec},
     sfml::{
-        graphics::{RectangleShape, RenderTarget, Sprite, Transformable},
+        graphics::{FloatRect, RectangleShape, RenderTarget, Sprite, Transformable},
         system::{Vector2f, Vector2u},
         window::VideoMode,
     },
@@ -71,8 +74,8 @@ impl<T: RenderTarget> T {
 
 #[extension(pub trait ScreenRectSfExt)]
 impl ScreenRect {
-    fn into_sf(&self) -> sfml::graphics::FloatRect {
-        sfml::graphics::FloatRect {
+    fn into_sf(&self) -> FloatRect {
+        FloatRect {
             left: f32::from(self.x),
             top: f32::from(self.y),
             width: f32::from(self.w),
@@ -99,5 +102,18 @@ impl RectangleShape<'_> {
     fn set_screen_rect(&mut self, rect: ScreenRect) {
         self.set_position((f32::from(rect.x), f32::from(rect.y)));
         self.set_size((f32::from(rect.w), f32::from(rect.h)));
+    }
+}
+
+#[extension(pub trait WorldRectExt)]
+impl WorldRect {
+    fn to_sf_draw(&self, camera_off: WorldPos) -> FloatRect {
+        let pos = self.topleft - camera_off;
+        FloatRect {
+            left: pos.x as f32,
+            top: pos.y as f32,
+            width: self.w as f32,
+            height: self.h as f32,
+        }
     }
 }

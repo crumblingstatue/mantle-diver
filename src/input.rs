@@ -32,6 +32,7 @@ fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
         (InputAction::SelectTorch, Key::LShift),
         (InputAction::Inventory, Key::I),
         (InputAction::Crafting, Key::C),
+        (InputAction::SmartCursorToggle, Key::LControl),
     ])
 }
 
@@ -124,6 +125,7 @@ pub enum InputAction {
     SelectTorch,
     Inventory,
     Crafting,
+    SmartCursorToggle,
 }
 
 impl InputAction {
@@ -139,6 +141,7 @@ impl InputAction {
             InputAction::SelectTorch => "Select torch",
             InputAction::Inventory => "Inventory",
             InputAction::Crafting => "Crafting",
+            InputAction::SmartCursorToggle => "Smart cursor toggle",
         }
     }
 }

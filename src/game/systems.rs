@@ -714,6 +714,9 @@ pub(crate) fn ui_hud_input_system(
     if input.pressed(InputAction::Crafting) {
         game.ui.craft.open ^= true;
     }
+    if input.pressed(InputAction::SmartCursorToggle) {
+        game.smart_cursor ^= true;
+    }
     let mp = input.mouse_down_loc.scaled(scale);
     if game.ui.inv.open
         && crate::game::ui::Inventory::screen_rect(screen_res, game.inventory.slots.len())
@@ -849,6 +852,11 @@ pub(crate) fn interact_system(
     };
     let player_pos = WorldPos::from_en(&mov.mob.en);
     let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
+    if game.smart_cursor {
+        game.highlight_tp = Some(mouse_tpos);
+    } else {
+        game.highlight_tp = None;
+    }
     if input.pressed(InputAction::Interact) && ptr_within_circle {
         let tile = game.world.tile_at_mut(mouse_tpos);
         if !tile.mid.empty() {

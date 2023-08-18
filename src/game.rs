@@ -71,6 +71,10 @@ pub struct GameState {
     pub tile_interact_radius: u16,
     pub item_pickup_radius: u16,
     pub ui: UiState,
+    /// Whether to use smart cursor for targeting blocks
+    pub smart_cursor: bool,
+    /// Tile pos to highlight (for smart cursor, etc.)
+    pub highlight_tp: Option<TilePos>,
 }
 
 #[derive(Debug)]
@@ -142,6 +146,8 @@ impl GameState {
             item_pickup_radius: 80,
             recipe_db: RecipeDb::load_or_default("data"),
             ui: UiState::default(),
+            smart_cursor: false,
+            highlight_tp: None,
         }
     }
 
