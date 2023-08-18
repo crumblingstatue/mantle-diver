@@ -43,6 +43,8 @@ fn default_key_bindings() -> FnvHashMap<InputAction, Key> {
     hm.insert(InputAction::ThrowItem, Key::Q);
     hm.insert(InputAction::Interact, Key::E);
     hm.insert(InputAction::SelectTorch, Key::LShift);
+    hm.insert(InputAction::Inventory, Key::I);
+    hm.insert(InputAction::Crafting, Key::C);
     hm
 }
 
@@ -133,6 +135,8 @@ pub enum InputAction {
     ThrowItem,
     Interact,
     SelectTorch,
+    Inventory,
+    Crafting,
 }
 
 impl InputAction {
@@ -146,6 +150,8 @@ impl InputAction {
             InputAction::ThrowItem => "Throw item",
             InputAction::Interact => "Interact",
             InputAction::SelectTorch => "Select torch",
+            InputAction::Inventory => "Inventory",
+            InputAction::Crafting => "Crafting",
         }
     }
 }

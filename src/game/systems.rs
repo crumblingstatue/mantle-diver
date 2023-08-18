@@ -704,10 +704,10 @@ pub(crate) fn ui_hud_input_system(
         // Reverse gravity
         game.gravity = -game.gravity;
     }
-    if input.pressed_raw(Key::I) {
+    if input.pressed(InputAction::Inventory) {
         game.ui.inv.open ^= true;
     }
-    if input.pressed_raw(Key::C) {
+    if input.pressed(InputAction::Crafting) {
         game.ui.craft.open ^= true;
     }
     let mp = input.mouse_down_loc.scaled(scale);
