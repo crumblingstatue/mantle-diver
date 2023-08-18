@@ -210,6 +210,10 @@ pub(crate) fn do_debug_ui(
     debug.graphic_picker.ui(ctx, atlas_size, res);
 }
 
+#[expect(
+    clippy::enum_variant_names,
+    reason = "So far we only have Wld debug, could change"
+)]
 pub enum DbgOvr {
     WldRect {
         r: WorldRect,
@@ -219,6 +223,10 @@ pub enum DbgOvr {
         pos: WorldPos,
         radius: u16,
         c: Color,
+    },
+    WldLine {
+        p1: WorldPos,
+        p2: WorldPos,
     },
 }
 

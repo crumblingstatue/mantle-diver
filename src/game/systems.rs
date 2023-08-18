@@ -857,6 +857,10 @@ pub(crate) fn interact_system(
     } else {
         game.highlight_tp = None;
     }
+    DBG_OVR.push(DbgOvr::WldLine {
+        p1: player_pos,
+        p2: mouse_wpos,
+    });
     if input.pressed(InputAction::Interact) && ptr_within_circle {
         let tile = game.world.tile_at_mut(mouse_tpos);
         if !tile.mid.empty() {

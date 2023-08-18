@@ -1,7 +1,8 @@
 use {
     crate::{debug::DBG_OVR, game::GameState, player::MovingEnt},
     sfml::graphics::{
-        CircleShape, Color, RectangleShape, RenderTarget, RenderTexture, Shape, Transformable,
+        CircleShape, Color, PrimitiveType, RectangleShape, RenderStates, RenderTarget,
+        RenderTexture, Shape, Transformable, Vertex,
     },
 };
 
@@ -34,6 +35,32 @@ pub(crate) fn draw_debug_overlay(rt: &mut RenderTexture, game: &GameState) {
             cs.set_fill_color(Color::TRANSPARENT);
             cs.set_outline_thickness(1.0);
             rt.draw(&cs);
+        }
+        crate::debug::DbgOvr::WldLine { p1, p2 } => {
+            let (Some(x1), Some(y1), Some(x2), Some(y2)) = (
+                p1.x.checked_sub(cx),
+                p1.y.checked_sub(cy),
+                p2.x.checked_sub(cx),
+                p2.y.checked_sub(cy),
+            ) else {
+                return;
+            };
+            rt.draw_primitives(
+                &[
+                    Vertex::new(
+                        (x1 as f32, y1 as f32).into(),
+                        Color::YELLOW,
+                        (0., 0.).into(),
+                    ),
+                    Vertex::new(
+                        (x2 as f32, y2 as f32).into(),
+                        Color::YELLOW,
+                        (0., 0.).into(),
+                    ),
+                ],
+                PrimitiveType::LINES,
+                &RenderStates::default(),
+            )
         }
     });
 }
