@@ -32,6 +32,7 @@ simdnoise = "3.1.6"
 splitty = "1.0.1"
 rodio = "0.17.1"
 extension-traits = "1.0.1"
+smart-default = "0.7.1"
 
 [dependencies.s2dc]
 git = "https://github.com/crumblingstatue/s2dc.git"

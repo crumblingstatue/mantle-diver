@@ -7,9 +7,10 @@ use {
         tile::LayerAccess,
     },
     mdv_math::types::{IntRect, ScreenVec},
+    smart_default::SmartDefault,
 };
 
-#[derive(Default)]
+#[derive(SmartDefault)]
 pub struct ItemDbEdit {
     pub open: bool,
     sel_idx: usize,
@@ -17,6 +18,7 @@ pub struct ItemDbEdit {
     pub extern_sel_mode: bool,
     /// Selected item for external item requests
     pub sel_for_extern: Option<ItemId>,
+    #[default = 1]
     give_amount: u16,
 }
 
