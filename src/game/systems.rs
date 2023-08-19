@@ -58,6 +58,19 @@ pub(super) fn item_use_system(
         log::warn!("No controlled entity");
         return;
     };
+    // Without an active item, we don't even know how we want to do targeting
+    let Some(active_slot) = game.inventory.slots.get_mut(game.ui.selected_inv_slot) else {
+        log::error!("Selected slot {} out of bounds", game.ui.selected_inv_slot);
+        return;
+    };
+    if active_slot.qty == 0 {
+        return;
+    }
+    let Some(itemdef) = &game.itemdb.get(active_slot.id) else {
+        return;
+    };
+    // If we want to mine a mid tile, we need to do a specific kind of targeting
+    let mine_targeting = itemdef.use1.is_mid_mine();
     let player_pos = WorldPos::from_en(&mov.mob.en);
     let ptr_within_circle = mouse_wpos.within_circle(player_pos, game.tile_interact_radius);
     DBG_OVR.push(DbgOvr::WldCircle {
@@ -70,7 +83,7 @@ pub(super) fn item_use_system(
         },
     });
     let mut target_tpos = None;
-    if game.smart_cursor && !debug.freecam {
+    if game.smart_cursor && mine_targeting && !debug.freecam {
         // Cast multiple different lines until we succeed
         let sources = match dominant_offset(player_pos, mouse_wpos) {
             DominantOffset::Horizontal => [
@@ -120,16 +133,6 @@ pub(super) fn item_use_system(
     if !(input.lmb_down || input.rmb_down) {
         return;
     }
-    let Some(active_slot) = game.inventory.slots.get_mut(game.ui.selected_inv_slot) else {
-        log::error!("Selected slot {} out of bounds", game.ui.selected_inv_slot);
-        return;
-    };
-    if active_slot.qty == 0 {
-        return;
-    }
-    let Some(itemdef) = &game.itemdb.get(active_slot.id) else {
-        return;
-    };
     let ticks = game.world.ticks;
     let tile_place_cooldown = 8;
     let action = if input.lmb_down {

@@ -76,6 +76,11 @@ pub enum UseAction {
         delay: u64,
     },
 }
+impl UseAction {
+    pub fn is_mid_mine(&self) -> bool {
+        matches!(self, UseAction::MineTile { .. })
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct ItemDb {
