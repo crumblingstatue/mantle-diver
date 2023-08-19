@@ -109,7 +109,8 @@ pub(super) fn item_use_system(
                     r: tpos.tile_world_rect(),
                     c: Color::CYAN,
                 });
-                if !game.world.tile_at_mut(tpos).mid.empty() {
+                let id = game.world.tile_at_mut(tpos).mid;
+                if !id.empty() && game.tile_db[id].is_impassable() {
                     target_tpos = Some(tpos);
                     return ControlFlow::Break(());
                 }
