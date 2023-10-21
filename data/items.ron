@@ -130,7 +130,7 @@ ItemDb(
             graphic_name: "tiles/smallrock",
             draw_off: ScreenVec(
                 x: 5,
-                y: 12,
+                y: -6,
             ),
             use1: PlaceMidTile(
                 id: TileId(7),

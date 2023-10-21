@@ -24,9 +24,7 @@ clap = { version = "4.3.22", default-features = false, features = [
     "derive",
 ] }
 directories = "5.0.1"
-texture_packer = "0.25.0"
 walkdir = "2.3.3"
-image = { version = "0.24.7", default-features = false, features = ["png"] }
 ron = "0.8.1"
 simdnoise = "3.1.6"
 splitty = "1.0.1"
@@ -51,6 +49,9 @@ features = ["graphics"]
 
 [dependencies.egui-sfml]
 git = "https://github.com/crumblingstatue/egui-sfml.git"
+
+[dependencies.stampcollect-sfml]
+git = "https://github.com/crumblingstatue/stampcollect.git"
 
 [dependencies.mdv-data]
 path = "packages/mdv-data"

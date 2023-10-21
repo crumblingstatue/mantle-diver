@@ -4,7 +4,7 @@ CharDb(
     graphic_offsets: {
         "char/eye1": Offset(
             left: ScreenVec(
-                x: 9,
+                x: 14,
                 y: 0,
             ),
             right: ScreenVec(
@@ -44,17 +44,17 @@ CharDb(
         ),
         "char/pants1": Offset(
             left: ScreenVec(
-                x: 7,
-                y: 0,
+                x: 6,
+                y: 4,
             ),
             right: ScreenVec(
-                x: 34,
-                y: 0,
+                x: 36,
+                y: -6,
             ),
         ),
         "char/shirt1": Offset(
             left: ScreenVec(
-                x: 7,
+                x: 6,
                 y: 0,
             ),
             right: ScreenVec(
@@ -84,21 +84,21 @@ CharDb(
         ),
         "items/crudepick": Offset(
             left: ScreenVec(
-                x: -19,
+                x: -14,
                 y: 28,
             ),
             right: ScreenVec(
-                x: 59,
-                y: 28,
+                x: 56,
+                y: 27,
             ),
         ),
         "items/devpick": Offset(
             left: ScreenVec(
-                x: -22,
-                y: 25,
+                x: -23,
+                y: 27,
             ),
             right: ScreenVec(
-                x: 62,
+                x: 66,
                 y: 26,
             ),
         ),
