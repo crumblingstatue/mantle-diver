@@ -25,10 +25,10 @@ impl AtlasBundle {
                 rects.insert(
                     dbg!(name),
                     IntRect {
-                        x: rect.x as i32,
-                        y: rect.y as i32,
-                        w: rect.w as i32,
-                        h: rect.h as i32,
+                        x: i32::from(rect.x),
+                        y: i32::from(rect.y),
+                        w: i32::from(rect.w),
+                        h: i32::from(rect.h),
                     },
                 );
             },
