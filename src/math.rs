@@ -197,7 +197,7 @@ pub fn px_per_frame_to_km_h(px_per_frame: f32) -> f32 {
 
 /// World extent in tiles. Roughly 50km*50km.
 pub const WORLD_EXTENT: TPosSc = 250_000;
-#[expect(clippy::assertions_on_constants)]
+
 const _: () = assert!(
     WORLD_EXTENT < TPOS_SC_MAX,
     "World extent can't be larger than maximum sound TPosSc value"

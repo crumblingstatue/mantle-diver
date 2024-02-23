@@ -28,7 +28,7 @@ pub type ChkPosSc = u16;
 /// Region index is a byte, so 255 max.
 /// 255 * 8 = 2040
 pub const CHK_POS_SC_MAX: ChkPosSc = REGION_CHUNK_EXTENT as ChkPosSc * 255;
-#[expect(clippy::assertions_on_constants)]
+
 const _: () = assert!(
     CHK_POS_SC_MAX == 2040,
     "Assumption about chunk pos scalar max value broken"
@@ -268,7 +268,7 @@ pub type TPosSc = u32;
 
 #[expect(dead_code)]
 pub const TPOS_SC_MAX: TPosSc = CHK_POS_SC_MAX as TPosSc * CHUNK_EXTENT as TPosSc;
-#[expect(clippy::assertions_on_constants)]
+
 const _: () = assert!(
     TPOS_SC_MAX == 261_120,
     "Assumption about max tilepos value broken"
@@ -344,7 +344,6 @@ pub const REGION_N_CHUNKS: u8 = REGION_CHUNK_EXTENT * REGION_CHUNK_EXTENT;
 /// This is the uncompressed byte length of a region
 pub const REGION_BYTES: usize = REGION_N_CHUNKS as usize * CHUNK_BYTES;
 
-#[expect(clippy::assertions_on_constants)]
 const _: () = assert!(
     REGION_N_CHUNKS <= 64,
     "A region file uses an existence bitset that's a 64 bit integer"
