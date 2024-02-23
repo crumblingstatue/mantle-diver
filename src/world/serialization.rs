@@ -21,6 +21,7 @@ pub(super) fn save_chunk(pos: &ChunkPos, chk: &Chunk, world_dir: &Path) {
         .read(true)
         .write(true)
         .create(true)
+        .truncate(false)
         .open(&reg_file_name)
         .unwrap();
     let mut existence_bitset = if reg_file_exists {
