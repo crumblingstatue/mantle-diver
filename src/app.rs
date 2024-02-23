@@ -238,9 +238,7 @@ impl App {
         self.render.rt = RenderTexture::new(rt_w, rt_h).unwrap();
         self.render.light_blend_rt = RenderTexture::new(rt_w, rt_h).unwrap();
         // We add 2 to include partially visible tiles
-        #[expect(clippy::cast_sign_loss, reason = "It's a size, not signed")]
         let tw = (base_size.x / ScreenSc::from(TILE_SIZE)) as u16 + 2;
-        #[expect(clippy::cast_sign_loss, reason = "It's a size, not signed")]
         let th = (base_size.y / ScreenSc::from(TILE_SIZE)) as u16 + 2;
         self.tiles_on_screen.x = tw;
         self.tiles_on_screen.y = th;
