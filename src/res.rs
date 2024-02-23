@@ -1,6 +1,6 @@
 use {
     crate::texture_atlas::AtlasBundle,
-    egui::epaint::ahash::HashMap,
+    egui_sfml::egui::epaint::ahash::HashMap,
     sfml::{
         graphics::{Font, Texture},
         SfBox,

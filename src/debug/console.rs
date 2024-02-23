@@ -1,7 +1,7 @@
 use {
     super::DebugState,
     crate::{cmdline::CmdLine, command::CmdVec},
-    egui::TextBuffer,
+    egui_sfml::egui::{self, TextBuffer},
     std::fmt::Write,
 };
 

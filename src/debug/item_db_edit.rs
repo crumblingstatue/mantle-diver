@@ -1,6 +1,7 @@
 use {
     super::graphic_picker::GraphicPicker,
     crate::{data, egui_ext::EguiUiExt, game::GameState, graphics::ScreenRes},
+    egui_sfml::egui,
     extension_traits::extension,
     mdv_data::{
         item::{ItemDef, ItemId, UseAction},

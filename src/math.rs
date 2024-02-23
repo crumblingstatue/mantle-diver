@@ -3,6 +3,7 @@ use {
         graphics::ScreenRes,
         world::{TPosSc, TilePos, TPOS_SC_MAX},
     },
+    egui_sfml::egui,
     extension_traits::extension,
     mdv_math::types::{IntRect, ScreenSc, ScreenVec},
     sfml::system::Vector2,

@@ -209,7 +209,9 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
                 shoes_x = f32::from(offs.left.x);
             }
-            if let Some(graphic) = held_item_graphic && let Some(offs) = game.char_db.graphic_offsets.get(graphic) {
+            if let Some(graphic) = held_item_graphic
+                && let Some(offs) = game.char_db.graphic_offsets.get(graphic)
+            {
                 tool_x = f32::from(offs.left.x);
                 tool_y = f32::from(offs.left.y);
                 drawable_tool = true;
@@ -241,7 +243,9 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
                 shoes_x = f32::from(offs.right.x);
             }
-            if let Some(graphic) = held_item_graphic && let Some(offs) = game.char_db.graphic_offsets.get(graphic) {
+            if let Some(graphic) = held_item_graphic
+                && let Some(offs) = game.char_db.graphic_offsets.get(graphic)
+            {
                 tool_x = f32::from(offs.right.x);
                 tool_y = f32::from(offs.right.y);
                 drawable_tool = true;
@@ -288,7 +292,9 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     s.set_color(colors.shoes);
     rt.draw(&s);
     // Tool
-    if let Some(graphic) = held_item_graphic && drawable_tool {
+    if let Some(graphic) = held_item_graphic
+        && drawable_tool
+    {
         s.set_color(Color::WHITE);
         s.set_texture_rect(res.atlas.rects[graphic].to_sf());
         s.set_position((base_x + tool_x, base_y + tool_y));

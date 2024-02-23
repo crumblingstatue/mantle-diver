@@ -4,6 +4,7 @@ use {
         game::GameState,
         save,
     },
+    egui_sfml::egui,
     rand::{thread_rng, Rng},
     std::path::{Path, PathBuf},
 };

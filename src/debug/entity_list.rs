@@ -1,6 +1,9 @@
-use crate::{
-    game::GameState,
-    player::{MoveExtra, MovingEnt},
+use {
+    crate::{
+        game::GameState,
+        player::{MoveExtra, MovingEnt},
+    },
+    egui_sfml::egui,
 };
 
 #[derive(Default)]

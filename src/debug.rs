@@ -9,7 +9,7 @@ use {
         math::WorldRect,
         player::{MovingEnt, PlayerColors},
     },
-    egui::Color32,
+    egui_sfml::egui::{self, Color32},
     gamedebug_core::MsgBuf,
 };
 

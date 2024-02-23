@@ -15,6 +15,7 @@ use {
         res::{Res, ResAudio},
         world::{TilePos, World},
     },
+    egui_sfml::egui,
     mdv_data::{
         item::{ItemId, ItemStack, UseAction},
         tile::{LayerAccess, TileDb, TileDef, TileId, TileLayer},
@@ -695,7 +696,9 @@ pub(super) fn item_drop_claim_system(
     {
         // Horizontal friction
         step_towards(&mut mov.hspeed, 0.0, 0.03);
-        if let Some(cd) = cd && game.world.ticks < cd.tick_dropped + cd.cooldown {
+        if let Some(cd) = cd
+            && game.world.ticks < cd.tick_dropped + cd.cooldown
+        {
             return;
         }
         // Player interaction

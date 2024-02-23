@@ -6,6 +6,7 @@ use {
         graphics::ScreenRes,
         math::TILE_SIZE,
     },
+    egui_sfml::egui,
     mdv_data::{
         item::ItemId,
         tile::{Bg, BgTileId, Mid, MidTileId, TileDb, TileDef, TileItemDrop, TileLayer},

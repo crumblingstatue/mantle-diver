@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
-egui = "0.22.0"
 fnv = "1.0.7"
 hecs = { version = "0.10.3", features = ["macros"] }
 num-traits = "0.2.16"

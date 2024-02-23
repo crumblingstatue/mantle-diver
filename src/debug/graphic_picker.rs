@@ -1,5 +1,6 @@
 use {
     crate::{egui_ext::EguiUiExt, res::Res},
+    egui_sfml::egui,
     mdv_math::types::IntRect,
 };
 

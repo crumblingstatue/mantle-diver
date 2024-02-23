@@ -1,6 +1,7 @@
 use {
     super::item_db_edit::ItemDbEdit,
     crate::data,
+    egui_sfml::egui,
     mdv_data::{
         item::{ItemDb, ItemStack},
         recipe::{Recipe, RecipeDb, Station},

@@ -1,4 +1,5 @@
 use {
+    egui_sfml::egui,
     mdv_data::char::{CharDb, Offset},
     mdv_math::types::ScreenVec,
 };

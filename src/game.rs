@@ -16,6 +16,7 @@ use {
         time::{daylight, tick_of_day},
         world::{TilePos, World},
     },
+    egui_sfml::egui,
     fnv::FnvHashMap,
     mdv_data::{
         char::CharDb,
