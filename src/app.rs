@@ -370,7 +370,7 @@ impl App {
         let mut user_tex = EguiUserTex {
             atlas: &res.atlas.tex,
         };
-        self.sf_egui.end_frame().unwrap();
+        self.sf_egui.end_frame(&mut self.rw).unwrap();
         self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
         self.rw.display();
     }
