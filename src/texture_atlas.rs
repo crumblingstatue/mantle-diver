@@ -19,7 +19,7 @@ impl AtlasBundle {
         let mut atlas_builder = SfmlAtlasBuilder::with_size(4096, 4096);
         let mut rects = HashMap::new();
         stampcollect_sfml::collect(
-            &format!("{res_path}/graphics"),
+            format!("{res_path}/graphics"),
             &mut atlas_builder,
             |name, rect| {
                 rects.insert(

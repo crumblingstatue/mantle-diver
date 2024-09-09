@@ -32,7 +32,7 @@ impl WorldManager {
                     self.world_dirs = save::world_dirs(worlds_path);
                     self.just_opened = false;
                 }
-                ui.label(&format!("Current world: {}", game.world.name));
+                ui.label(format!("Current world: {}", game.world.name));
                 ui.separator();
                 let mut refresh = false;
                 egui::ScrollArea::vertical()
