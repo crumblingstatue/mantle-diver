@@ -7,8 +7,7 @@ use {
 
 pub struct AudioCtx {
     pub music_sink: rodio::Sink,
-    pub stream: rodio::OutputStream,
-    pub stream_handle: rodio::OutputStreamHandle,
+    pub _stream: rodio::OutputStream,
     pub plr: SoundPlayer,
     pub mus_vol: f32,
 }
@@ -19,8 +18,7 @@ impl AudioCtx {
         let plr = SoundPlayer::new(stream_handle.clone());
         Self {
             music_sink: rodio::Sink::try_new(&stream_handle).unwrap(),
-            stream,
-            stream_handle,
+            _stream: stream,
             plr,
             mus_vol: 1.0,
         }
