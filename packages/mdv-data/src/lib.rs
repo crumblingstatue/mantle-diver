@@ -1,5 +1,3 @@
-#![feature(lint_reasons)]
-
 pub mod char;
 pub mod item;
 pub mod recipe;
