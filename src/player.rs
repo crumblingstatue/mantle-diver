@@ -122,12 +122,12 @@ impl MovingEnt {
 
 #[extension(trait S2dcEnExt)]
 impl s2dc::Entity {
-    #[expect(
-        clippy::cast_sign_loss,
-        reason = "Entity coordinates are kept positive"
-    )]
     fn to_world_rect(&self) -> WorldRect {
         let (x, y, w, h) = self.xywh();
+        #[expect(
+            clippy::cast_sign_loss,
+            reason = "Entity coordinates are kept positive"
+        )]
         WorldRect {
             topleft: WorldPos {
                 x: x as u32,

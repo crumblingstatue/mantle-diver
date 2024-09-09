@@ -12,33 +12,33 @@ use {
 
 #[extension(pub trait ScreenVecExt)]
 impl ScreenVec {
-    #[expect(
-        clippy::cast_possible_truncation,
-        reason = "We expect that this function will be called only on resolutions,
-                  which are small enough"
-    )]
     fn from_sf_resolution(size: Vector2<u32>) -> Self {
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "We expect that this function will be called only on resolutions,
+                      which are small enough"
+        )]
         Self {
             x: size.x as ScreenSc,
             y: size.y as ScreenSc,
         }
     }
-    #[expect(
-        clippy::cast_possible_truncation,
-        reason = "We expect that this function will be called only on resolutions,
-                  which are small enough"
-    )]
     fn from_reso_i32(x: i32, y: i32) -> Self {
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "We expect that this function will be called only on resolutions,
+                      which are small enough"
+        )]
         Self {
             x: x as ScreenSc,
             y: y as ScreenSc,
         }
     }
-    #[expect(
-        clippy::cast_sign_loss,
-        reason = "Assumed to be called on sizes, which are positive"
-    )]
     fn size_to_sf_resolution(self) -> Vector2<u32> {
+        #[expect(
+            clippy::cast_sign_loss,
+            reason = "Assumed to be called on sizes, which are positive"
+        )]
         Vector2 {
             x: self.x as u32,
             y: self.y as u32,

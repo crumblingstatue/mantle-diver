@@ -59,12 +59,12 @@ impl SfVec2fExt for Vector2f {
 
 #[extension(pub trait RenderTargetExt)]
 impl<T: RenderTarget> T {
-    #[expect(
-        clippy::cast_possible_truncation,
-        reason = "Size is smaller than i16::MAX"
-    )]
     fn res(&self) -> ScreenRes {
         let size = self.size();
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "Size is smaller than i16::MAX"
+        )]
         ScreenRes {
             w: size.x as u16,
             h: size.y as u16,
