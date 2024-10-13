@@ -187,11 +187,11 @@ impl TilePos {
         }
     }
 
-    pub(crate) fn subtract(&self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
+    pub(crate) fn checked_sub(&self, other: Self) -> Option<Self> {
+        Some(Self {
+            x: self.x.checked_sub(other.x)?,
+            y: self.y.checked_sub(other.y)?,
+        })
     }
 
     pub(crate) fn to_world(self) -> WorldPos {

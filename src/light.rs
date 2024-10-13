@@ -142,7 +142,7 @@ pub(crate) fn enumerate_light_sources(
     let torch_selected = game.selected_item_is(data::item::TORCH);
     let held_torch_pos = if torch_selected {
         match game.ecw.query_one_mut::<&MovingEnt>(game.controlled_en) {
-            Ok(en) => Some(en.tile_pos().subtract(tp)),
+            Ok(en) => en.tile_pos().checked_sub(tp),
             Err(_) => None,
         }
     } else {
