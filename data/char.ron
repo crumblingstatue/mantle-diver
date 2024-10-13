@@ -35,11 +35,11 @@ CharDb(
         "char/legs1": Offset(
             left: ScreenVec(
                 x: 4,
-                y: 60,
+                y: 62,
             ),
             right: ScreenVec(
                 x: 33,
-                y: 60,
+                y: 62,
             ),
         ),
         "char/pants1": Offset(

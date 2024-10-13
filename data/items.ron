@@ -143,7 +143,7 @@ ItemDb(
             graphic_name: "tiles/stick",
             draw_off: ScreenVec(
                 x: 3,
-                y: 12,
+                y: -8,
             ),
             use1: PlaceMidTile(
                 id: TileId(8),

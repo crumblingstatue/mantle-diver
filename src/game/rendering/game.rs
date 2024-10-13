@@ -171,23 +171,11 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     let held_item_id = game.inventory.slots[game.ui.selected_inv_slot].id;
     let held_item_graphic = game.itemdb.get(held_item_id).map(|def| &def.graphic_name);
     let mut drawable_tool = false;
-    let (
-        mut head_x,
-        mut eye_x,
-        mut hair_x,
-        mut torso_x,
-        mut legs_x,
-        mut tool_x,
-        mut tool_y,
-        mut pants_x,
-        mut shirt_x,
-        mut shoes_x,
-        mut shoes_y,
-        mut pants_y,
-        mut legs_y,
-    ) = (
-        0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    );
+    #[rustfmt::skip]
+    let [mut head_x, mut eye_x, mut hair_x, mut torso_x, mut legs_x, mut tool_x,
+         mut tool_y, mut pants_x, mut shirt_x, mut shoes_x, mut shoes_y, mut pants_y,
+         mut legs_y] =
+        [0.0; _];
     match mov_extra.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {

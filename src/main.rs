@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+#![feature(let_chains, generic_arg_infer)]
 #![warn(
     trivial_casts,
     trivial_numeric_casts,
