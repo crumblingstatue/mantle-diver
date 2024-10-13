@@ -16,7 +16,7 @@ rmp-serde = "1.1.2"
 serde = { version = "1.0.183", features = ["derive"] }
 log = "0.4.20"
 env_logger = "0.10.0"
-zstd = "0.12.4"
+zstd = "0.13.2"
 clap = { version = "4.3.22", default-features = false, features = [
     "std",
     "help",
