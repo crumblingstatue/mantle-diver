@@ -4,10 +4,11 @@ use {
         command::CmdVec,
         config::Config,
         debug::{self, DebugState, DBG_OVR},
-        game::{rendering, rendering::RenderState, GameState},
-        graphics::{
-            ScreenRes, {self},
+        game::{
+            rendering::{self, RenderState},
+            GameState,
         },
+        graphics::{self, ScreenRes},
         input::Input,
         light::{self, LightState, U16Vec},
         math::{ScreenVecExt, WPosSc, TILE_SIZE, WORLD_EXTENT_PX},
@@ -30,6 +31,7 @@ use {
         },
         system::{Vector2, Vector2u},
         window::{Event, Key},
+        SfBox,
     },
     std::collections::VecDeque,
 };
@@ -38,7 +40,7 @@ mod command;
 
 /// Application level state (includes game and ui state, etc.)
 pub struct App {
-    pub rw: RenderWindow,
+    pub rw: SfBox<RenderWindow>,
     pub should_quit: bool,
     pub game: GameState,
     pub sf_egui: SfEgui,
@@ -256,7 +258,7 @@ impl App {
     }
 
     fn do_update(&mut self, res: &mut Res, aud: &ResAudio) {
-        self.sf_egui.begin_frame();
+        self.sf_egui.begin_pass();
         let rt_size = self.render.rt.size();
         let mut mouse_world_pos = self.game.camera_offset;
         let mut loc = self.input.mouse_down_loc / ScreenSc::from(self.scale);
@@ -370,7 +372,7 @@ impl App {
         let mut user_tex = EguiUserTex {
             atlas: &res.atlas.tex,
         };
-        self.sf_egui.end_frame(&mut self.rw).unwrap();
+        self.sf_egui.end_pass(&mut self.rw).unwrap();
         self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
         self.rw.display();
     }

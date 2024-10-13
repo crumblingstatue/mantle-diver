@@ -4,6 +4,7 @@ use {
     sfml::{
         graphics::RenderWindow,
         window::{ContextSettings, Style},
+        SfBox,
     },
     sfml_xt::graphics::RenderWindowExt,
 };
@@ -25,13 +26,14 @@ impl ScreenRes {
 
 const DEFAULT_RES: ScreenRes = ScreenRes { w: 960, h: 540 };
 
-pub fn make_window() -> RenderWindow {
+pub fn make_window() -> SfBox<RenderWindow> {
     let mut rw = RenderWindow::new(
         DEFAULT_RES.to_sf(),
         "Mantle Diver",
         Style::DEFAULT,
         &ContextSettings::default(),
-    );
+    )
+    .unwrap();
     rw.set_framerate_limit(FPS_TARGET.into());
     rw.center();
     rw
