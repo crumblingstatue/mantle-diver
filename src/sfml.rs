@@ -3,13 +3,15 @@ use {
         graphics::ScreenRes,
         math::{WorldPos, WorldRect},
     },
+    egui_sfml::{egui, SfEgui},
     extension_traits::extension,
     mdv_math::types::{ScreenRect, ScreenVec},
     sfml::{
-        graphics::{FloatRect, RectangleShape, RenderTarget, Sprite, Transformable},
+        graphics::{FloatRect, RectangleShape, RenderTarget, RenderWindow, Sprite, Transformable},
         system::{Vector2f, Vector2u},
-        window::VideoMode,
+        window::{ContextSettings, Event, Style, VideoMode},
     },
+    sfml_xt::graphics::RenderWindowExt,
 };
 
 pub trait SpriteExt {
@@ -115,5 +117,38 @@ impl WorldRect {
             width: self.w as f32,
             height: self.h as f32,
         }
+    }
+}
+
+pub fn show_fatal_error_window(title: &str, body: impl AsRef<str>) {
+    let mut rw = RenderWindow::new(
+        (800, 600),
+        title,
+        Style::default(),
+        &ContextSettings::default(),
+    )
+    .unwrap();
+    rw.set_framerate_limit(60);
+    rw.center();
+    let mut sf_egui = SfEgui::new(&rw);
+    while rw.is_open() {
+        while let Some(ev) = rw.poll_event() {
+            sf_egui.add_event(&ev);
+            if ev == Event::Closed {
+                rw.close();
+            }
+        }
+        sf_egui
+            .run(&mut rw, |_rw, ctx| {
+                egui::CentralPanel::default().show(ctx, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.heading(title);
+                    });
+                    ui.label(body.as_ref());
+                });
+            })
+            .unwrap();
+        sf_egui.draw(&mut rw, None);
+        rw.display();
     }
 }

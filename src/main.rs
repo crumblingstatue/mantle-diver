@@ -15,6 +15,7 @@ use {
     directories::ProjectDirs,
     gamedebug_core::IMMEDIATE,
     res::{Res, ResAudio},
+    sfml::show_fatal_error_window,
     std::backtrace::Backtrace,
 };
 
@@ -86,26 +87,22 @@ fn main() {
         };
         let bt = Backtrace::capture();
         eprintln!("{msg}\n{file}:{line}:{column}\n{bt}");
-        rfd::MessageDialog::new()
-            .set_title("Mantle Diver panicked!")
-            .set_description(&format!(
+        show_fatal_error_window(
+            "Mantle Diver panicked!",
+            format!(
                 "\
-                {msg}\n\n\
-                Location:\n\
-                {file}:{line}:{column}\n\n\
-                Backtrace: {bt}\n\n\
-                Terminating."
-            ))
-            .set_level(rfd::MessageLevel::Error)
-            .show();
+            {msg}\n\n\
+            Location:\n\
+            {file}:{line}:{column}\n\n\
+            Backtrace: {bt}\n\n\
+            Terminating."
+            ),
+        );
     }));
     env_logger::builder()
         .filter_level(log::LevelFilter::Info)
         .init();
     if let Err(e) = try_main() {
-        rfd::MessageDialog::new()
-            .set_title("Fatal error")
-            .set_description(&e.to_string())
-            .show();
+        show_fatal_error_window("Fatal error", e.to_string());
     }
 }
