@@ -182,7 +182,12 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
         mut pants_x,
         mut shirt_x,
         mut shoes_x,
-    ) = (0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        mut shoes_y,
+        mut pants_y,
+        mut legs_y,
+    ) = (
+        0.0, 4.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    );
     match mov_extra.facing_dir {
         FacingDir::Left => {
             if let Some(offs) = game.char_db.graphic_offsets.get("char/head1") {
@@ -199,15 +204,18 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = f32::from(offs.left.x);
+                legs_y = f32::from(offs.left.y);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
                 pants_x = f32::from(offs.left.x);
+                pants_y = f32::from(offs.left.y);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
                 shirt_x = f32::from(offs.left.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
                 shoes_x = f32::from(offs.left.x);
+                shoes_y = f32::from(offs.left.y);
             }
             if let Some(graphic) = held_item_graphic
                 && let Some(offs) = game.char_db.graphic_offsets.get(graphic)
@@ -233,15 +241,18 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/legs1") {
                 legs_x = f32::from(offs.right.x);
+                legs_y = f32::from(offs.right.y);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/pants1") {
                 pants_x = f32::from(offs.right.x);
+                pants_y = f32::from(offs.right.y);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shirt1") {
                 shirt_x = f32::from(offs.right.x);
             }
             if let Some(offs) = game.char_db.graphic_offsets.get("char/shoes1") {
                 shoes_x = f32::from(offs.right.x);
+                shoes_y = f32::from(offs.right.y);
             }
             if let Some(graphic) = held_item_graphic
                 && let Some(offs) = game.char_db.graphic_offsets.get(graphic)
@@ -274,7 +285,7 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     rt.draw(&s);
     // Legs
     s.set_texture_rect(res.atlas.rects["char/legs1"].to_sf());
-    s.set_position((base_x + legs_x, base_y + 64.0));
+    s.set_position((base_x + legs_x, base_y + legs_y));
     rt.draw(&s);
     // Shirt
     s.set_texture_rect(res.atlas.rects["char/shirt1"].to_sf());
@@ -283,12 +294,12 @@ fn draw_player_sprites(game: &mut GameState, rt: &mut RenderTexture, res: &Res) 
     rt.draw(&s);
     // Pants
     s.set_texture_rect(res.atlas.rects["char/pants1"].to_sf());
-    s.set_position((base_x + pants_x, base_y + 64.0));
+    s.set_position((base_x + pants_x, base_y + pants_y));
     s.set_color(colors.pants);
     rt.draw(&s);
     // Shoes
     s.set_texture_rect(res.atlas.rects["char/shoes1"].to_sf());
-    s.set_position((base_x + shoes_x, base_y + 87.0));
+    s.set_position((base_x + shoes_x, base_y + shoes_y));
     s.set_color(colors.shoes);
     rt.draw(&s);
     // Tool

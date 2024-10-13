@@ -182,7 +182,10 @@ TileDb(
             uprootable: false,
         ),
         /*[3]*/ TileDef(
-            light: None,
+            light: ScreenVec(
+                x: 29,
+                y: 65,
+            ),
             graphic_name: "tiles/platform",
             layer: MidDef(
                 platform: true,
@@ -190,14 +193,14 @@ TileDb(
                     x: 0,
                     y: 0,
                     w: 32,
-                    h: 1,
+                    h: 32,
                 ),
             ),
             neigh_aware: false,
             blend_list: [],
             draw_offs: ScreenVec(
                 x: 0,
-                y: 0,
+                y: -10,
             ),
             health: 5.0,
             hit_sound: "dig/tree",

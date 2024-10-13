@@ -8,8 +8,8 @@ CharDb(
                 y: 0,
             ),
             right: ScreenVec(
-                x: 32,
-                y: 0,
+                x: 26,
+                y: 4,
             ),
         ),
         "char/hair1": Offset(
@@ -35,21 +35,21 @@ CharDb(
         "char/legs1": Offset(
             left: ScreenVec(
                 x: 4,
-                y: 0,
+                y: 60,
             ),
             right: ScreenVec(
-                x: 37,
-                y: 0,
+                x: 33,
+                y: 60,
             ),
         ),
         "char/pants1": Offset(
             left: ScreenVec(
                 x: 6,
-                y: 4,
+                y: 52,
             ),
             right: ScreenVec(
-                x: 36,
-                y: -6,
+                x: 32,
+                y: 52,
             ),
         ),
         "char/shirt1": Offset(
@@ -64,12 +64,12 @@ CharDb(
         ),
         "char/shoes1": Offset(
             left: ScreenVec(
-                x: 4,
-                y: 0,
+                x: 3,
+                y: 62,
             ),
             right: ScreenVec(
-                x: 37,
-                y: 0,
+                x: 34,
+                y: 62,
             ),
         ),
         "char/torso1": Offset(
@@ -94,22 +94,22 @@ CharDb(
         ),
         "items/devpick": Offset(
             left: ScreenVec(
-                x: -23,
-                y: 27,
+                x: -19,
+                y: 25,
             ),
             right: ScreenVec(
-                x: 66,
-                y: 26,
+                x: 58,
+                y: 23,
             ),
         ),
         "items/woodpick": Offset(
             left: ScreenVec(
-                x: -21,
-                y: 27,
+                x: -25,
+                y: 20,
             ),
             right: ScreenVec(
-                x: 62,
-                y: 27,
+                x: 54,
+                y: 18,
             ),
         ),
         "tiles/platform": Offset(

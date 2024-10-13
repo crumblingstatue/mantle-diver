@@ -33,7 +33,7 @@ ItemDb(
             graphic_name: "tiles/platform",
             draw_off: ScreenVec(
                 x: 4,
-                y: 17,
+                y: 6,
             ),
             use1: PlaceMidTile(
                 id: TileId(4),
