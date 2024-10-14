@@ -16,7 +16,7 @@ pub struct AtlasBundle {
 
 impl AtlasBundle {
     pub fn new(res_path: &str) -> anyhow::Result<Self> {
-        let mut atlas_builder = SfmlAtlasBuilder::with_size(4096, 4096);
+        let mut atlas_builder = SfmlAtlasBuilder::with_size(4096, 4096)?;
         let mut rects = HashMap::new();
         stampcollect_sfml::collect(
             format!("{res_path}/graphics"),
