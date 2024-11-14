@@ -1,6 +1,6 @@
 use {
     mdv_math::types::IntRect,
-    sfml::{graphics::Texture, SfBox},
+    sfml::{cpp::FBox, graphics::Texture},
     stampcollect_sfml::SfmlAtlasBuilder,
     std::collections::HashMap,
 };
@@ -9,7 +9,7 @@ pub type RectMap = HashMap<String, IntRect>;
 
 #[derive(Debug)]
 pub struct AtlasBundle {
-    pub tex: SfBox<Texture>,
+    pub tex: FBox<Texture>,
     // Key could be `tiles/dirt` for example, derived from folder+filename without extension
     pub rects: RectMap,
 }

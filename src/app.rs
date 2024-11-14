@@ -25,13 +25,13 @@ use {
     mdv_math::types::{ScreenSc, ScreenVec},
     rand::{thread_rng, Rng},
     sfml::{
+        cpp::FBox,
         graphics::{
             BlendMode, Color, Rect, RectangleShape, RenderStates, RenderTarget, RenderTexture,
             RenderWindow, Shape, Sprite, Texture, Transformable, View,
         },
         system::{Vector2, Vector2u},
         window::{Event, Key},
-        SfBox,
     },
     std::collections::VecDeque,
 };
@@ -40,7 +40,7 @@ mod command;
 
 /// Application level state (includes game and ui state, etc.)
 pub struct App {
-    pub rw: SfBox<RenderWindow>,
+    pub rw: FBox<RenderWindow>,
     pub should_quit: bool,
     pub game: GameState,
     pub sf_egui: SfEgui,
@@ -253,7 +253,8 @@ impl App {
         self.tiles_on_screen.x = tw;
         self.tiles_on_screen.y = th;
         self.light_state.light_map = vec![0; tw as usize * th as usize];
-        let view = View::from_rect(Rect::new(0., 0., f32::from(size.x), f32::from(size.y)));
+        let view =
+            View::from_rect(Rect::new(0., 0., f32::from(size.x), f32::from(size.y))).unwrap();
         self.rw.set_view(&view);
     }
 
@@ -331,8 +332,10 @@ impl App {
         self.rw.clear(Color::rgb(40, 10, 70));
         self.rw.draw(&spr);
         // Draw light overlay with multiply blending
-        let mut rst = RenderStates::default();
-        rst.blend_mode = BlendMode::MULTIPLY;
+        let rst = RenderStates {
+            blend_mode: BlendMode::MULTIPLY,
+            ..Default::default()
+        };
         self.render.light_blend_rt.display();
         spr.set_texture(self.render.light_blend_rt.texture(), false);
         self.rw.draw_with_renderstates(&spr, &rst);
@@ -372,8 +375,8 @@ impl App {
         let mut user_tex = EguiUserTex {
             atlas: &res.atlas.tex,
         };
-        self.sf_egui.end_pass(&mut self.rw).unwrap();
-        self.sf_egui.draw(&mut self.rw, Some(&mut user_tex));
+        let di = self.sf_egui.end_pass(&mut self.rw).unwrap();
+        self.sf_egui.draw(di, &mut self.rw, Some(&mut user_tex));
         self.rw.display();
     }
     /// Before rendering, we clamp the camera offset to "sensible coordinates", to avoid having

@@ -122,8 +122,10 @@ pub(crate) fn draw_world(
             }
         },
     );
-    let mut rs = RenderStates::DEFAULT;
-    rs.set_texture(Some(&res.atlas.tex));
+    let rs = RenderStates {
+        texture: Some(&res.atlas.tex),
+        ..Default::default()
+    };
     rt.draw_primitives(verts, PrimitiveType::QUADS, &rs);
     // Draw tile highlight rect
     if let Some(hi_rect) = &game.highlight_tp {

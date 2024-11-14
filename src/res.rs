@@ -2,8 +2,8 @@ use {
     crate::texture_atlas::AtlasBundle,
     egui_sfml::egui::epaint::ahash::HashMap,
     sfml::{
+        cpp::FBox,
         graphics::{Font, Texture},
-        SfBox,
     },
     std::{io::Cursor, path::Path},
 };
@@ -14,8 +14,8 @@ pub struct Res {
     pub atlas: AtlasBundle,
     pub surf_music: AuBuf,
     pub und_music: AuBuf,
-    pub sans_font: SfBox<Font>,
-    pub forest_bg: SfBox<Texture>,
+    pub sans_font: FBox<Font>,
+    pub forest_bg: FBox<Texture>,
 }
 
 pub struct ResAudio {

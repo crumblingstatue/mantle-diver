@@ -2,9 +2,9 @@ use {
     crate::math::FPS_TARGET,
     mdv_math::types::{ScreenSc, ScreenVec},
     sfml::{
+        cpp::FBox,
         graphics::RenderWindow,
         window::{ContextSettings, Style},
-        SfBox,
     },
     sfml_xt::graphics::RenderWindowExt,
 };
@@ -26,7 +26,7 @@ impl ScreenRes {
 
 const DEFAULT_RES: ScreenRes = ScreenRes { w: 960, h: 540 };
 
-pub fn make_window() -> SfBox<RenderWindow> {
+pub fn make_window() -> FBox<RenderWindow> {
     let mut rw = RenderWindow::new(
         DEFAULT_RES.to_sf(),
         "Mantle Diver",

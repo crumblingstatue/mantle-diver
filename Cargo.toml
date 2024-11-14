@@ -35,18 +35,18 @@ git = "https://github.com/crumblingstatue/s2dc.git"
 features = ["serde"]
 
 [dependencies.sfml-xt]
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies.gamedebug_core]
 git = "https://github.com/crumblingstatue/gamedebug_core.git"
 
 [dependencies.sfml]
-version = "0.23.0"
+version = "0.24.0"
 default-features = false
 features = ["graphics"]
 
 [dependencies.egui-sfml]
-version = "0.6.0"
+version = "0.7.0"
 
 [dependencies.stampcollect-sfml]
 git = "https://github.com/crumblingstatue/stampcollect.git"

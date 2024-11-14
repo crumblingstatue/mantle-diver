@@ -138,7 +138,7 @@ pub fn show_fatal_error_window(title: &str, body: impl AsRef<str>) {
                 rw.close();
             }
         }
-        sf_egui
+        let di = sf_egui
             .run(&mut rw, |_rw, ctx| {
                 egui::CentralPanel::default().show(ctx, |ui| {
                     ui.vertical_centered(|ui| {
@@ -148,7 +148,7 @@ pub fn show_fatal_error_window(title: &str, body: impl AsRef<str>) {
                 });
             })
             .unwrap();
-        sf_egui.draw(&mut rw, None);
+        sf_egui.draw(di, &mut rw, None);
         rw.display();
     }
 }
