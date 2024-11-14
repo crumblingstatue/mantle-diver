@@ -26,7 +26,7 @@ walkdir = "2.3.3"
 ron = "0.8.1"
 simdnoise = "3.1.6"
 splitty = "1.0.1"
-rodio = "0.19"
+rodio = "0.20.1"
 extension-traits = "2.0.0"
 smart-default = "0.7.1"
 
